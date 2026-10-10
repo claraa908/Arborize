@@ -3,9 +3,22 @@
 @theme {
     /*Fontes*/ 
     --font-sans: "League Spartan", sans-serif;
+
     /*Cores do sistema*/
     --color-amma-green: #6B8B3F;
+    --color-amma-green-dark: #4D6E1F;
     --color-amma-green-light: #E1E8D9;
+    --color-amma-green-lighter: #F5F8F2;
     --color-amma-bg: #EEF2EA;
     --color-grey-text: #6F6F6F;
+
+    /* Arredondamento formato folha */
+    --radius-btn: 10px 20px;
+    --radius-box: 15px 40px;
+    
+}
+
+   /* Animação de botões */
+.efeito-zoom {
+    @apply transition-all duration-300 hover:scale-105 hover:shadow-lg active:scale-95 cursor-pointer;
 }

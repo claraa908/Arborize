@@ -1,14 +1,18 @@
 <script setup lang="ts">
+    const emit = defineEmits<{
+        (e: 'open-login'): void
+    }>()
+
 </script>
 
 <template>
   <header class="w-full flex items-center justify-between px-8 py-6 border-b border-gray-200 ">
     <div class="flex items-center gap-2">
-      <div class="text-[#5D8A3F] flex items-center gap-2">
+      <div class="text-amma-grey-text flex items-center gap-2">
         <img src="@/assets/images/logo.png" alt="Logo Arborize" class="h-16 w-auto" />
         <div class="flex flex-col">
-          <span class="text-xl font-bold leading-none tracking-wide text-[#5D8A3F]">ARBORIZE</span>
-          <span class="text-[0.6rem] font-medium tracking-widest text-[#5D8A3F]">Gestão Ambiental</span>
+          <span class="text-xl font-bold leading-none tracking-wide text-amma-green">ARBORIZE</span>
+          <span class="text-[0.6rem] font-medium tracking-widest text-amma-green">Gestão Ambiental</span>
         </div>
       </div>
     </div>
@@ -21,10 +25,7 @@
     </nav>
 
     <div class="flex items-center gap-4 text-sm font-bold">
-      <button class="text-[#5D8A3F] hover:text-[#3E5F29] transition-colors">Cadastre-se</button>
-      <button class="bg-amma-green text-white px-6 py-2.5 rounded-tl-[10px] rounded-tr-[20px] rounded-bl-[20px] rounded-br-[10px] hover:bg-[#527536] transition-colors">
-        Entrar
-      </button>
+        <button @click="emit('open-login')" class="bg-amma-green hover:bg-amma-green-dark text-white px-6 py-2.5 rounded-btn efeito-zoom">Entrar</button>
     </div>
   </header>
 </template>
