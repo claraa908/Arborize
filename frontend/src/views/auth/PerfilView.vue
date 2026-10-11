@@ -17,12 +17,12 @@ const confirmPassword = ref('')
         <div class="bg-white rounded-box shadow-sm border border-amma-green-light p-8 flex flex-col items-center text-center">
           <div class="relative mb-6">
             <div 
-              class="w-32 h-32 bg-amma-green-dark text-white flex items-center justify-center font-bold text-4xl shadow-lg border-4 border-white"
+              class="w-32 h-32 bg-amma-green-light text-amma-green flex items-center justify-center font-bold text-4xl shadow-lg border-4 border-white"
               style="border-radius: 60px 15px 60px 60px;"
             >
               RB
             </div>
-            <button class="absolute bottom-0 right-0 w-10 h-10 bg-white border border-amma-green-light text-amma-green-dark hover:text-amma-green rounded-full flex items-center justify-center shadow-sm efeito-zoom">
+            <button class="absolute bottom-0 right-0 w-10 h-10 bg-white border border-amma-green-light text-amma-green hover:text-amma-green rounded-full flex items-center justify-center shadow-sm efeito-zoom">
               <span class="material-symbols-outlined text-[20px]">photo_camera</span>
             </button>
           </div>

@@ -27,7 +27,7 @@ const navigateToProfile = () => {
         </div>
         
         <div 
-          class="w-12 h-12 bg-amma-green-dark text-white flex items-center justify-center font-bold text-[15px] shadow-md border-2 border-white"
+          class="w-12 h-12 bg-amma-green-light text-dark flex items-center justify-center font-bold text-[15px] shadow-md border-2 border-white"
           style="border-radius: 24px 6px 24px 24px;"
         >
           RB
@@ -42,8 +42,8 @@ const navigateToProfile = () => {
           :class="[
             'w-10 h-10 flex items-center justify-center transition-all efeito-zoom',
             route.name === 'perfil'
-              ? 'bg-amma-green text-white shadow-inner rounded-bl-[10px] rounded-tr-[10px] rounded-tl-[20px] rounded-br-[20px]'
-              : 'text-grey-text hover:text-white hover:bg-amma-green-dark rounded-bl-[10px] rounded-tr-[10px] rounded-tl-[20px] rounded-br-[20px]'
+              ? 'bg-amma-green-dark text-white shadow-inner rounded-bl-[10px] rounded-tr-[10px] rounded-tl-[20px] rounded-br-[20px]'
+              : 'text-grey-text hover:text-white hover:bg-amma-green rounded-bl-[10px] rounded-tr-[10px] rounded-tl-[20px] rounded-br-[20px]'
           ]"
           title="Meu Perfil"
         >

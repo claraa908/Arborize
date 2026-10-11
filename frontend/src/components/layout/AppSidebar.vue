@@ -11,7 +11,6 @@ const menuItems = [
   { name: 'Viveiro', icon: 'psychiatry', routeName: 'viveiro' },
   { name: 'Solicitações', icon: 'content_paste', routeName: 'solicitacoes' },
   { name: 'Laudos', icon: 'description', routeName: 'laudos' },
-  { name: 'Podas', icon: 'content_cut', routeName: 'podas' },
   { name: 'Eventos', icon: 'event', routeName: 'eventos' }
 ]
 
