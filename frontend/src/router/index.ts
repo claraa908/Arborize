@@ -42,7 +42,7 @@ const router = createRouter({
         {
           path: 'viveiro',
           name: 'viveiro',
-          component: () => import('@/views/auth/ViveiroView.vue'),
+          component: () => import('@/views/auth/viveiro/ViveiroView.vue'),
           meta: { title: 'Gestão do Viveiro' }
         },
         {
@@ -60,7 +60,7 @@ const router = createRouter({
         {
           path: 'eventos',
           name: 'eventos',
-          component: () => import('@/views/auth/EventosView.vue'),
+          component: () => import('@/views/auth/eventos/EventosView.vue'),
           meta: { title: 'Eventos Ambientais' }
         },
         {
@@ -68,6 +68,18 @@ const router = createRouter({
           name: 'perfil',
           component: () => import('@/views/auth/PerfilView.vue'),
           meta: { title: 'Meu Perfil' }
+        },
+        {
+          path: 'eventos/cadastrar',
+          name: 'eventos-cadastrar',
+          component: () => import('@/views/auth/eventos/EventosCadastroView.vue'),
+          meta: { title: 'Cadastrar Evento' }
+        },
+        {
+          path: 'viveiro/cadastrar-especie',
+          name: 'viveiro-cadastrar',
+          component: () => import('@/views/auth/viveiro/ViveiroCadastroView.vue'),
+          meta: { title: 'Cadastrar Viveiro' }
         }
       ]
     }
