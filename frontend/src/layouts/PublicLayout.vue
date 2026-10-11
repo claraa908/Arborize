@@ -8,12 +8,12 @@ const isLoginModalOpen = ref(false)
 </script>
 
 <template>
-  <div class="min-h-screen bg-amma-bg px-4 py-2 md:px-8 md:py-4 flex justify-center">
-    <div class="w-full max-w-7xl bg-white rounded-box shadow-xl flex flex-col min-h-[85vh]">
+  <div class="h-screen bg-amma-bg px-4 py-2 md:px-8 md:py-4 flex justify-center overflow-hidden">
+    <div class="w-full max-w-7xl bg-white rounded-box shadow-xl flex flex-col h-full overflow-hidden">
       
-      <TopBar @open-login="isLoginModalOpen = true" />
+      <TopBar class="shrink-0" @open-login="isLoginModalOpen = true" />
       
-      <main class="flex-1 p-6 md:p-10">
+      <main class="flex-1 overflow-y-auto px-6 md:px-10 pt-2 pb-6 md:pb-10">
         <RouterView />
       </main>
 

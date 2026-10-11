@@ -14,6 +14,16 @@ const router = createRouter({
           path: '',
           name: 'home',
           component: HomeView
+        },
+        {
+          path: 'biblioteca',
+          name: 'biblioteca-catalogo',
+          component: () => import('@/views/public/biblioteca/CatalogoView.vue')
+        },
+        {
+          path: 'biblioteca/:id',
+          name: 'biblioteca-documento',
+          component: () => import('@/views/public/biblioteca/DocumentoView.vue')
         }
       ]
     },
@@ -26,6 +36,24 @@ const router = createRouter({
           name: 'dashboard',
           component: () => import('@/views/auth/DashboardView.vue'),
           meta: { title: 'Dashboard e Relatórios' }
+        },
+        {
+          path: 'biblioteca',
+          name: 'biblioteca-lista',
+          component: () => import('@/views/auth/biblioteca/BibliotecaListaView.vue'),
+          meta: { title: 'Biblioteca Digital', activeMenu: 'biblioteca-lista' }
+        },
+        {
+          path: 'biblioteca/nova',
+          name: 'biblioteca-nova',
+          component: () => import('@/views/auth/biblioteca/BibliotecaFormView.vue'),
+          meta: { title: 'Biblioteca Digital', activeMenu: 'biblioteca-lista' }
+        },
+        {
+          path: 'biblioteca/:id',
+          name: 'biblioteca-detalhes',
+          component: () => import('@/views/auth/biblioteca/BibliotecaDetalhesView.vue'),
+          meta: { title: 'Biblioteca Digital', activeMenu: 'biblioteca-lista' }
         },
         {
           path: 'solicitacoes',
@@ -50,12 +78,6 @@ const router = createRouter({
           name: 'laudos',
           component: () => import('@/views/auth/LaudosView.vue'),
           meta: { title: 'Laudos Técnicos' }
-        },
-        {
-          path: 'podas',
-          name: 'podas',
-          component: () => import('@/views/auth/PodasView.vue'),
-          meta: { title: 'Cronograma de Podas' }
         },
         {
           path: 'eventos',

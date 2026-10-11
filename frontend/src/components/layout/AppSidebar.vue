@@ -7,15 +7,22 @@ const router = useRouter()
 
 const menuItems = [
   { name: 'Dashboard e Relatórios', icon: 'insert_chart', routeName: 'dashboard' },
+  { name: 'Biblioteca Digital', icon: 'local_library', routeName: 'biblioteca-catalogo' },
   { name: 'Inventário', icon: 'pin_drop', routeName: 'inventario' },
-  { name: 'Viveiro', icon: 'psychiatry', routeName: 'viveiro',
+  { 
+    name: 'Viveiro', 
+    icon: 'psychiatry', 
+    routeName: 'viveiro',
     children: [
       { name: 'Cadastrar Espécie', routeName: 'viveiro-cadastrar' }
     ]
   },
   { name: 'Solicitações', icon: 'content_paste', routeName: 'solicitacoes' },
   { name: 'Laudos', icon: 'description', routeName: 'laudos' },
-  { name: 'Eventos', icon: 'event', routeName: 'eventos',
+  { 
+    name: 'Eventos', 
+    icon: 'event', 
+    routeName: 'eventos',
     children: [
       { name: 'Cadastrar Evento', routeName: 'eventos-cadastrar' }
     ]
@@ -58,6 +65,9 @@ const toggleSubmenu = (itemName: string) => {
   openSubmenus.value[itemName] = !openSubmenus.value[itemName]
 }
 
+const isActive = (routeName: string) => {
+  return route.name === routeName || route.meta.activeMenu === routeName
+}
 </script>
 
 <template>
@@ -96,7 +106,7 @@ const toggleSubmenu = (itemName: string) => {
           :class="[
             'flex items-center py-3.5 transition-all cursor-pointer rounded-btn select-none',
             isExpanded ? 'px-4 gap-4 justify-between' : 'px-0 justify-center',
-            route.name === item.routeName || (item.children && item.children.some(child => child.routeName === route.name))
+            isActive(item.routeName) || (item.children && item.children.some(child => isActive(child.routeName)))
               ? 'bg-amma-green-dark text-white shadow-inner'
               : 'text-white/80 hover:bg-black/10 hover:text-white'
           ]"
@@ -126,7 +136,7 @@ const toggleSubmenu = (itemName: string) => {
             href="#"
             :class="[
               'py-3.5 px-5 text-sm font-semibold rounded-btn transition-all',
-              route.name === child.routeName
+              isActive(child.routeName)
                 ? 'bg-black/20 text-white font-bold'
                 : 'text-white/70 hover:text-white hover:bg-black/10'
             ]"
@@ -135,10 +145,9 @@ const toggleSubmenu = (itemName: string) => {
             {{ child.name }}
           </a>
         </div>
-
-    </div>
-  </nav>
-</aside>
+      </div>
+    </nav>
+  </aside>
 
   <button
     v-if="windowWidth < 768"
@@ -158,11 +167,9 @@ const toggleSubmenu = (itemName: string) => {
     leave-to-class="opacity-0 -translate-x-4"
   >
     <div v-if="isMobileOpen && windowWidth < 768" class="fixed inset-0 z-50 flex">
-
       <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" @click="isMobileOpen = false"></div>
 
       <div class="relative w-4/5 max-w-[280px] bg-amma-green h-full shadow-2xl flex flex-col rounded-r-box">
-
         <div class="p-6 flex items-center justify-between border-b border-white/10">
           <button
             @click="isMobileOpen = false"
@@ -183,8 +190,8 @@ const toggleSubmenu = (itemName: string) => {
             <a
               href="#"
               :class="[
-                'flex items-center gap-4 px-4 py-3.5 text-sm font-semibold transition-all cursor-pointer rounded-btn',
-                route.name === item.routeName
+                'flex items-center justify-between px-4 py-3.5 text-sm font-semibold transition-all cursor-pointer rounded-btn',
+                isActive(item.routeName) || (item.children && item.children.some(child => isActive(child.routeName)))
                   ? 'bg-amma-green-dark text-white shadow-inner'
                   : 'text-white/80 hover:bg-black/10 hover:text-white'
               ]"
@@ -204,17 +211,17 @@ const toggleSubmenu = (itemName: string) => {
                 <span class="material-symbols-outlined text-[18px]">
                   {{ openSubmenus[item.name] ? 'expand_less' : 'expand_more' }}
                 </span>
-          </button>
-          </a>
+              </button>
+            </a>
 
-          <div v-if="item.children && openSubmenus[item.name]" class="pl-4 flex flex-col gap-1">
+            <div v-if="item.children && openSubmenus[item.name]" class="pl-4 flex flex-col gap-1">
               <a
                 v-for="child in item.children"
                 :key="child.name"
                 href="#"
                 :class="[
                   'px-5 py-3.5 text-sm font-semibold rounded-btn transition-all',
-                  route.name === child.routeName
+                  isActive(child.routeName)
                     ? 'bg-black/20 text-white font-bold'
                     : 'text-white/70 hover:text-white hover:bg-black/10'
                 ]"
