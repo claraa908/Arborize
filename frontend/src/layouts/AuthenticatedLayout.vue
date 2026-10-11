@@ -14,7 +14,7 @@ import AppHeader from '@/components/layout/AppHeader.vue'
         
         <AppHeader />
 
-        <main class="flex-1 px-10 pb-10 overflow-y-auto">
+        <main class="flex-1 pb-6 md:pb-7 overflow-y-auto">
           <RouterView />
         </main>
       </div>

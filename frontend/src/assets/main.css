@@ -13,8 +13,12 @@
     --color-grey-text: #6F6F6F;
 
     /* Arredondamento formato folha */
-    --radius-btn: 10px 30px;
+    --radius-btn: 10px 20px;
+    --radius-btn-sidebar: 10px 30px;
     --radius-box: 15px 60px;
+    --radius-btn-l-small: 5px 10px;
+    --radius-btn-r-small: 10px 5px;
+    
     
 }
 

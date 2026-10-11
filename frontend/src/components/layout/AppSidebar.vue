@@ -7,6 +7,7 @@ const router = useRouter()
 
 const menuItems = [
   { name: 'Dashboard e Relatórios', icon: 'insert_chart', routeName: 'dashboard' },
+  { name: 'Biblioteca Digital', icon: 'local_library', routeName: 'biblioteca-lista' },
   { name: 'Inventário', icon: 'pin_drop', routeName: 'inventario' },
   { name: 'Viveiro', icon: 'psychiatry', routeName: 'viveiro' },
   { name: 'Solicitações', icon: 'content_paste', routeName: 'solicitacoes' },
@@ -39,6 +40,10 @@ onUnmounted(() => {
 const navigateTo = (routeName: string) => {
   router.push({ name: routeName })
   isMobileOpen.value = false
+}
+
+const isActive = (routeName: string) => {
+  return route.name === routeName || route.meta.activeMenu === routeName
 }
 </script>
 
@@ -77,9 +82,9 @@ const navigateTo = (routeName: string) => {
         href="#"
         :title="!isExpanded ? item.name : ''"
         :class="[
-          'flex items-center py-3.5 transition-all cursor-pointer rounded-btn',
+          'flex items-center py-3.5 transition-all cursor-pointer rounded-btn-sidebar',
           isExpanded ? 'px-4 gap-4 justify-start' : 'px-0 justify-center',
-          route.name === item.routeName
+          isActive(item.routeName)
             ? 'bg-amma-green-dark text-white shadow-inner'
             : 'text-white/80 hover:bg-black/10 hover:text-white'
         ]"
@@ -136,7 +141,7 @@ const navigateTo = (routeName: string) => {
             href="#"
             :class="[
               'flex items-center gap-4 px-4 py-3.5 text-sm font-semibold transition-all cursor-pointer rounded-btn',
-              route.name === item.routeName
+              isActive(item.routeName)
                 ? 'bg-amma-green-dark text-white shadow-inner'
                 : 'text-white/80 hover:bg-black/10 hover:text-white'
             ]"

@@ -10,7 +10,7 @@ const confirmPassword = ref('')
 </script>
 
 <template>
-  <div class="max-w-5xl mx-auto pt-8">
+  <div class="px-6 md:px-10 pt-6 md:pt-6 max-w-5xl mx-auto">
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
       
       <div class="md:col-span-1 flex flex-col gap-6">
