@@ -3,8 +3,6 @@
 
 <template>
   <div>
-    <h2 class="text-3xl font-extrabold text-emerald-950 mb-2">Título da Página</h2>
-    <p class="text-emerald-900/60 mb-8 font-medium">Subtítulo ou descrição da página.</p>
     
     <div class="bg-white rounded-box shadow-sm border border-emerald-900/10 p-8 flex items-center justify-center min-h-[400px]">
       <span class="text-emerald-900/40 font-medium">Conteúdo em construção</span>
