@@ -33,18 +33,14 @@ public class EducationalMaterial {
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    // Nome que será guardado no postgres
-    @Column(name = "file_path", nullable = false)
-    private String filePath;
-
-    @Column(name = "file_size")
-    private Double fileSize;
-
     @Column(name = "upload_date")
     private LocalDate uploadDate;
 
     @Column(nullable = false)
     private String status;
+
+    @OneToMany(mappedBy = "educationalMaterial", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Document> documents;
 
     @PrePersist
     public void prePersist() {

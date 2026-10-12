@@ -13,5 +13,4 @@ public interface EducationalMaterialRepository extends JpaRepository<Educational
     List<EducationalMaterial> findByStatus(String status);
     List<EducationalMaterial> findByStatusAndCategory(String status, MaterialCategory category);
     List<EducationalMaterial> findByStatusAndTitleContainingIgnoreCase(String status, String title);
-    List<EducationalMaterial> findByStatusAndTypeAndCategory(String status, MaterialType type, MaterialCategory category);
 }

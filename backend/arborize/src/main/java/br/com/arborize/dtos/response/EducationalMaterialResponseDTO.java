@@ -11,9 +11,8 @@ public record EducationalMaterialResponseDTO(
         MaterialType type,
         MaterialCategory category,
         String description,
-        String filePath,
-        Double fileSize,
         LocalDate uploadDate,
-        String status
+        String status,
+        List<DocumentResponseDTO> documents
 ) {
 }
