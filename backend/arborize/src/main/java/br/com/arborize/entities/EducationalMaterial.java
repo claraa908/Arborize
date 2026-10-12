@@ -3,14 +3,14 @@ package br.com.arborize.entities;
 import br.com.arborize.enums.MaterialCategory;
 import br.com.arborize.enums.MaterialType;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 
 @Entity
 @Table(name = "educational_materials")
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -24,7 +24,7 @@ public class EducationalMaterial {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "material_type", nullable = false)
-    private MaterialType materialType;
+    private MaterialType type;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
