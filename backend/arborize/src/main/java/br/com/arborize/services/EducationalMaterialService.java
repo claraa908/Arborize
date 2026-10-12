@@ -63,7 +63,7 @@ public class EducationalMaterialService {
         }
     }
 
-    // 2. Lista os materiais publicados (com suporte a busca ou categoria) - ESTE MÉTODO ESTAVA FALTANDO NO SEU SERVICE
+    // 2. Lista os materiais publicados (com suporte a busca ou categoria)
     public List<EducationalMaterialResponseDTO> getPublicMaterials(String search, MaterialCategory category) {
         List<EducationalMaterialEntities> materials;
 
@@ -80,17 +80,17 @@ public class EducationalMaterialService {
                 .collect(Collectors.toList());
     }
 
-    // 3. Busca os bytes do PDF no MinIO para download - ESTE MÉTODO TAMBÉM ESTAVA FALTANDO
+    // 3. Busca os bytes do PDF no MinIO para download
     public byte[] getFileStream(Long materialId) {
         EducationalMaterialEntities material = repository.findById(materialId)
                 .orElseThrow(() -> new RuntimeException("Material não encontrado"));
 
-        if (material.getDocument() == null || material.getDocument().isEmpty()) {
+        if (material.getDocuments() == null || material.getDocuments().isEmpty()) {
             throw new RuntimeException("Nenhum documento associado a este material");
         }
 
         // Pega o primeiro documento (geralmente o PDF) para download
-        DocumentEntities doc = material.getDocument().get(0);
+        DocumentEntities doc = material.getDocuments().get(0);
 
         try {
             InputStream stream = minioClient.getObject(

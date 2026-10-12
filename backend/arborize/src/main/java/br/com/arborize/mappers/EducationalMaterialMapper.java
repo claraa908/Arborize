@@ -17,7 +17,6 @@ public class EducationalMaterialMapper {
     @Autowired
     private DocumentMapper documentMapper;
 
-    // Converte o RequestDTO de entrada para a Entidade EducationalMaterialEntities
     public EducationalMaterialEntities toEntity(EducationalMaterialRequestDTO dto) {
         return EducationalMaterialEntities.builder()
                 .title(dto.title())
@@ -28,7 +27,6 @@ public class EducationalMaterialMapper {
                 .build();
     }
 
-    // Converte a Entidade do Banco (contendo a lista de documentos) para o ResponseDTO
     public EducationalMaterialResponseDTO toResponseDTO(EducationalMaterialEntities entity) {
         List<DocumentResponseDTO> documentDTOs = (entity.getDocuments() != null) ?
                 entity.getDocuments().stream()
