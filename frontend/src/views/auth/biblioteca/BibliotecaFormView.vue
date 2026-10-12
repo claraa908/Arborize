@@ -38,14 +38,14 @@ const triggerFileInput = () => {
 
 const handleFileUpload = (event: Event) => {
   const inputElement = event.target as HTMLInputElement
-  
+
   if (!inputElement || !inputElement.files || inputElement.files.length === 0) {
     fileName.value = ''
     return
   }
 
   const uploadedFile = inputElement.files[0]
-  
+
   if (uploadedFile && uploadedFile.type === 'application/pdf') {
     fileName.value = uploadedFile.name
   } else {
@@ -63,7 +63,7 @@ const triggerCoverInput = () => {
 
 const handleCoverUpload = (event: Event) => {
   const inputElement = event.target as HTMLInputElement
-  
+
   if (!inputElement || !inputElement.files || inputElement.files.length === 0) {
     coverName.value = ''
     coverPreview.value = null
@@ -71,7 +71,7 @@ const handleCoverUpload = (event: Event) => {
   }
 
   const uploadedCover = inputElement.files[0]
-  
+
   if (uploadedCover && uploadedCover.type.startsWith('image/')) {
     coverName.value = uploadedCover.name
     // Cria uma URL temporária para pré-visualizar a imagem escolhida
@@ -101,7 +101,7 @@ const saveDocument = () => {
 
 <template>
   <div class="flex flex-col w-full">
-    
+
     <AppBreadcrumb :items="breadcrumbItems" />
 
     <div class="px-6 md:px-10 pb-6 pt-6 flex flex-col gap-6 w-full">
@@ -117,24 +117,24 @@ const saveDocument = () => {
 
       <div class="bg-white rounded-box shadow-sm border border-amma-green-light p-8">
         <form @submit.prevent="saveDocument" class="flex flex-col gap-6">
-          
+
           <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-            
+
             <!-- Upload de Capa com Pré-visualização -->
             <div class="flex flex-col gap-1.5">
               <label class="text-sm font-semibold text-grey-text pl-1">Foto de Capa (Opcional)</label>
-              <div 
+              <div
                 @click="triggerCoverInput"
                 class="relative w-full border-2 border-dashed border-amma-green-light hover:border-amma-green bg-amma-green-lighter/30 rounded-box p-4 flex flex-col items-center justify-center cursor-pointer transition-colors h-[150px] overflow-hidden"
               >
-                <input 
-                  type="file" 
-                  ref="coverInput" 
-                  accept="image/*" 
-                  class="hidden" 
-                  @change="handleCoverUpload" 
+                <input
+                  type="file"
+                  ref="coverInput"
+                  accept="image/*"
+                  class="hidden"
+                  @change="handleCoverUpload"
                 />
-                
+
                 <!-- Se houver imagem selecionada, mostra a pré-visualização em miniatura -->
                 <template v-if="coverPreview">
                   <img :src="coverPreview" alt="Pré-visualização da Capa" class="absolute inset-0 w-full h-full object-cover rounded-box" />
@@ -157,16 +157,16 @@ const saveDocument = () => {
             <!-- Upload de PDF -->
             <div class="flex flex-col gap-1.5">
               <label class="text-sm font-semibold text-grey-text pl-1">Arquivo PDF *</label>
-              <div 
+              <div
                 @click="triggerFileInput"
                 class="w-full border-2 border-dashed border-amma-green-light hover:border-amma-green bg-amma-green-lighter/30 rounded-box p-4 flex flex-col items-center justify-center cursor-pointer transition-colors h-[150px]"
               >
-                <input 
-                  type="file" 
-                  ref="fileInput" 
-                  accept=".pdf" 
-                  class="hidden" 
-                  @change="handleFileUpload" 
+                <input
+                  type="file"
+                  ref="fileInput"
+                  accept=".pdf"
+                  class="hidden"
+                  @change="handleFileUpload"
                 />
                 <span class="material-symbols-outlined text-3xl text-amma-green mb-1">picture_as_pdf</span>
                 <p v-if="!fileName" class="text-xs font-medium text-grey-text text-center">
@@ -183,20 +183,20 @@ const saveDocument = () => {
 
           <div class="flex flex-col gap-1.5">
             <label class="text-sm font-semibold text-grey-text pl-1">Título do Documento *</label>
-            <input 
-              v-model="titulo" 
-              type="text" 
+            <input
+              v-model="titulo"
+              type="text"
               required
               placeholder="Ex: Guia de Plantio Urbano 2026"
-              class="w-full bg-white focus:bg-amma-green-lighter border-2 border-amma-green-light focus:border-amma-green rounded-btn py-3 px-4 text-grey-text outline-none transition-all text-sm font-medium" 
+              class="w-full bg-white focus:bg-amma-green-lighter border-2 border-amma-green-light focus:border-amma-green rounded-btn py-3 px-4 text-grey-text outline-none transition-all text-sm font-medium"
             />
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div class="flex flex-col gap-1.5">
               <label class="text-sm font-semibold text-grey-text pl-1">Tipo de Material *</label>
-              <select 
-                v-model="tipoMaterial" 
+              <select
+                v-model="tipoMaterial"
                 required
                 class="w-full bg-white focus:bg-amma-green-lighter border-2 border-amma-green-light focus:border-amma-green rounded-btn py-3 px-4 text-grey-text outline-none transition-all text-sm font-medium appearance-none"
               >
@@ -207,8 +207,8 @@ const saveDocument = () => {
 
             <div class="flex flex-col gap-1.5">
               <label class="text-sm font-semibold text-grey-text pl-1">Categoria *</label>
-              <select 
-                v-model="categoria" 
+              <select
+                v-model="categoria"
                 required
                 class="w-full bg-white focus:bg-amma-green-lighter border-2 border-amma-green-light focus:border-amma-green rounded-btn py-3 px-4 text-grey-text outline-none transition-all text-sm font-medium appearance-none"
               >
@@ -220,11 +220,11 @@ const saveDocument = () => {
 
           <div class="flex flex-col gap-1.5">
             <label class="text-sm font-semibold text-grey-text pl-1">Descrição</label>
-            <textarea 
-              v-model="descricao" 
+            <textarea
+              v-model="descricao"
               rows="3"
               placeholder="Breve resumo sobre o conteúdo do documento..."
-              class="w-full bg-white focus:bg-amma-green-lighter border-2 border-amma-green-light focus:border-amma-green rounded-btn py-3 px-4 text-grey-text outline-none transition-all text-sm font-medium resize-none" 
+              class="w-full bg-white focus:bg-amma-green-lighter border-2 border-amma-green-light focus:border-amma-green rounded-btn py-3 px-4 text-grey-text outline-none transition-all text-sm font-medium resize-none"
             ></textarea>
           </div>
 
@@ -243,21 +243,21 @@ const saveDocument = () => {
           </div>
 
           <div class="flex justify-end gap-3 mt-4">
-            <button 
-              type="button" 
+            <button
+              type="button"
               @click="goBack"
               class="bg-white hover:bg-amma-bg text-grey-text font-bold py-2.5 px-6 rounded-btn border-2 border-amma-green-light transition-colors shadow-sm text-sm"
             >
               Cancelar
             </button>
-            <button 
+            <button
               type="submit"
               class="bg-amma-green hover:bg-amma-green-dark text-white font-bold py-2.5 px-6 rounded-btn shadow-md text-sm border-none outline-none efeito-zoom"
             >
               Guardar Documento
             </button>
           </div>
-          
+
         </form>
       </div>
     </div>

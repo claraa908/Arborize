@@ -10,6 +10,7 @@ public record EducationalMaterialRequestDTO(
         MaterialCategory category,
         String description,
         String status,
+        MultipartFile coverPhoto,
         MultipartFile file
 ) {
 }
