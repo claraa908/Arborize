@@ -16,14 +16,14 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Document {
+public class DocumentEntities {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
     @JoinColumn(name = "educational_material_id")
-    private EducationalMaterial educationalMaterial;
+    private EducationalMaterialEntities educationalMaterialEntities;
 
     // (Futuramente você poderá adicionar outros relacionamentos aqui, ex: technicalReport, treeSpecies, etc.)
 

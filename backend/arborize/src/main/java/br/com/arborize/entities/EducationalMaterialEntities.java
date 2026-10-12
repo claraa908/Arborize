@@ -14,7 +14,7 @@ import java.time.LocalDate;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class EducationalMaterial {
+public class EducationalMaterialEntities {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -40,7 +40,7 @@ public class EducationalMaterial {
     private String status;
 
     @OneToMany(mappedBy = "educationalMaterial", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Document> documents;
+    private List<DocumentEntities> documents;
 
     @PrePersist
     public void prePersist() {
