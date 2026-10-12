@@ -56,12 +56,6 @@ const router = createRouter({
           meta: { title: 'Biblioteca Digital', activeMenu: 'biblioteca-lista' }
         },
         {
-          path: 'solicitacoes',
-          name: 'solicitacoes',
-          component: () => import('@/views/auth/SolicitacoesView.vue'),
-          meta: { title: 'Solicitações de Mudas' }
-        },
-        {
           path: 'inventario',
           name: 'inventario',
           component: () => import('@/views/auth/InventarioView.vue'),
@@ -72,6 +66,18 @@ const router = createRouter({
           name: 'viveiro',
           component: () => import('@/views/auth/viveiro/ViveiroView.vue'),
           meta: { title: 'Gestão do Viveiro' }
+        },
+        {
+          path: 'viveiro/cadastrar-especie',
+          name: 'viveiro-cadastrar',
+          component: () => import('@/views/auth/viveiro/ViveiroCadastroView.vue'),
+          meta: { title: 'Gestão do Viveiro', activeMenu: 'viveiro' }
+        },
+        {
+          path: 'solicitacoes',
+          name: 'solicitacoes',
+          component: () => import('@/views/auth/SolicitacoesView.vue'),
+          meta: { title: 'Solicitações de Mudas' }
         },
         {
           path: 'laudos',
@@ -86,22 +92,16 @@ const router = createRouter({
           meta: { title: 'Eventos Ambientais' }
         },
         {
+          path: 'eventos/cadastrar',
+          name: 'eventos-cadastrar',
+          component: () => import('@/views/auth/eventos/EventosCadastroView.vue'),
+          meta: { title: 'Eventos Ambientais', activeMenu: 'eventos' }
+        },
+        {
           path: 'perfil',
           name: 'perfil',
           component: () => import('@/views/auth/PerfilView.vue'),
           meta: { title: 'Meu Perfil' }
-        },
-        {
-          path: 'eventos/cadastrar',
-          name: 'eventos-cadastrar',
-          component: () => import('@/views/auth/eventos/EventosCadastroView.vue'),
-          meta: { title: 'Cadastrar Evento' }
-        },
-        {
-          path: 'viveiro/cadastrar-especie',
-          name: 'viveiro-cadastrar',
-          component: () => import('@/views/auth/viveiro/ViveiroCadastroView.vue'),
-          meta: { title: 'Cadastrar Viveiro' }
         }
       ]
     }

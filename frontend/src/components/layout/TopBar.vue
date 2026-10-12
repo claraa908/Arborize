@@ -9,6 +9,7 @@ interface NavLink {
 
 const emit = defineEmits<{
   (e: 'open-login'): void
+  (e: 'open-register'): void
 }>()
 
 const route = useRoute()
@@ -68,11 +69,26 @@ const navigateTo = (routeName: string) => {
       </button>
     </nav>
 
-    <div class="flex items-center gap-4 text-sm font-bold">
-      <button @click="emit('open-login')" class="bg-amma-green hover:bg-amma-green-dark text-white px-6 py-2.5 rounded-btn efeito-zoom">
+    <div class="flex items-center gap-3 text-sm font-bold">
+      <button 
+        type="button"
+        @click="emit('open-register')" 
+        class="border-2 border-amma-green text-amma-green hover:bg-amma-green-lighter px-5 py-2.5 rounded-btn transition-colors efeito-zoom cursor-pointer"
+      >
+        Cadastrar-se
+      </button>
+      <button 
+        type="button"
+        @click="emit('open-login')" 
+        class="bg-amma-green hover:bg-amma-green-dark text-white px-6 py-2.5 rounded-btn efeito-zoom cursor-pointer"
+      >
         Entrar
       </button>
-      <button @click="isMobileMenuOpen = !isMobileMenuOpen" class="md:hidden flex items-center text-amma-green ml-2">
+      <button 
+        type="button"
+        @click="isMobileMenuOpen = !isMobileMenuOpen" 
+        class="md:hidden flex items-center text-amma-green ml-1"
+      >
         <span class="material-symbols-outlined text-[32px]">
           {{ isMobileMenuOpen ? 'close' : 'menu' }}
         </span>

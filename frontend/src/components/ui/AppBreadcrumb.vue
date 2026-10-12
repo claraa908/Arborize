@@ -29,9 +29,9 @@ const goBack = () => {
 </script>
 
 <template>
-  <div class="sticky top-0 z-20 bg-white px-6 md:px-10 py-4 flex items-center justify-between w-full shadow-[0_4px_12px_-4px_rgba(0,0,0,0.05)]">
+  <div class="sticky top-0 z-20 bg-white px-6 md:px-10 py-2.5 flex items-center justify-between w-full border-b border-amma-green-light/40 shadow-xs">
     
-    <div class="flex items-center flex-wrap gap-1.5 text-sm">
+    <div class="flex items-center flex-wrap gap-1 text-xs md:text-sm">
       <template v-for="(item, index) in items" :key="index">
         <span 
           @click="navigateTo(item)"
@@ -40,17 +40,17 @@ const goBack = () => {
             item.routeName 
               ? 'text-grey-text hover:text-amma-green cursor-pointer' 
               : 'text-amma-green-dark cursor-default',
-            item.icon ? '' : 'font-semibold text-sm'
+            item.icon ? '' : 'font-semibold'
           ]"
           :title="item.icon ? item.label : ''"
         >
-          <span v-if="item.icon" class="material-symbols-outlined text-[22px]">{{ item.icon }}</span>
+          <span v-if="item.icon" class="material-symbols-outlined text-[18px]">{{ item.icon }}</span>
           <span v-else>{{ item.label }}</span>
         </span>
         
         <span 
           v-if="index < items.length - 1" 
-          class="material-symbols-outlined text-grey-text/40 text-[18px] mx-1"
+          class="material-symbols-outlined text-grey-text/40 text-[16px] mx-0.5"
         >
           chevron_right
         </span>
@@ -60,9 +60,9 @@ const goBack = () => {
     <button 
       v-if="showBack"
       @click="goBack" 
-      class="flex items-center gap-1.5 text-grey-text hover:text-amma-green hover:border-amma-green bg-white hover:bg-amma-green-lighter/10 transition-colors font-bold text-sm outline-none border border-gray-200 rounded-[5px_20px_5px_20px] px-3 py-1.5 shadow-sm efeito-zoom"
+      class="flex items-center gap-1 text-grey-text hover:text-amma-green hover:border-amma-green bg-white hover:bg-amma-green-lighter/10 transition-colors font-bold text-xs outline-none border border-gray-200 rounded-[4px_14px_4px_14px] px-2.5 py-1 shadow-xs efeito-zoom cursor-pointer"
     >
-      <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+      <span class="material-symbols-outlined text-[16px]">arrow_back</span>
       Voltar
     </button>
     

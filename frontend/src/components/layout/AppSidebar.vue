@@ -7,7 +7,7 @@ const router = useRouter()
 
 const menuItems = [
   { name: 'Dashboard e Relatórios', icon: 'insert_chart', routeName: 'dashboard' },
-  { name: 'Biblioteca Digital', icon: 'local_library', routeName: 'biblioteca-catalogo' },
+  { name: 'Biblioteca Digital', icon: 'local_library', routeName: 'biblioteca-lista' },
   { name: 'Inventário', icon: 'pin_drop', routeName: 'inventario' },
   { 
     name: 'Viveiro', 
@@ -104,7 +104,7 @@ const isActive = (routeName: string) => {
           href="#"
           :title="!isExpanded ? item.name : ''"
           :class="[
-            'flex items-center py-3.5 transition-all cursor-pointer rounded-btn select-none',
+            'flex items-center py-3.5 transition-all cursor-pointer rounded-btn-sidebar select-none',
             isExpanded ? 'px-4 gap-4 justify-between' : 'px-0 justify-center',
             isActive(item.routeName) || (item.children && item.children.some(child => isActive(child.routeName)))
               ? 'bg-amma-green-dark text-white shadow-inner'

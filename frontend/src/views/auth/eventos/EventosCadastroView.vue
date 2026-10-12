@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import AppBreadcrumb from '@/components/ui/AppBreadcrumb.vue'
 
+const router = useRouter()
 
 const form = ref({
   nome: '',
@@ -17,18 +20,45 @@ const form = ref({
 })
 
 const previewImagem = ref<string | null>(null)
+const imageInput = ref<HTMLInputElement | null>(null)
+const mostrarPopup = ref(false)
 
-function handleFileUpload(event: Event) {
-  const target = event.target as HTMLInputElement
-  if (target.files && target.files[0]) {
-    const file = target.files[0]
-    form.value.imagem = file
-    previewImagem.value = URL.createObjectURL(file)
+const breadcrumbItems = [
+  { label: 'Eventos Ambientais', icon: 'event', routeName: 'eventos' },
+  { label: 'Cadastrar Evento' }
+]
+
+const goBack = () => {
+  router.push({ name: 'eventos' })
+}
+
+const triggerImageInput = () => {
+  if (imageInput.value) {
+    imageInput.value.click()
   }
 }
 
-const mostrarPopup = ref(false)
-const formularioVazio = {
+const handleFileUpload = (event: Event) => {
+  const target = event.target as HTMLInputElement
+  if (!target || !target.files || target.files.length === 0) {
+    form.value.imagem = null
+    previewImagem.value = null
+    return
+  }
+
+  const file = target.files[0]
+  if (file && file.type.startsWith('image/')) {
+    form.value.imagem = file
+    previewImagem.value = URL.createObjectURL(file)
+  } else {
+    alert('Por favor, selecione apenas arquivos de imagem (PNG, JPG, WEBP).')
+    target.value = ''
+    form.value.imagem = null
+    previewImagem.value = null
+  }
+}
+
+const formularioVazio = () => ({
   nome: '',
   descricao: '',
   imagem: null as File | null,
@@ -40,163 +70,205 @@ const formularioVazio = {
   descricaoHorarioInicio: '',
   horarioTermino: '',
   descricaoHorarioTermino: ''
-}
+})
 
-function submeterEvento() {
+const submeterEvento = () => {
   mostrarPopup.value = true
-  form.value = { ...formularioVazio }
+  form.value = { ...formularioVazio() }
   previewImagem.value = null
 
   setTimeout(() => {
     mostrarPopup.value = false
-  }, 4000)
+    goBack()
+  }, 1500)
 }
-
-
 </script>
 
 <template>
-  <div class="bg-white p-8 rounded-2xl shadow-sm max-w-5xl mx-auto text-gray-800">
-    <h1 class="text-2xl font-bold text-[#2d4a22] mb-1">Cadastrar Eventos</h1>
-    <p class="text-xs text-gray-500 mb-6">(*) indica campos obrigatórios</p>
+  <div class="flex flex-col w-full">
+    <AppBreadcrumb :items="breadcrumbItems" />
 
-    <form @submit.prevent="submeterEvento" class="space-y-6">
-      <div>
-        <label class="block text-sm font-semibold mb-2">Nome do Evento *</label>
-        <input
-          v-model="form.nome"
-          type="text"
-          placeholder="Ex: Caminhada até o Cedro para boas vivências com a natureza"
-          class="w-full bg-[#f4f7f2] border border-[#d2e0cc] rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#5b8246]"
-          required
-        />
-      </div>
-
-      <div>
-        <label class="block text-sm font-semibold mb-2">Descrição do Evento *</label>
-        <textarea
-          v-model="form.descricao"
-          rows="3"
-          placeholder="Escreva a descrição do evento..."
-          class="w-full bg-[#f4f7f2] border border-[#d2e0cc] rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#5b8246]"
-          required
-        ></textarea>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div>
-          <label class="block text-sm font-semibold mb-2">Adicionar imagem *</label>
-          <div class="border-2 border-dashed border-gray-300 bg-[#e8e8e8] rounded-xl p-6 text-center flex flex-col items-center justify-center min-h-[160px] relative">
-            <template v-if="!previewImagem">
-              <p class="text-xs text-gray-500 mb-3">Selecione a imagem</p>
-              <label class="bg-[#6b8e53] hover:bg-[#567542] text-white px-6 py-1.5 rounded-lg text-xs cursor-pointer font-medium transition">
-                upload
-                <input type="file" accept="image/*" class="hidden" @change="handleFileUpload" />
-              </label>
-            </template>
-            <template v-else>
-              <img :src="previewImagem" class="max-h-32 rounded-lg object-cover mb-2" />
-              <button type="button" @click="previewImagem = null" class="text-xs text-red-600 underline">
-                Remover imagem
-              </button>
-            </template>
-          </div>
+    <div class="px-6 md:px-10 pb-6 pt-6 flex flex-col gap-6 w-full">
+      <div class="flex items-center gap-4">
+        <div class="w-12 h-12 flex items-center justify-center bg-amma-green-lighter/50 text-amma-green rounded-full shadow-sm">
+          <span class="material-symbols-outlined text-[24px]">calendar_add_on</span>
         </div>
-
-        <div class="space-y-4">
-          <div>
-            <label class="block text-sm font-semibold mb-2">Data de início *</label>
-            <input
-              v-model="form.dataInicio"
-              type="date"
-class="w-full bg-[#f4f7f2] border border-[#d2e0cc] text-gray-700 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#5b8246] accent-[#6b8e53]"              required
-            />
-          </div>
-          <div>
-            <label class="block text-sm font-semibold mb-2">Data de término *</label>
-            <input
-              v-model="form.dataTermino"
-              type="date"
-class="w-full bg-[#f4f7f2] border border-[#d2e0cc] text-gray-700 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#5b8246] accent-[#6b8e53]"              required
-            />
-          </div>
+        <div>
+          <h2 class="text-2xl font-bold text-amma-green-dark leading-none">Cadastrar Evento</h2>
+          <p class="text-sm text-grey-text mt-1">Preencha os dados e a programação do evento socioambiental.</p>
         </div>
       </div>
 
-      <div class="border-t border-gray-200 pt-6 space-y-4">
-        <h2 class="text-base font-bold text-gray-800 mb-4">Detalhes do Evento</h2>
-
-        <div>
-          <label class="block text-sm font-semibold mb-2">Defina o local *</label>
-          <input
-            v-model="form.local"
-            type="text"
-            placeholder="Ex: UFC Quixadá Av., José de Freitas Queiroz, 5003 - Cedro Novo"
-            class="w-full bg-[#f4f7f2] border border-[#d2e0cc] rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#5b8246]"
-            required
-          />
-        </div>
-
-        <div>
-          <label class="block text-sm font-semibold mb-2">Defina o destino final (opcional)</label>
-          <input
-            v-model="form.destinoFinal"
-            type="text"
-            placeholder="Ex: Açude do Cedro Estr. p/ Açude do Cedro - Quixadá"
-            class="w-full bg-[#f4f7f2] border border-[#d2e0cc] rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#5b8246]"
-          />
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label class="block text-sm font-semibold mb-2">Horário de início *</label>
+      <div class="bg-white rounded-box shadow-sm border border-amma-green-light p-8">
+        <form @submit.prevent="submeterEvento" class="flex flex-col gap-6">
+          <div class="flex flex-col gap-1.5">
+            <label class="text-sm font-semibold text-grey-text pl-1">Nome do Evento *</label>
             <input
-              v-model="form.horarioInicio"
-              type="time"
-              class="w-full bg-[#f4f7f2] border border-[#d2e0cc] text-gray-700 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#5b8246] accent-[#6b8e53]"
-              required
-            />
-          </div>
-          <div>
-            <label class="block text-sm font-semibold mb-2">Descrição do horário de início *</label>
-            <input
-              v-model="form.descricaoHorarioInicio"
+              v-model="form.nome"
               type="text"
-              placeholder="Ex: Saída da UFC até o Cedro"
-              class="w-full bg-[#f4f7f2] border border-[#d2e0cc] rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#5b8246] accent-[#6b8e53]"
-            />
-          </div>
-
-          <div>
-            <label class="block text-sm font-semibold mb-2">Horário de término *</label>
-            <input
-              v-model="form.horarioTermino"
-              type="time"
-              class="w-full bg-[#f4f7f2] border border-[#d2e0cc] text-gray-700 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#5b8246] accent-[#6b8e53]"
               required
+              placeholder="Ex: Caminhada ecológica no Cedro para preservação da Caatinga"
+              class="w-full bg-white focus:bg-amma-green-lighter border-2 border-amma-green-light focus:border-amma-green rounded-btn py-3 px-4 text-grey-text outline-none transition-all text-sm font-medium"
             />
           </div>
-          <div>
-            <label class="block text-sm font-semibold mb-2">Descrição do horário de término *</label>
-            <input
-              v-model="form.descricaoHorarioTermino"
-              type="text"
-              placeholder="Ex: Saída do Cedro até a UFC"
-              class="w-full bg-[#f4f7f2] border border-[#d2e0cc] rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#5b8246] accent-[#6b8e53]"
-            />
-          </div>
-        </div>
-      </div>
 
-      <div class="flex justify-center pt-4">
-        <button
-          type="submit"
-          class="bg-[#6b8e53] hover:bg-[#567542] text-white px-12 py-3 rounded-xl font-bold tracking-wide transition shadow-md"
-        >
-          ENVIAR
-        </button>
+          <div class="flex flex-col gap-1.5">
+            <label class="text-sm font-semibold text-grey-text pl-1">Descrição do Evento *</label>
+            <textarea
+              v-model="form.descricao"
+              rows="3"
+              required
+              placeholder="Descreva os objetivos, público-alvo e recomendações aos participantes..."
+              class="w-full bg-white focus:bg-amma-green-lighter border-2 border-amma-green-light focus:border-amma-green rounded-btn py-3 px-4 text-grey-text outline-none transition-all text-sm font-medium resize-none"
+            ></textarea>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div class="flex flex-col gap-1.5">
+              <label class="text-sm font-semibold text-grey-text pl-1">Banner do Evento *</label>
+              <div
+                @click="triggerImageInput"
+                class="relative w-full border-2 border-dashed border-amma-green-light hover:border-amma-green bg-amma-green-lighter/30 rounded-box p-4 flex flex-col items-center justify-center cursor-pointer transition-colors h-[170px] overflow-hidden"
+              >
+                <input
+                  type="file"
+                  ref="imageInput"
+                  accept="image/*"
+                  class="hidden"
+                  @change="handleFileUpload"
+                />
+
+                <template v-if="previewImagem">
+                  <img :src="previewImagem" alt="Pré-visualização do Banner" class="absolute inset-0 w-full h-full object-cover rounded-box" />
+                  <div class="absolute inset-0 bg-black/40 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-semibold">
+                    Alterar Imagem
+                  </div>
+                </template>
+
+                <template v-else>
+                  <span class="material-symbols-outlined text-3xl text-amma-green mb-1">image</span>
+                  <p class="text-xs font-medium text-grey-text text-center">
+                    Clique para selecionar o banner *<br/>
+                    <span class="text-[11px] text-grey-text/60 font-normal">PNG, JPG ou WEBP</span>
+                  </p>
+                </template>
+              </div>
+            </div>
+
+            <div class="flex flex-col justify-between gap-4">
+              <div class="flex flex-col gap-1.5">
+                <label class="text-sm font-semibold text-grey-text pl-1">Data de Início *</label>
+                <input
+                  v-model="form.dataInicio"
+                  type="date"
+                  required
+                  class="w-full bg-white focus:bg-amma-green-lighter border-2 border-amma-green-light focus:border-amma-green rounded-btn py-3 px-4 text-grey-text outline-none transition-all text-sm font-medium"
+                />
+              </div>
+
+              <div class="flex flex-col gap-1.5">
+                <label class="text-sm font-semibold text-grey-text pl-1">Data de Término *</label>
+                <input
+                  v-model="form.dataTermino"
+                  type="date"
+                  required
+                  class="w-full bg-white focus:bg-amma-green-lighter border-2 border-amma-green-light focus:border-amma-green rounded-btn py-3 px-4 text-grey-text outline-none transition-all text-sm font-medium"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div class="border-t border-amma-green-light pt-6 flex flex-col gap-5">
+            <h3 class="text-base font-bold text-amma-green-dark">Localização e Horários</h3>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <div class="flex flex-col gap-1.5">
+                <label class="text-sm font-semibold text-grey-text pl-1">Local de Concentração *</label>
+                <input
+                  v-model="form.local"
+                  type="text"
+                  required
+                  placeholder="Ex: UFC Campus Quixadá - Entrada Principal"
+                  class="w-full bg-white focus:bg-amma-green-lighter border-2 border-amma-green-light focus:border-amma-green rounded-btn py-3 px-4 text-grey-text outline-none transition-all text-sm font-medium"
+                />
+              </div>
+
+              <div class="flex flex-col gap-1.5">
+                <label class="text-sm font-semibold text-grey-text pl-1">Destino Final (Opcional)</label>
+                <input
+                  v-model="form.destinoFinal"
+                  type="text"
+                  placeholder="Ex: Açude do Cedro"
+                  class="w-full bg-white focus:bg-amma-green-lighter border-2 border-amma-green-light focus:border-amma-green rounded-btn py-3 px-4 text-grey-text outline-none transition-all text-sm font-medium"
+                />
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <div class="flex flex-col gap-1.5">
+                <label class="text-sm font-semibold text-grey-text pl-1">Horário de Início *</label>
+                <input
+                  v-model="form.horarioInicio"
+                  type="time"
+                  required
+                  class="w-full bg-white focus:bg-amma-green-lighter border-2 border-amma-green-light focus:border-amma-green rounded-btn py-3 px-4 text-grey-text outline-none transition-all text-sm font-medium"
+                />
+              </div>
+
+              <div class="flex flex-col gap-1.5">
+                <label class="text-sm font-semibold text-grey-text pl-1">Descrição do Ponto de Partida</label>
+                <input
+                  v-model="form.descricaoHorarioInicio"
+                  type="text"
+                  placeholder="Ex: Saída pontual dos participantes"
+                  class="w-full bg-white focus:bg-amma-green-lighter border-2 border-amma-green-light focus:border-amma-green rounded-btn py-3 px-4 text-grey-text outline-none transition-all text-sm font-medium"
+                />
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <div class="flex flex-col gap-1.5">
+                <label class="text-sm font-semibold text-grey-text pl-1">Horário de Término *</label>
+                <input
+                  v-model="form.horarioTermino"
+                  type="time"
+                  required
+                  class="w-full bg-white focus:bg-amma-green-lighter border-2 border-amma-green-light focus:border-amma-green rounded-btn py-3 px-4 text-grey-text outline-none transition-all text-sm font-medium"
+                />
+              </div>
+
+              <div class="flex flex-col gap-1.5">
+                <label class="text-sm font-semibold text-grey-text pl-1">Descrição do Encerramento</label>
+                <input
+                  v-model="form.descricaoHorarioTermino"
+                  type="text"
+                  placeholder="Ex: Previsão de chegada e retorno"
+                  class="w-full bg-white focus:bg-amma-green-lighter border-2 border-amma-green-light focus:border-amma-green rounded-btn py-3 px-4 text-grey-text outline-none transition-all text-sm font-medium"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div class="flex justify-end gap-3 mt-4">
+            <button
+              type="button"
+              @click="goBack"
+              class="bg-white hover:bg-amma-bg text-grey-text font-bold py-2.5 px-6 rounded-btn border-2 border-amma-green-light transition-colors shadow-sm text-sm"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              class="bg-amma-green hover:bg-amma-green-dark text-white font-bold py-2.5 px-6 rounded-btn shadow-md text-sm border-none outline-none efeito-zoom"
+            >
+              Salvar Evento
+            </button>
+          </div>
+        </form>
       </div>
-      <Transition
+    </div>
+
+    <Transition
       enter-active-class="transition duration-300 ease-out"
       enter-from-class="opacity-0 -translate-y-6"
       enter-to-class="opacity-100 translate-y-0"
@@ -206,12 +278,11 @@ class="w-full bg-[#f4f7f2] border border-[#d2e0cc] text-gray-700 rounded-xl p-3 
     >
       <div
         v-if="mostrarPopup"
-        class="fixed top-6 left-1/2 -translate-x-1/2 z-50 bg-[#8cb158] text-white font-bold py-3 px-10 rounded-2xl shadow-xl border border-white/20 text-center text-lg flex items-center gap-3"
+        class="fixed top-6 left-1/2 -translate-x-1/2 z-50 bg-amma-green text-white font-bold py-3 px-8 rounded-btn shadow-xl border border-white/20 text-center text-sm md:text-base flex items-center gap-3"
       >
         <span class="material-symbols-outlined text-2xl">check_circle</span>
-        <span>Novo evento foi criado!</span>
+        <span>Novo evento cadastrado com sucesso!</span>
       </div>
     </Transition>
-    </form>
   </div>
 </template>
