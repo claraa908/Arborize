@@ -64,7 +64,7 @@ public class EducationalMaterialService {
         }
     }
 
-    // 2. Lista os materiais publicados (com suporte a busca ou categoria)
+    // 2. Lista os materiais PUBLICADOS para o Cidadão (Com suporte a busca e categoria)
     @Transactional(readOnly = true)
     public List<EducationalMaterialResponseDTO> getPublicMaterials(String search, MaterialCategory category) {
         List<EducationalMaterialEntities> materials;
@@ -82,7 +82,24 @@ public class EducationalMaterialService {
                 .collect(Collectors.toList());
     }
 
-    // 3. Busca os bytes do PDF no MinIO para download
+    // 3. Lista TODOS os materiais para o Administrador (Incluindo RASCUNHO e PUBLICADO)
+    @Transactional(readOnly = true)
+    public List<EducationalMaterialResponseDTO> getAllMaterialsForAdmin() {
+        List<EducationalMaterialEntities> materials = repository.findAllByOrderByIdDesc();
+        return materials.stream()
+                .map(mapper::toResponseDTO)
+                .collect(Collectors.toList());
+    }
+
+    // 4. Busca um material específico por ID (Para o Admin ver os detalhes e editar)
+    @Transactional(readOnly = true)
+    public EducationalMaterialResponseDTO getMaterialById(Long id) {
+        EducationalMaterialEntities material = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Material não encontrado com o ID: " + id));
+        return mapper.toResponseDTO(material);
+    }
+
+    // 5. Busca os bytes do PDF no MinIO para download
     public byte[] getFileStream(Long materialId) {
         EducationalMaterialEntities material = repository.findById(materialId)
                 .orElseThrow(() -> new RuntimeException("Material não encontrado"));
@@ -91,7 +108,6 @@ public class EducationalMaterialService {
             throw new RuntimeException("Nenhum documento associado a este material");
         }
 
-        // Pega o primeiro documento (geralmente o PDF) para download
         DocumentEntities doc = material.getDocuments().get(0);
 
         try {

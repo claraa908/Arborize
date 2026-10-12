@@ -9,7 +9,8 @@ import java.util.List;
 
 @Repository
 public interface EducationalMaterialRepository extends JpaRepository<EducationalMaterialEntities,Long> {
+    List<EducationalMaterialEntities> findAllByOrderByIdDesc();
     List<EducationalMaterialEntities> findByStatus(String status);
-    List<EducationalMaterialEntities> findByStatusAndCategory(String status, MaterialCategory category);
     List<EducationalMaterialEntities> findByStatusAndTitleContainingIgnoreCase(String status, String title);
+    List<EducationalMaterialEntities> findByStatusAndCategory(String status, MaterialCategory category);
 }

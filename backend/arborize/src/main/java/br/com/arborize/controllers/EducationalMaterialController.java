@@ -28,16 +28,30 @@ public class EducationalMaterialController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    // 2. Endpoint GET para listar os materiais publicados na tela pública (com suporte a busca e categoria)
+    // 2. Endpoint GET para listar os materiais PUBLICADOS na tela pública (com suporte a busca e categoria)
     @GetMapping
-    public ResponseEntity<List<EducationalMaterialResponseDTO>> getAllMaterials(
+    public ResponseEntity<List<EducationalMaterialResponseDTO>> getPublicMaterials(
             @RequestParam(required = false) String search,
             @RequestParam(required = false) MaterialCategory category) {
         List<EducationalMaterialResponseDTO> materials = service.getPublicMaterials(search, category);
         return ResponseEntity.ok(materials);
     }
 
-    // 3. Endpoint GET para o download do PDF armazenado no MinIO
+    // 3. Endpoint GET para o Administrador listar TODOS os materiais (Incluindo Rascunhos e Publicados)
+    @GetMapping("/admin")
+    public ResponseEntity<List<EducationalMaterialResponseDTO>> getAllMaterialsForAdmin() {
+        List<EducationalMaterialResponseDTO> materials = service.getAllMaterialsForAdmin();
+        return ResponseEntity.ok(materials);
+    }
+
+    // 4. Endpoint GET para buscar um material específico por ID (Para o Admin ver detalhes/editar)
+    @GetMapping("/{id}")
+    public ResponseEntity<EducationalMaterialResponseDTO> getMaterialById(@PathVariable Long id) {
+        EducationalMaterialResponseDTO material = service.getMaterialById(id);
+        return ResponseEntity.ok(material);
+    }
+
+    // 5. Endpoint GET para o download do PDF armazenado no MinIO
     @GetMapping("/{id}/download")
     public ResponseEntity<byte[]> downloadPdf(@PathVariable Long id) {
         byte[] pdfBytes = service.getFileStream(id);
