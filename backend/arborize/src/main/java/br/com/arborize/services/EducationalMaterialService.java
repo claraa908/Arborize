@@ -9,6 +9,7 @@ import br.com.arborize.mappers.EducationalMaterialMapper;
 import br.com.arborize.repositories.EducationalMaterialRepository;
 import io.minio.GetObjectArgs;
 import io.minio.MinioClient;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -64,6 +65,7 @@ public class EducationalMaterialService {
     }
 
     // 2. Lista os materiais publicados (com suporte a busca ou categoria)
+    @Transactional(readOnly = true)
     public List<EducationalMaterialResponseDTO> getPublicMaterials(String search, MaterialCategory category) {
         List<EducationalMaterialEntities> materials;
 

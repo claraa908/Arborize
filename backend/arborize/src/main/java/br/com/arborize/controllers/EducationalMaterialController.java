@@ -15,7 +15,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/materials")
-@CrossOrigin(origins = "*") // Permite que o Front-end consuma a API sem problemas de CORS
 public class EducationalMaterialController {
 
     @Autowired

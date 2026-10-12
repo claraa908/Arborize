@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import AppBreadcrumb from '@/components/ui/AppBreadcrumb.vue'
+import axios from 'axios'
 
 const router = useRouter()
 
@@ -84,17 +85,52 @@ const handleCoverUpload = (event: Event) => {
   }
 }
 
-const saveDocument = () => {
-  console.log('Guardando documento...', {
-    titulo: titulo.value,
-    descricao: descricao.value,
-    tipoMaterial: tipoMaterial.value,
-    categoria: categoria.value,
-    statusPublicacao: statusPublicacao.value,
-    arquivo: fileName.value,
-    capa: coverName.value
-  })
-  goBack()
+const saveDocument = async () => {
+  try {
+    const formData = new FormData()
+
+    // Adiciona os campos de texto
+    formData.append('title', titulo.value)
+    formData.append('description', descricao.value)
+    formData.append('status', statusPublicacao.value)
+
+    // Mapeia o texto visual do select para o Enum exato do Java
+    const tipoMapeado = tipoMaterial.value === 'Cartilha' ? 'CARTILHA' :
+                        tipoMaterial.value === 'Manual' ? 'MANUAL' :
+                        tipoMaterial.value === 'Relatório Técnico' ? 'RELATORIO_TECNICO' :
+                        tipoMaterial.value === 'Guia' ? 'GUIA' : 'OUTROS';
+
+    const categoriaMapeada = categoria.value === 'Arborização Urbana' ? 'ARBORIZACAO_URBANA' :
+                             categoria.value === 'Caatinga' ? 'CAATINGA' :
+                             categoria.value === 'Educação Ambiental' ? 'EDUCACAO_AMBIENTAL' : 'LEGISLACAO';
+
+    formData.append('type', tipoMapeado)
+    formData.append('category', categoriaMapeada)
+
+    // Adiciona o arquivo PDF obrigatório
+    if (fileInput.value && fileInput.value.files && fileInput.value.files[0]) {
+      formData.append('file', fileInput.value.files[0])
+    }
+
+    // Adiciona a foto de capa opcional (se o usuário selecionou)
+    if (coverInput.value && coverInput.value.files && coverInput.value.files[0]) {
+      formData.append('coverPhoto', coverInput.value.files[0])
+    }
+
+    // Envia via POST para o Spring Boot
+    await axios.post('http://localhost:8080/api/materials', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
+
+    alert('Documento guardado com sucesso!')
+    goBack()
+
+  } catch (error) {
+    console.error('Erro ao guardar documento:', error)
+    alert('Ocorreu um erro ao salvar o documento. Verifique a conexão com o servidor.')
+  }
 }
 
 </script>

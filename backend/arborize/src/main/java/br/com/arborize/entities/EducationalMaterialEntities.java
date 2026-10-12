@@ -40,7 +40,7 @@ public class EducationalMaterialEntities {
     @Column(nullable = false)
     private String status;
 
-    @OneToMany(mappedBy = "educationalMaterial", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "educationalMaterial", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<DocumentEntities> documents;
 
     @PrePersist
