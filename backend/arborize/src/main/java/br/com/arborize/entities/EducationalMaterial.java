@@ -1,16 +1,53 @@
 package br.com.arborize.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import br.com.arborize.enums.MaterialCategory;
+import br.com.arborize.enums.MaterialType;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Entity
-@Table(name = "educational_material")
+@Table(name = "educational_materials")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class EducationalMaterial {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
+    @Column(nullable = false)
+    private String title;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "material_type", nullable = false)
+    private MaterialType materialType;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private MaterialCategory category;
+
+    @Column(columnDefinition = "TEXT")
+    private String description;
+
+    // Nome que será guardado no postgres
+    @Column(name = "file_path", nullable = false)
+    private String filePath;
+
+    @Column(name = "file_size")
+    private Double fileSize;
+
+    @Column(name = "upload_date")
+    private LocalDate uploadDate;
+
+    @Column(nullable = false)
+    private String status;
+
+    @PrePersist
+    public void prePersist() {
+        this.uploadDate = LocalDate.now();
+    }
 }
