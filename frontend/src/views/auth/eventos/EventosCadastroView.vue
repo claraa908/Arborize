@@ -73,32 +73,36 @@ const formularioVazio = () => ({
 })
 
 const submeterEvento = async () => {
-  // 1. Mapear os dados do Vue para os atributos exatos da Entidade Java
-  const eventoPayload = {
-    nome: form.value.nome,
-    descricao: form.value.descricao,
-    dataInicio: form.value.dataInicio,
-    dataTermino: form.value.dataTermino,
-    localConcentracao: form.value.local, // Mapeado de form.local
-    destinoFinal: form.value.destinoFinal,
-    horarioInicio: form.value.horarioInicio,
-    horarioTermino: form.value.horarioTermino,
-    descricaoPontoPartida: form.value.descricaoHorarioInicio, // Mapeado
-    descricaoEncerramento: form.value.descricaoHorarioTermino, // Mapeado
+  // 1. Criar um objeto FormData em vez de um objeto JSON
+  const formData = new FormData()
+
+  // 2. Adicionar os campos de texto usando os nomes EXATOS do EventosRequestDTO no Java
+  formData.append('nome', form.value.nome)
+  formData.append('descricao', form.value.descricao)
+  formData.append('dataInicio', form.value.dataInicio)
+  formData.append('dataTermino', form.value.dataTermino)
+  formData.append('localConcentracao', form.value.local) // mapeado do Vue
+  formData.append('destinoFinal', form.value.destinoFinal)
+  formData.append('horarioInicio', form.value.horarioInicio)
+  formData.append('horarioTermino', form.value.horarioTermino)
+  formData.append('descricaoPontoPartida', form.value.descricaoPontoPartida) // mapeado
+  formData.append('descricaoEncerramento', form.value.descricaoEncerramento) // mapeado
+
+  // 3. Adicionar o ficheiro da imagem (o nome 'banner' tem de bater com o DTO do Java)
+  if (form.value.imagem) {
+    formData.append('banner', form.value.imagem)
   }
 
   try {
-    // 2. Fazer a requisição POST para o Spring Boot
+    // 4. Fazer a requisição POST
     const response = await fetch('http://localhost:8080/eventos', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(eventoPayload),
+      // IMPORTANTE: NÃO coloque 'Content-Type' aqui.
+      // Ao usar FormData, o navegador gere automaticamente o boundary correto do multipart.
+      body: formData,
     })
 
     if (response.ok) {
-      // 3. Em caso de sucesso (Status 201), exibir o popup e redirecionar
       mostrarPopup.value = true
       form.value = { ...formularioVazio() }
       previewImagem.value = null
@@ -108,13 +112,11 @@ const submeterEvento = async () => {
         goBack()
       }, 1500)
     } else {
-      // 4. Tratamento de erros de validação (Status 400, 500)
       const errorText = await response.text()
       alert('Falha ao cadastrar evento. Verifique os dados preenchidos.')
       console.error('Erro retornado pelo servidor:', errorText)
     }
   } catch (error) {
-    // 5. Tratamento de falha na rede (Servidor desligado ou erro de CORS)
     alert('Erro de conexão. Certifique-se de que o back-end está a rodar na porta 8080.')
     console.error('Falha na requisição:', error)
   }

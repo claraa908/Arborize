@@ -5,7 +5,7 @@ import AppBreadcrumb from '@/components/ui/AppBreadcrumb.vue'
 
 const router = useRouter()
 
-const formEspecie = ref({
+const form = ref({
   nomePopular: '',
   nomeCientifico: '',
   familiaBotanica: '',
@@ -46,19 +46,19 @@ const triggerImageInput = () => {
 const handleFileUpload = (event: Event) => {
   const target = event.target as HTMLInputElement
   if (!target || !target.files || target.files.length === 0) {
-    formEspecie.value.imagem = null
+    form.value.imagem = null
     previewImagem.value = null
     return
   }
 
   const file = target.files[0]
   if (file && file.type.startsWith('image/')) {
-    formEspecie.value.imagem = file
+    form.value.imagem = file
     previewImagem.value = URL.createObjectURL(file)
   } else {
     alert('Por favor, selecione apenas arquivos de imagem (PNG, JPG, WEBP).')
     target.value = ''
-    formEspecie.value.imagem = null
+    form.value.imagem = null
     previewImagem.value = null
   }
 }
@@ -76,50 +76,40 @@ const formVazio = () => ({
 })
 
 const submeterEspecie = async () => {
-  // 1. Mapear e converter os dados do formulário para o formato da Entidade Java
-  const especiePayload = {
-    nomePopular: formEspecie.value.nomePopular,
-    nomeCientifico: formEspecie.value.nomeCientifico,
-    familiaBotanica: formEspecie.value.familiaBotanica,
-    categoria: formEspecie.value.categoria,
-    porteArvore: formEspecie.value.porte, // Mapeado de 'porte'
-    recomendadaCalcadas: formEspecie.value.adequadoCalcada === 'Sim', // Converte "Sim"/"Não" para true/false
-    tempoGerminacaoDias: formEspecie.value.tempoGerminacaoDias
-      ? parseInt(formEspecie.value.tempoGerminacaoDias as string)
-      : null, // Garante que é um número inteiro
-    descricaoCultivo: formEspecie.value.descricao, // Mapeado de 'descricao'
+  const formData = new FormData()
+
+  // Adiciona os textos usando EXATAMENTE os mesmos nomes do EspecieRequestDTO
+  formData.append('nomePopular', form.value.nomePopular)
+  formData.append('nomeCientifico', form.value.nomeCientifico)
+  formData.append('familiaBotanica', form.value.familiaBotanica)
+  formData.append('categoria', form.value.categoria)
+  formData.append('porteArvore', form.value.porteArvore)
+  formData.append('descricaoCultivo', form.value.descricaoCultivo)
+
+  // Converter números e booleanos para string de forma segura antes de enviar
+  formData.append('tempoGerminacaoDias', form.value.tempoGerminacaoDias?.toString() || '')
+  formData.append('recomendadaCalcadas', form.value.recomendadaCalcadas ? 'true' : 'false')
+
+  // Adiciona a imagem se existir
+  if (form.value.imagem) {
+    formData.append('foto', form.value.imagem) // 'foto' tem de bater com o nome no Record
   }
 
   try {
-    // 2. Enviar os dados via POST para a rota de espécies
     const response = await fetch('http://localhost:8080/especies', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(especiePayload),
+      // IMPORTANTE: Não coloque headers com 'Content-Type' aqui. O navegador trata do Multipart!
+      body: formData,
     })
 
     if (response.ok) {
-      // 3. Sucesso! Mostra o popup e limpa o form
-      mostrarPopup.value = true
-      formEspecie.value = { ...formVazio() }
-      previewImagem.value = null
-
-      setTimeout(() => {
-        mostrarPopup.value = false
-        goBack()
-      }, 1500)
+      alert('Espécie criada com sucesso!')
     } else {
-      // 4. Tratamento de erros do back-end
       const errorText = await response.text()
-      alert('Falha ao cadastrar a espécie. Verifique os dados preenchidos.')
-      console.error('Erro retornado pelo servidor:', errorText)
+      console.error('Erro:', errorText)
     }
   } catch (error) {
-    // 5. Erro de rede / servidor desligado
-    alert('Erro de conexão. Verifique se o back-end está a rodar na porta 8080.')
-    console.error('Falha na requisição:', error)
+    console.error('Erro de conexão:', error)
   }
 }
 </script>
@@ -151,7 +141,7 @@ const submeterEspecie = async () => {
             <div class="flex flex-col gap-1.5">
               <label class="text-sm font-semibold text-grey-text pl-1">Nome Popular *</label>
               <input
-                v-model="formEspecie.nomePopular"
+                v-model="form.nomePopular"
                 type="text"
                 required
                 placeholder="Ex: Ipê-amarelo, Aroeira-do-sertão, Mulungu"
@@ -162,7 +152,7 @@ const submeterEspecie = async () => {
             <div class="flex flex-col gap-1.5">
               <label class="text-sm font-semibold text-grey-text pl-1">Nome Científico *</label>
               <input
-                v-model="formEspecie.nomeCientifico"
+                v-model="form.nomeCientifico"
                 type="text"
                 required
                 placeholder="Ex: Handroanthus chrysotrichus"
@@ -175,7 +165,7 @@ const submeterEspecie = async () => {
             <div class="flex flex-col gap-1.5">
               <label class="text-sm font-semibold text-grey-text pl-1">Família Botânica</label>
               <input
-                v-model="formEspecie.familiaBotanica"
+                v-model="form.familiaBotanica"
                 type="text"
                 placeholder="Ex: Bignoniaceae"
                 class="w-full bg-white focus:bg-amma-green-lighter border-2 border-amma-green-light focus:border-amma-green rounded-btn py-3 px-4 text-grey-text outline-none transition-all text-sm font-medium"
@@ -185,7 +175,7 @@ const submeterEspecie = async () => {
             <div class="flex flex-col gap-1.5">
               <label class="text-sm font-semibold text-grey-text pl-1">Categoria *</label>
               <select
-                v-model="formEspecie.categoria"
+                v-model="form.categoria"
                 required
                 class="w-full bg-white focus:bg-amma-green-lighter border-2 border-amma-green-light focus:border-amma-green rounded-btn py-3 px-4 text-grey-text outline-none transition-all text-sm font-medium appearance-none"
               >
@@ -196,7 +186,7 @@ const submeterEspecie = async () => {
             <div class="flex flex-col gap-1.5">
               <label class="text-sm font-semibold text-grey-text pl-1">Porte da Árvore *</label>
               <select
-                v-model="formEspecie.porte"
+                v-model="form.porte"
                 required
                 class="w-full bg-white focus:bg-amma-green-lighter border-2 border-amma-green-light focus:border-amma-green rounded-btn py-3 px-4 text-grey-text outline-none transition-all text-sm font-medium appearance-none"
               >
@@ -254,7 +244,7 @@ const submeterEspecie = async () => {
                   <label class="flex items-center gap-2 cursor-pointer">
                     <input
                       type="radio"
-                      v-model="formEspecie.adequadoCalcada"
+                      v-model="form.adequadoCalcada"
                       value="Sim"
                       class="w-4 h-4 text-amma-green focus:ring-amma-green accent-amma-green"
                     />
@@ -265,7 +255,7 @@ const submeterEspecie = async () => {
                   <label class="flex items-center gap-2 cursor-pointer">
                     <input
                       type="radio"
-                      v-model="formEspecie.adequadoCalcada"
+                      v-model="form.adequadoCalcada"
                       value="Não"
                       class="w-4 h-4 text-amma-green focus:ring-amma-green accent-amma-green"
                     />
@@ -279,7 +269,7 @@ const submeterEspecie = async () => {
                   >Tempo médio de germinação (em dias)</label
                 >
                 <input
-                  v-model="formEspecie.tempoGerminacaoDias"
+                  v-model="form.tempoGerminacaoDias"
                   type="number"
                   placeholder="Ex: 15"
                   class="w-full bg-white focus:bg-amma-green-lighter border-2 border-amma-green-light focus:border-amma-green rounded-btn py-3 px-4 text-grey-text outline-none transition-all text-sm font-medium"
@@ -293,7 +283,7 @@ const submeterEspecie = async () => {
               >Descrição / Orientações de Cultivo</label
             >
             <textarea
-              v-model="formEspecie.descricao"
+              v-model="form.descricao"
               rows="3"
               placeholder="Descreva as características da espécie, época de florada, recomendações de solo e rega..."
               class="w-full bg-white focus:bg-amma-green-lighter border-2 border-amma-green-light focus:border-amma-green rounded-btn py-3 px-4 text-grey-text outline-none transition-all text-sm font-medium resize-none"
