@@ -4,6 +4,7 @@ import br.com.arborize.enums.MaterialCategory;
 import br.com.arborize.enums.MaterialType;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public record EducationalMaterialResponseDTO(
         Long id,
