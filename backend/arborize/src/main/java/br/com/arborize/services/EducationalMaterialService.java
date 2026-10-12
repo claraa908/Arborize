@@ -54,7 +54,7 @@ public class EducationalMaterialService {
                 documents.add(coverDoc);
             }
 
-            material.setDocument(documents);
+            material.setDocuments(documents);
             EducationalMaterialEntities saved = repository.save(material);
 
             return mapper.toResponseDTO(saved);
