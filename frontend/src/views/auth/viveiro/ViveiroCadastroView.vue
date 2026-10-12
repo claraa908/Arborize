@@ -14,7 +14,7 @@ const formEspecie = ref({
   adequadoCalcada: 'Sim',
   tempoGerminacaoDias: '',
   descricao: '',
-  imagem: null as File | null
+  imagem: null as File | null,
 })
 
 const previewImagem = ref<string | null>(null)
@@ -25,12 +25,12 @@ const categorias = ['Nativa da Caatinga', 'Frutífera', 'Ornamental', 'Medicinal
 const portes = [
   { valor: 'Pequeno', rotulo: 'Pequeno (Até 4m)' },
   { valor: 'Médio', rotulo: 'Médio (4m a 8m)' },
-  { valor: 'Grande', rotulo: 'Grande (Acima de 8m)' }
+  { valor: 'Grande', rotulo: 'Grande (Acima de 8m)' },
 ]
 
 const breadcrumbItems = [
   { label: 'Viveiro', icon: 'psychiatry', routeName: 'viveiro' },
-  { label: 'Cadastrar Espécie' }
+  { label: 'Cadastrar Espécie' },
 ]
 
 const goBack = () => {
@@ -72,18 +72,55 @@ const formVazio = () => ({
   adequadoCalcada: 'Sim',
   tempoGerminacaoDias: '',
   descricao: '',
-  imagem: null as File | null
+  imagem: null as File | null,
 })
 
-const submeterEspecie = () => {
-  mostrarPopup.value = true
-  formEspecie.value = { ...formVazio() }
-  previewImagem.value = null
+const submeterEspecie = async () => {
+  // 1. Mapear e converter os dados do formulário para o formato da Entidade Java
+  const especiePayload = {
+    nomePopular: formEspecie.value.nomePopular,
+    nomeCientifico: formEspecie.value.nomeCientifico,
+    familiaBotanica: formEspecie.value.familiaBotanica,
+    categoria: formEspecie.value.categoria,
+    porteArvore: formEspecie.value.porte, // Mapeado de 'porte'
+    recomendadaCalcadas: formEspecie.value.adequadoCalcada === 'Sim', // Converte "Sim"/"Não" para true/false
+    tempoGerminacaoDias: formEspecie.value.tempoGerminacaoDias
+      ? parseInt(formEspecie.value.tempoGerminacaoDias as string)
+      : null, // Garante que é um número inteiro
+    descricaoCultivo: formEspecie.value.descricao, // Mapeado de 'descricao'
+  }
 
-  setTimeout(() => {
-    mostrarPopup.value = false
-    goBack()
-  }, 1500)
+  try {
+    // 2. Enviar os dados via POST para a rota de espécies
+    const response = await fetch('http://localhost:8080/especies', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(especiePayload),
+    })
+
+    if (response.ok) {
+      // 3. Sucesso! Mostra o popup e limpa o form
+      mostrarPopup.value = true
+      formEspecie.value = { ...formVazio() }
+      previewImagem.value = null
+
+      setTimeout(() => {
+        mostrarPopup.value = false
+        goBack()
+      }, 1500)
+    } else {
+      // 4. Tratamento de erros do back-end
+      const errorText = await response.text()
+      alert('Falha ao cadastrar a espécie. Verifique os dados preenchidos.')
+      console.error('Erro retornado pelo servidor:', errorText)
+    }
+  } catch (error) {
+    // 5. Erro de rede / servidor desligado
+    alert('Erro de conexão. Verifique se o back-end está a rodar na porta 8080.')
+    console.error('Falha na requisição:', error)
+  }
 }
 </script>
 
@@ -93,12 +130,18 @@ const submeterEspecie = () => {
 
     <div class="px-6 md:px-10 pb-6 pt-6 flex flex-col gap-6 w-full">
       <div class="flex items-center gap-4">
-        <div class="w-12 h-12 flex items-center justify-center bg-amma-green-lighter/50 text-amma-green rounded-full shadow-sm">
+        <div
+          class="w-12 h-12 flex items-center justify-center bg-amma-green-lighter/50 text-amma-green rounded-full shadow-sm"
+        >
           <span class="material-symbols-outlined text-[24px]">add</span>
         </div>
         <div>
-          <h2 class="text-2xl font-bold text-amma-green-dark leading-none">Cadastrar Espécie Botânica</h2>
-          <p class="text-sm text-grey-text mt-1">Preencha os dados e características da espécie para o viveiro municipal.</p>
+          <h2 class="text-2xl font-bold text-amma-green-dark leading-none">
+            Cadastrar Espécie Botânica
+          </h2>
+          <p class="text-sm text-grey-text mt-1">
+            Preencha os dados e características da espécie para o viveiro municipal.
+          </p>
         </div>
       </div>
 
@@ -157,7 +200,9 @@ const submeterEspecie = () => {
                 required
                 class="w-full bg-white focus:bg-amma-green-lighter border-2 border-amma-green-light focus:border-amma-green rounded-btn py-3 px-4 text-grey-text outline-none transition-all text-sm font-medium appearance-none"
               >
-                <option v-for="porte in portes" :key="porte.valor" :value="porte.valor">{{ porte.rotulo }}</option>
+                <option v-for="porte in portes" :key="porte.valor" :value="porte.valor">
+                  {{ porte.rotulo }}
+                </option>
               </select>
             </div>
           </div>
@@ -178,8 +223,14 @@ const submeterEspecie = () => {
                 />
 
                 <template v-if="previewImagem">
-                  <img :src="previewImagem" alt="Pré-visualização da Espécie" class="absolute inset-0 w-full h-full object-cover rounded-box" />
-                  <div class="absolute inset-0 bg-black/40 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-semibold">
+                  <img
+                    :src="previewImagem"
+                    alt="Pré-visualização da Espécie"
+                    class="absolute inset-0 w-full h-full object-cover rounded-box"
+                  />
+                  <div
+                    class="absolute inset-0 bg-black/40 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-semibold"
+                  >
                     Alterar Imagem
                   </div>
                 </template>
@@ -187,7 +238,7 @@ const submeterEspecie = () => {
                 <template v-else>
                   <span class="material-symbols-outlined text-3xl text-amma-green mb-1">image</span>
                   <p class="text-xs font-medium text-grey-text text-center">
-                    Clique para selecionar a imagem *<br/>
+                    Clique para selecionar a imagem *<br />
                     <span class="text-[11px] text-grey-text/60 font-normal">PNG, JPG ou WEBP</span>
                   </p>
                 </template>
@@ -196,7 +247,9 @@ const submeterEspecie = () => {
 
             <div class="flex flex-col justify-between gap-4">
               <div class="flex flex-col gap-1.5">
-                <label class="text-sm font-semibold text-grey-text pl-1">Recomendada para Calçadas? *</label>
+                <label class="text-sm font-semibold text-grey-text pl-1"
+                  >Recomendada para Calçadas? *</label
+                >
                 <div class="flex flex-col sm:flex-row gap-4 pt-1">
                   <label class="flex items-center gap-2 cursor-pointer">
                     <input
@@ -205,7 +258,9 @@ const submeterEspecie = () => {
                       value="Sim"
                       class="w-4 h-4 text-amma-green focus:ring-amma-green accent-amma-green"
                     />
-                    <span class="text-sm font-medium text-grey-text">Sim (Raízes não agressivas)</span>
+                    <span class="text-sm font-medium text-grey-text"
+                      >Sim (Raízes não agressivas)</span
+                    >
                   </label>
                   <label class="flex items-center gap-2 cursor-pointer">
                     <input
@@ -220,7 +275,9 @@ const submeterEspecie = () => {
               </div>
 
               <div class="flex flex-col gap-1.5">
-                <label class="text-sm font-semibold text-grey-text pl-1">Tempo médio de germinação (em dias)</label>
+                <label class="text-sm font-semibold text-grey-text pl-1"
+                  >Tempo médio de germinação (em dias)</label
+                >
                 <input
                   v-model="formEspecie.tempoGerminacaoDias"
                   type="number"
@@ -232,7 +289,9 @@ const submeterEspecie = () => {
           </div>
 
           <div class="flex flex-col gap-1.5">
-            <label class="text-sm font-semibold text-grey-text pl-1">Descrição / Orientações de Cultivo</label>
+            <label class="text-sm font-semibold text-grey-text pl-1"
+              >Descrição / Orientações de Cultivo</label
+            >
             <textarea
               v-model="formEspecie.descricao"
               rows="3"

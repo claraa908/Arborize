@@ -16,7 +16,7 @@ const form = ref({
   horarioInicio: '',
   descricaoHorarioInicio: '',
   horarioTermino: '',
-  descricaoHorarioTermino: ''
+  descricaoHorarioTermino: '',
 })
 
 const previewImagem = ref<string | null>(null)
@@ -25,7 +25,7 @@ const mostrarPopup = ref(false)
 
 const breadcrumbItems = [
   { label: 'Eventos Ambientais', icon: 'event', routeName: 'eventos' },
-  { label: 'Cadastrar Evento' }
+  { label: 'Cadastrar Evento' },
 ]
 
 const goBack = () => {
@@ -69,18 +69,55 @@ const formularioVazio = () => ({
   horarioInicio: '',
   descricaoHorarioInicio: '',
   horarioTermino: '',
-  descricaoHorarioTermino: ''
+  descricaoHorarioTermino: '',
 })
 
-const submeterEvento = () => {
-  mostrarPopup.value = true
-  form.value = { ...formularioVazio() }
-  previewImagem.value = null
+const submeterEvento = async () => {
+  // 1. Mapear os dados do Vue para os atributos exatos da Entidade Java
+  const eventoPayload = {
+    nome: form.value.nome,
+    descricao: form.value.descricao,
+    dataInicio: form.value.dataInicio,
+    dataTermino: form.value.dataTermino,
+    localConcentracao: form.value.local, // Mapeado de form.local
+    destinoFinal: form.value.destinoFinal,
+    horarioInicio: form.value.horarioInicio,
+    horarioTermino: form.value.horarioTermino,
+    descricaoPontoPartida: form.value.descricaoHorarioInicio, // Mapeado
+    descricaoEncerramento: form.value.descricaoHorarioTermino, // Mapeado
+  }
 
-  setTimeout(() => {
-    mostrarPopup.value = false
-    goBack()
-  }, 1500)
+  try {
+    // 2. Fazer a requisição POST para o Spring Boot
+    const response = await fetch('http://localhost:8080/eventos', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(eventoPayload),
+    })
+
+    if (response.ok) {
+      // 3. Em caso de sucesso (Status 201), exibir o popup e redirecionar
+      mostrarPopup.value = true
+      form.value = { ...formularioVazio() }
+      previewImagem.value = null
+
+      setTimeout(() => {
+        mostrarPopup.value = false
+        goBack()
+      }, 1500)
+    } else {
+      // 4. Tratamento de erros de validação (Status 400, 500)
+      const errorText = await response.text()
+      alert('Falha ao cadastrar evento. Verifique os dados preenchidos.')
+      console.error('Erro retornado pelo servidor:', errorText)
+    }
+  } catch (error) {
+    // 5. Tratamento de falha na rede (Servidor desligado ou erro de CORS)
+    alert('Erro de conexão. Certifique-se de que o back-end está a rodar na porta 8080.')
+    console.error('Falha na requisição:', error)
+  }
 }
 </script>
 
@@ -90,12 +127,16 @@ const submeterEvento = () => {
 
     <div class="px-6 md:px-10 pb-6 pt-6 flex flex-col gap-6 w-full">
       <div class="flex items-center gap-4">
-        <div class="w-12 h-12 flex items-center justify-center bg-amma-green-lighter/50 text-amma-green rounded-full shadow-sm">
+        <div
+          class="w-12 h-12 flex items-center justify-center bg-amma-green-lighter/50 text-amma-green rounded-full shadow-sm"
+        >
           <span class="material-symbols-outlined text-[24px]">calendar_add_on</span>
         </div>
         <div>
           <h2 class="text-2xl font-bold text-amma-green-dark leading-none">Cadastrar Evento</h2>
-          <p class="text-sm text-grey-text mt-1">Preencha os dados e a programação do evento socioambiental.</p>
+          <p class="text-sm text-grey-text mt-1">
+            Preencha os dados e a programação do evento socioambiental.
+          </p>
         </div>
       </div>
 
@@ -139,8 +180,14 @@ const submeterEvento = () => {
                 />
 
                 <template v-if="previewImagem">
-                  <img :src="previewImagem" alt="Pré-visualização do Banner" class="absolute inset-0 w-full h-full object-cover rounded-box" />
-                  <div class="absolute inset-0 bg-black/40 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-semibold">
+                  <img
+                    :src="previewImagem"
+                    alt="Pré-visualização do Banner"
+                    class="absolute inset-0 w-full h-full object-cover rounded-box"
+                  />
+                  <div
+                    class="absolute inset-0 bg-black/40 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-semibold"
+                  >
                     Alterar Imagem
                   </div>
                 </template>
@@ -148,7 +195,7 @@ const submeterEvento = () => {
                 <template v-else>
                   <span class="material-symbols-outlined text-3xl text-amma-green mb-1">image</span>
                   <p class="text-xs font-medium text-grey-text text-center">
-                    Clique para selecionar o banner *<br/>
+                    Clique para selecionar o banner *<br />
                     <span class="text-[11px] text-grey-text/60 font-normal">PNG, JPG ou WEBP</span>
                   </p>
                 </template>
@@ -183,7 +230,9 @@ const submeterEvento = () => {
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div class="flex flex-col gap-1.5">
-                <label class="text-sm font-semibold text-grey-text pl-1">Local de Concentração *</label>
+                <label class="text-sm font-semibold text-grey-text pl-1"
+                  >Local de Concentração *</label
+                >
                 <input
                   v-model="form.local"
                   type="text"
@@ -194,7 +243,9 @@ const submeterEvento = () => {
               </div>
 
               <div class="flex flex-col gap-1.5">
-                <label class="text-sm font-semibold text-grey-text pl-1">Destino Final (Opcional)</label>
+                <label class="text-sm font-semibold text-grey-text pl-1"
+                  >Destino Final (Opcional)</label
+                >
                 <input
                   v-model="form.destinoFinal"
                   type="text"
@@ -216,7 +267,9 @@ const submeterEvento = () => {
               </div>
 
               <div class="flex flex-col gap-1.5">
-                <label class="text-sm font-semibold text-grey-text pl-1">Descrição do Ponto de Partida</label>
+                <label class="text-sm font-semibold text-grey-text pl-1"
+                  >Descrição do Ponto de Partida</label
+                >
                 <input
                   v-model="form.descricaoHorarioInicio"
                   type="text"
@@ -228,7 +281,9 @@ const submeterEvento = () => {
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div class="flex flex-col gap-1.5">
-                <label class="text-sm font-semibold text-grey-text pl-1">Horário de Término *</label>
+                <label class="text-sm font-semibold text-grey-text pl-1"
+                  >Horário de Término *</label
+                >
                 <input
                   v-model="form.horarioTermino"
                   type="time"
@@ -238,7 +293,9 @@ const submeterEvento = () => {
               </div>
 
               <div class="flex flex-col gap-1.5">
-                <label class="text-sm font-semibold text-grey-text pl-1">Descrição do Encerramento</label>
+                <label class="text-sm font-semibold text-grey-text pl-1"
+                  >Descrição do Encerramento</label
+                >
                 <input
                   v-model="form.descricaoHorarioTermino"
                   type="text"
