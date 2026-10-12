@@ -5,6 +5,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
+import java.util.List;
+import java.util.ArrayList;
+
 @Entity
 @Table(name = "especies")
 @Data
@@ -37,6 +40,9 @@ public class Especie {
 
     @Column(columnDefinition = "TEXT")
     private String descricaoCultivo;
+
+    @OneToMany(mappedBy = "especie", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<DocumentEntities> documents = new ArrayList<>();
 
     // Guardará o link público gerado pelo MinIO
     //private String imagemUrl;

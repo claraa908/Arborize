@@ -26,6 +26,14 @@ public class DocumentEntities {
     @JoinColumn(name = "educational_material_id")
     private EducationalMaterialEntities educationalMaterial;
 
+    @ManyToOne
+    @JoinColumn(name = "evento_id")
+    private Eventos eventos;
+
+    @ManyToOne
+    @JoinColumn(name = "especie_id")
+    private Especie especie;
+
     @Column(name = "original_filename", nullable = false)
     private String originalFilename;
 

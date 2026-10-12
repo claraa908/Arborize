@@ -1,36 +1,36 @@
 package br.com.arborize.controllers;
 
-import br.com.arborize.entities.Especie;
+import br.com.arborize.dtos.request.EspecieRequestDTO;
+import br.com.arborize.dtos.response.EspecieResponseDTO;
 import br.com.arborize.services.EspecieService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import io.swagger.v3.oas.annotations.tags.Tag;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/especies")
-@Tag(name = "Espécies", description = "Endpoints do Catálogo de Espécies da Caatinga")
-//@CrossOrigin(originPatterns = "*")
 public class EspecieController {
 
     @Autowired
-    private EspecieService especieService;
+    private EspecieService service;
 
-    @PostMapping
-    public ResponseEntity<Especie> criarEspecie(@RequestBody Especie especie) {
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> criarEspecie(@ModelAttribute EspecieRequestDTO dto) {
         try {
-            Especie novaEspecie = especieService.salvar(especie);
-            return new ResponseEntity<>(novaEspecie, HttpStatus.CREATED);
+            EspecieResponseDTO novaEspecie = service.criarEspecie(dto);
+            return ResponseEntity.status(HttpStatus.CREATED).body(novaEspecie);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
+            e.printStackTrace(); // Mantemos isto para debug fácil no terminal!
+            return ResponseEntity.badRequest().body("Falha ao salvar espécie: " + e.getMessage());
         }
     }
 
     @GetMapping
-    public ResponseEntity<List<Especie>> listarEspecies() {
-        return ResponseEntity.ok(especieService.listarTodas());
+    public ResponseEntity<List<EspecieResponseDTO>> listarEspecies() {
+        return ResponseEntity.ok(service.listarTodos());
     }
 }

@@ -3,6 +3,8 @@ package br.com.arborize.entities;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "eventos")
@@ -42,6 +44,9 @@ public class Eventos {
     private String descricaoPontoPartida;
 
     private String descricaoEncerramento;
+
+    @OneToMany(mappedBy = "eventos", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<DocumentEntities> documents = new ArrayList<>();
 
 
     // Construtor vazio
@@ -83,4 +88,12 @@ public class Eventos {
 
     public String getDescricaoEncerramento() { return descricaoEncerramento; }
     public void setDescricaoEncerramento(String descricaoEncerramento) { this.descricaoEncerramento = descricaoEncerramento; }
+
+    public List<DocumentEntities> getDocuments() {
+        return documents;
+    }
+
+    public void setDocuments(List<DocumentEntities> documents) {
+        this.documents = documents;
+    }
 }
