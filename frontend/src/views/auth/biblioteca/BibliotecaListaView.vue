@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import AppDataTable, { type TableColumn } from '@/components/ui/AppDataTable.vue'
+import axios from 'axios'
 
 const router = useRouter()
 const searchQuery = ref('')
@@ -14,16 +15,35 @@ const colunas: TableColumn[] = [
   { key: 'acoes', label: 'Ações', align: 'center' }
 ]
 
-const documentos = ref([
-  { id: '1', titulo: 'Guia de Plantio Urbano', categoria: 'Manuais', status: 'PUBLICADO', data: '10/10/2026' },
-  { id: '2', titulo: 'Cartilha de Preservação da Caatinga', categoria: 'Cartilhas', status: 'RASCUNHO', data: '11/10/2026' },
-  { id: '3', titulo: 'Manual de Poda Segura', categoria: 'Manuais', status: 'PUBLICADO', data: '05/10/2026' }
-])
+const documentos = ref<any[]>([])
+
+// Função para buscar todos os documentos do Admin (incluindo rascunhos)
+const carregarDocumentosAdmin = async () => {
+  try {
+    const response = await axios.get('http://localhost:8080/api/materials/admin')
+
+    // Mapeia os dados vindos do back-end para as chaves que a tabela espera
+    documentos.value = response.data.map((item: any) => ({
+      id: String(item.id),
+      titulo: item.title,
+      categoria: item.category,
+      status: item.status,
+      data: item.uploadDate ? new Date(item.uploadDate).toLocaleDateString('pt-BR') : '-'
+    }))
+  } catch (error) {
+    console.error('Erro ao carregar documentos do admin:', error)
+  }
+}
+
+// Executa a busca assim que o componente é montado na tela
+onMounted(() => {
+  carregarDocumentosAdmin()
+})
 
 const documentosFiltrados = computed(() => {
   if (!searchQuery.value) return documentos.value
   const query = searchQuery.value.toLowerCase()
-  return documentos.value.filter(doc => 
+  return documentos.value.filter(doc =>
     doc.titulo.toLowerCase().includes(query) ||
     doc.categoria.toLowerCase().includes(query)
   )
@@ -61,8 +81,8 @@ const viewDetails = (id: string) => {
       </template>
 
       <template #status="{ item }">
-        <span 
-          :class="[ 
+        <span
+          :class="[
             'text-xs font-bold px-3 py-1.5 rounded-full inline-block min-w-[100px]',
             item.status === 'PUBLICADO' ? 'bg-amma-green/20 text-amma-green-dark' : 'bg-orange-100 text-orange-700'
           ]"
@@ -77,17 +97,17 @@ const viewDetails = (id: string) => {
 
       <template #acoes="{ item }">
         <div class="flex items-center justify-center gap-2">
-          <button 
+          <button
             type="button"
             @click="viewDetails(item.id)"
-            class="w-8 h-8 flex items-center justify-center text-amma-green hover:bg-amma-green-lighter rounded-full transition-colors efeito-zoom cursor-pointer" 
+            class="w-8 h-8 flex items-center justify-center text-amma-green hover:bg-amma-green-lighter rounded-full transition-colors efeito-zoom cursor-pointer"
             title="Visualizar Detalhes"
           >
             <span class="material-symbols-outlined text-[20px]">list_alt</span>
           </button>
-          <button 
+          <button
             type="button"
-            class="w-8 h-8 flex items-center justify-center text-grey-text hover:text-amma-green-dark hover:bg-amma-green-lighter rounded-full transition-colors efeito-zoom cursor-pointer" 
+            class="w-8 h-8 flex items-center justify-center text-grey-text hover:text-amma-green-dark hover:bg-amma-green-lighter rounded-full transition-colors efeito-zoom cursor-pointer"
             title="Editar Documento"
           >
             <span class="material-symbols-outlined text-[20px]">edit</span>

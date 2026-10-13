@@ -124,4 +124,38 @@ public class EducationalMaterialService {
             throw new RuntimeException("Erro ao recuperar arquivo do MinIO: " + e.getMessage(), e);
         }
     }
+
+    public byte[] getCoverStream(Long materialId) {
+        EducationalMaterialEntities material = repository.findById(materialId)
+                .orElseThrow(() -> new RuntimeException("Material não encontrado"));
+
+        if (material.getDocuments() == null || material.getDocuments().isEmpty()) {
+            throw new RuntimeException("Nenhum documento associado");
+        }
+
+        // Procura o documento que seja imagem (por exemplo, contendo image/ no content type ou extensão)
+        // Ou se preferir, o segundo documento enviado. Vamos pegar o que tiver extensão de imagem ou o segundo elemento:
+        DocumentEntities coverDoc = material.getDocuments().stream()
+                .filter(d -> d.getContentType() != null && d.getContentType().startsWith("image"))
+                .findFirst()
+                .orElse(material.getDocuments().size() > 1 ? material.getDocuments().get(1) : null);
+
+        if (coverDoc == null) {
+            throw new RuntimeException("Nenhuma foto de capa associada a este material");
+        }
+
+        try {
+            InputStream stream = minioClient.getObject(
+                    GetObjectArgs.builder()
+                            .bucket(bucketName)
+                            .object(coverDoc.getFilePath())
+                            .build()
+            );
+            byte[] bytes = stream.readAllBytes();
+            stream.close();
+            return bytes;
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao recuperar capa do MinIO: " + e.getMessage(), e);
+        }
+    }
 }

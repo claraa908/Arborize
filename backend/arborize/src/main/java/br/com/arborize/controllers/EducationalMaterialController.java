@@ -62,4 +62,14 @@ public class EducationalMaterialController {
 
         return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
     }
+
+    @GetMapping("/{id}/cover")
+    public ResponseEntity<byte[]> getCoverPhoto(@PathVariable Long id) {
+        byte[] coverBytes = service.getCoverStream(id);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.IMAGE_JPEG); // ou detecte o tipo original
+
+        return new ResponseEntity<>(coverBytes, headers, HttpStatus.OK);
+    }
 }
