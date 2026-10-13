@@ -47,4 +47,8 @@ public class EducationalMaterialEntities {
     public void prePersist() {
         this.uploadDate = LocalDate.now();
     }
+
+    public List<DocumentEntities> getDocument() {
+        return documents;
+    }
 }

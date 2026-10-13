@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue' // onMounted adicionado
 import { useRouter } from 'vue-router'
 import AppDataTable, { type TableColumn } from '@/components/ui/AppDataTable.vue'
 
@@ -9,58 +9,40 @@ const searchQuery = ref('')
 const colunas: TableColumn[] = [
   { key: 'especie', label: 'Espécie Botânica', width: '35%' },
   { key: 'categoria', label: 'Categoria' },
-  { key: 'porte', label: 'Porte', align: 'center' },
-  { key: 'calcada', label: 'Calçadas', align: 'center' },
+  { key: 'porteArvore', label: 'Porte', align: 'center' }, // Atualizado
+  { key: 'recomendadaCalcadas', label: 'Calçadas', align: 'center' }, // Atualizado
   { key: 'mudasDisponiveis', label: 'Estoque Mudas', align: 'center' },
-  { key: 'acoes', label: 'Ações', align: 'center' }
+  { key: 'acoes', label: 'Ações', align: 'center' },
 ]
 
-const especies = ref([
-  {
-    id: '1',
-    nomePopular: 'Ipê-amarelo',
-    nomeCientifico: 'Handroanthus chrysotrichus',
-    categoria: 'Nativa da Caatinga',
-    porte: 'Médio',
-    calcada: 'Sim',
-    mudasDisponiveis: 120
-  },
-  {
-    id: '2',
-    nomePopular: 'Aroeira-do-sertão',
-    nomeCientifico: 'Myracrodruon urundeuva',
-    categoria: 'Nativa da Caatinga',
-    porte: 'Grande',
-    calcada: 'Não',
-    mudasDisponiveis: 45
-  },
-  {
-    id: '3',
-    nomePopular: 'Mulungu',
-    nomeCientifico: 'Erythrina velutina',
-    categoria: 'Medicinal',
-    porte: 'Médio',
-    calcada: 'Sim',
-    mudasDisponiveis: 80
-  },
-  {
-    id: '4',
-    nomePopular: 'Cajarana',
-    nomeCientifico: 'Spondias dulcis',
-    categoria: 'Frutífera',
-    porte: 'Médio',
-    calcada: 'Sim',
-    mudasDisponiveis: 30
+const especies = ref([])
+
+const carregarEspecies = async () => {
+  try {
+    const resposta = await fetch('http://localhost:8080/especies')
+    if (resposta.ok) {
+      const dados = await resposta.json()
+      especies.value = dados
+    } else {
+      console.error('Falha ao carregar espécies:', resposta.status)
+    }
+  } catch (erro) {
+    console.error('Erro de conexão ao buscar espécies:', erro)
   }
-])
+}
+
+onMounted(() => {
+  carregarEspecies()
+})
 
 const especiesFiltradas = computed(() => {
   if (!searchQuery.value) return especies.value
   const query = searchQuery.value.toLowerCase()
-  return especies.value.filter(esp =>
-    esp.nomePopular.toLowerCase().includes(query) ||
-    esp.nomeCientifico.toLowerCase().includes(query) ||
-    esp.categoria.toLowerCase().includes(query)
+  return especies.value.filter(
+    (esp) =>
+      (esp.nomePopular && esp.nomePopular.toLowerCase().includes(query)) ||
+      (esp.nomeCientifico && esp.nomeCientifico.toLowerCase().includes(query)) ||
+      (esp.categoria && esp.categoria.toLowerCase().includes(query)),
   )
 })
 
@@ -92,37 +74,41 @@ const navigateToNew = () => {
         </span>
       </template>
 
-      <template #porte="{ item }">
-        <span class="text-sm font-medium text-grey-text/80">{{ item.porte }}</span>
+      <template #porteArvore="{ item }">
+        <span class="text-sm font-medium text-grey-text/80">{{ item.porteArvore }}</span>
       </template>
 
-      <template #calcada="{ item }">
-        <span 
+      <template #recomendadaCalcadas="{ item }">
+        <span
           :class="[
             'text-xs font-bold px-3 py-1 rounded-full inline-block min-w-[60px]',
-            item.calcada === 'Sim' ? 'bg-amma-green/20 text-amma-green-dark' : 'bg-red-100 text-red-700'
+            item.recomendadaCalcadas
+              ? 'bg-amma-green/20 text-amma-green-dark'
+              : 'bg-red-100 text-red-700',
           ]"
         >
-          {{ item.calcada }}
+          {{ item.recomendadaCalcadas ? 'Sim' : 'Não' }}
         </span>
       </template>
 
       <template #mudasDisponiveis="{ item }">
-        <span class="text-sm font-bold text-amma-green-dark">{{ item.mudasDisponiveis }} un</span>
+        <span class="text-sm font-bold text-amma-green-dark">
+          {{ item.mudasDisponiveis || 0 }} un
+        </span>
       </template>
 
       <template #acoes>
         <div class="flex items-center justify-center gap-2">
-          <button 
+          <button
             type="button"
-            class="w-8 h-8 flex items-center justify-center text-amma-green hover:bg-amma-green-lighter rounded-full transition-colors efeito-zoom cursor-pointer" 
+            class="w-8 h-8 flex items-center justify-center text-amma-green hover:bg-amma-green-lighter rounded-full transition-colors efeito-zoom cursor-pointer"
             title="Visualizar Detalhes"
           >
             <span class="material-symbols-outlined text-[20px]">psychiatry</span>
           </button>
-          <button 
+          <button
             type="button"
-            class="w-8 h-8 flex items-center justify-center text-grey-text hover:text-amma-green-dark hover:bg-amma-green-lighter rounded-full transition-colors efeito-zoom cursor-pointer" 
+            class="w-8 h-8 flex items-center justify-center text-grey-text hover:text-amma-green-dark hover:bg-amma-green-lighter rounded-full transition-colors efeito-zoom cursor-pointer"
             title="Editar Espécie"
           >
             <span class="material-symbols-outlined text-[20px]">edit</span>
