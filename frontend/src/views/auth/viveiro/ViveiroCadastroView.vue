@@ -78,21 +78,25 @@ const formVazio = () => ({
 const submeterEspecie = async () => {
   const formData = new FormData()
 
-  // Adiciona os textos usando EXATAMENTE os mesmos nomes do EspecieRequestDTO
+  // Nomes no FormData (esquerda) têm de bater com o DTO do Java.
+  // Nomes no form.value (direita) têm de bater com o seu objeto "form" do Vue.
   formData.append('nomePopular', form.value.nomePopular)
   formData.append('nomeCientifico', form.value.nomeCientifico)
   formData.append('familiaBotanica', form.value.familiaBotanica)
   formData.append('categoria', form.value.categoria)
-  formData.append('porteArvore', form.value.porteArvore)
-  formData.append('descricaoCultivo', form.value.descricaoCultivo)
 
-  // Converter números e booleanos para string de forma segura antes de enviar
+  // CORREÇÕES AQUI:
+  formData.append('porteArvore', form.value.porte)
+  formData.append('descricaoCultivo', form.value.descricao)
+
+  // Converter o 'Sim'/'Não' para 'true'/'false'
+  const calcadaBoolean = form.value.adequadoCalcada === 'Sim' ? 'true' : 'false'
+  formData.append('recomendadaCalcadas', calcadaBoolean)
+
   formData.append('tempoGerminacaoDias', form.value.tempoGerminacaoDias?.toString() || '')
-  formData.append('recomendadaCalcadas', form.value.recomendadaCalcadas ? 'true' : 'false')
 
-  // Adiciona a imagem se existir
   if (form.value.imagem) {
-    formData.append('foto', form.value.imagem) // 'foto' tem de bater com o nome no Record
+    formData.append('foto', form.value.imagem)
   }
 
   try {
