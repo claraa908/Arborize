@@ -5,7 +5,7 @@ import AppBreadcrumb from '@/components/ui/AppBreadcrumb.vue'
 
 const router = useRouter()
 
-const formEspecie = ref({
+const form = ref({
   nomePopular: '',
   nomeCientifico: '',
   familiaBotanica: '',
@@ -14,7 +14,7 @@ const formEspecie = ref({
   adequadoCalcada: 'Sim',
   tempoGerminacaoDias: '',
   descricao: '',
-  imagem: null as File | null
+  imagem: null as File | null,
 })
 
 const previewImagem = ref<string | null>(null)
@@ -25,12 +25,12 @@ const categorias = ['Nativa da Caatinga', 'Frutífera', 'Ornamental', 'Medicinal
 const portes = [
   { valor: 'Pequeno', rotulo: 'Pequeno (Até 4m)' },
   { valor: 'Médio', rotulo: 'Médio (4m a 8m)' },
-  { valor: 'Grande', rotulo: 'Grande (Acima de 8m)' }
+  { valor: 'Grande', rotulo: 'Grande (Acima de 8m)' },
 ]
 
 const breadcrumbItems = [
   { label: 'Viveiro', icon: 'psychiatry', routeName: 'viveiro' },
-  { label: 'Cadastrar Espécie' }
+  { label: 'Cadastrar Espécie' },
 ]
 
 const goBack = () => {
@@ -46,19 +46,19 @@ const triggerImageInput = () => {
 const handleFileUpload = (event: Event) => {
   const target = event.target as HTMLInputElement
   if (!target || !target.files || target.files.length === 0) {
-    formEspecie.value.imagem = null
+    form.value.imagem = null
     previewImagem.value = null
     return
   }
 
   const file = target.files[0]
   if (file && file.type.startsWith('image/')) {
-    formEspecie.value.imagem = file
+    form.value.imagem = file
     previewImagem.value = URL.createObjectURL(file)
   } else {
     alert('Por favor, selecione apenas arquivos de imagem (PNG, JPG, WEBP).')
     target.value = ''
-    formEspecie.value.imagem = null
+    form.value.imagem = null
     previewImagem.value = null
   }
 }
@@ -72,18 +72,49 @@ const formVazio = () => ({
   adequadoCalcada: 'Sim',
   tempoGerminacaoDias: '',
   descricao: '',
-  imagem: null as File | null
+  imagem: null as File | null,
 })
 
-const submeterEspecie = () => {
-  mostrarPopup.value = true
-  formEspecie.value = { ...formVazio() }
-  previewImagem.value = null
+const submeterEspecie = async () => {
+  const formData = new FormData()
 
-  setTimeout(() => {
-    mostrarPopup.value = false
-    goBack()
-  }, 1500)
+  // Nomes no FormData (esquerda) têm de bater com o DTO do Java.
+  // Nomes no form.value (direita) têm de bater com o seu objeto "form" do Vue.
+  formData.append('nomePopular', form.value.nomePopular)
+  formData.append('nomeCientifico', form.value.nomeCientifico)
+  formData.append('familiaBotanica', form.value.familiaBotanica)
+  formData.append('categoria', form.value.categoria)
+
+  // CORREÇÕES AQUI:
+  formData.append('porteArvore', form.value.porte)
+  formData.append('descricaoCultivo', form.value.descricao)
+
+  // Converter o 'Sim'/'Não' para 'true'/'false'
+  const calcadaBoolean = form.value.adequadoCalcada === 'Sim' ? 'true' : 'false'
+  formData.append('recomendadaCalcadas', calcadaBoolean)
+
+  formData.append('tempoGerminacaoDias', form.value.tempoGerminacaoDias?.toString() || '')
+
+  if (form.value.imagem) {
+    formData.append('foto', form.value.imagem)
+  }
+
+  try {
+    const response = await fetch('http://localhost:8080/especies', {
+      method: 'POST',
+      // IMPORTANTE: Não coloque headers com 'Content-Type' aqui. O navegador trata do Multipart!
+      body: formData,
+    })
+
+    if (response.ok) {
+      alert('Espécie criada com sucesso!')
+    } else {
+      const errorText = await response.text()
+      console.error('Erro:', errorText)
+    }
+  } catch (error) {
+    console.error('Erro de conexão:', error)
+  }
 }
 </script>
 
@@ -93,12 +124,18 @@ const submeterEspecie = () => {
 
     <div class="px-6 md:px-10 pb-6 pt-6 flex flex-col gap-6 w-full">
       <div class="flex items-center gap-4">
-        <div class="w-12 h-12 flex items-center justify-center bg-amma-green-lighter/50 text-amma-green rounded-full shadow-sm">
+        <div
+          class="w-12 h-12 flex items-center justify-center bg-amma-green-lighter/50 text-amma-green rounded-full shadow-sm"
+        >
           <span class="material-symbols-outlined text-[24px]">add</span>
         </div>
         <div>
-          <h2 class="text-2xl font-bold text-amma-green-dark leading-none">Cadastrar Espécie Botânica</h2>
-          <p class="text-sm text-grey-text mt-1">Preencha os dados e características da espécie para o viveiro municipal.</p>
+          <h2 class="text-2xl font-bold text-amma-green-dark leading-none">
+            Cadastrar Espécie Botânica
+          </h2>
+          <p class="text-sm text-grey-text mt-1">
+            Preencha os dados e características da espécie para o viveiro municipal.
+          </p>
         </div>
       </div>
 
@@ -108,7 +145,7 @@ const submeterEspecie = () => {
             <div class="flex flex-col gap-1.5">
               <label class="text-sm font-semibold text-grey-text pl-1">Nome Popular *</label>
               <input
-                v-model="formEspecie.nomePopular"
+                v-model="form.nomePopular"
                 type="text"
                 required
                 placeholder="Ex: Ipê-amarelo, Aroeira-do-sertão, Mulungu"
@@ -119,7 +156,7 @@ const submeterEspecie = () => {
             <div class="flex flex-col gap-1.5">
               <label class="text-sm font-semibold text-grey-text pl-1">Nome Científico *</label>
               <input
-                v-model="formEspecie.nomeCientifico"
+                v-model="form.nomeCientifico"
                 type="text"
                 required
                 placeholder="Ex: Handroanthus chrysotrichus"
@@ -132,7 +169,7 @@ const submeterEspecie = () => {
             <div class="flex flex-col gap-1.5">
               <label class="text-sm font-semibold text-grey-text pl-1">Família Botânica</label>
               <input
-                v-model="formEspecie.familiaBotanica"
+                v-model="form.familiaBotanica"
                 type="text"
                 placeholder="Ex: Bignoniaceae"
                 class="w-full bg-white focus:bg-amma-green-lighter border-2 border-amma-green-light focus:border-amma-green rounded-btn py-3 px-4 text-grey-text outline-none transition-all text-sm font-medium"
@@ -142,7 +179,7 @@ const submeterEspecie = () => {
             <div class="flex flex-col gap-1.5">
               <label class="text-sm font-semibold text-grey-text pl-1">Categoria *</label>
               <select
-                v-model="formEspecie.categoria"
+                v-model="form.categoria"
                 required
                 class="w-full bg-white focus:bg-amma-green-lighter border-2 border-amma-green-light focus:border-amma-green rounded-btn py-3 px-4 text-grey-text outline-none transition-all text-sm font-medium appearance-none"
               >
@@ -153,11 +190,13 @@ const submeterEspecie = () => {
             <div class="flex flex-col gap-1.5">
               <label class="text-sm font-semibold text-grey-text pl-1">Porte da Árvore *</label>
               <select
-                v-model="formEspecie.porte"
+                v-model="form.porte"
                 required
                 class="w-full bg-white focus:bg-amma-green-lighter border-2 border-amma-green-light focus:border-amma-green rounded-btn py-3 px-4 text-grey-text outline-none transition-all text-sm font-medium appearance-none"
               >
-                <option v-for="porte in portes" :key="porte.valor" :value="porte.valor">{{ porte.rotulo }}</option>
+                <option v-for="porte in portes" :key="porte.valor" :value="porte.valor">
+                  {{ porte.rotulo }}
+                </option>
               </select>
             </div>
           </div>
@@ -178,8 +217,14 @@ const submeterEspecie = () => {
                 />
 
                 <template v-if="previewImagem">
-                  <img :src="previewImagem" alt="Pré-visualização da Espécie" class="absolute inset-0 w-full h-full object-cover rounded-box" />
-                  <div class="absolute inset-0 bg-black/40 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-semibold">
+                  <img
+                    :src="previewImagem"
+                    alt="Pré-visualização da Espécie"
+                    class="absolute inset-0 w-full h-full object-cover rounded-box"
+                  />
+                  <div
+                    class="absolute inset-0 bg-black/40 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-semibold"
+                  >
                     Alterar Imagem
                   </div>
                 </template>
@@ -187,7 +232,7 @@ const submeterEspecie = () => {
                 <template v-else>
                   <span class="material-symbols-outlined text-3xl text-amma-green mb-1">image</span>
                   <p class="text-xs font-medium text-grey-text text-center">
-                    Clique para selecionar a imagem *<br/>
+                    Clique para selecionar a imagem *<br />
                     <span class="text-[11px] text-grey-text/60 font-normal">PNG, JPG ou WEBP</span>
                   </p>
                 </template>
@@ -196,21 +241,25 @@ const submeterEspecie = () => {
 
             <div class="flex flex-col justify-between gap-4">
               <div class="flex flex-col gap-1.5">
-                <label class="text-sm font-semibold text-grey-text pl-1">Recomendada para Calçadas? *</label>
+                <label class="text-sm font-semibold text-grey-text pl-1"
+                  >Recomendada para Calçadas? *</label
+                >
                 <div class="flex flex-col sm:flex-row gap-4 pt-1">
                   <label class="flex items-center gap-2 cursor-pointer">
                     <input
                       type="radio"
-                      v-model="formEspecie.adequadoCalcada"
+                      v-model="form.adequadoCalcada"
                       value="Sim"
                       class="w-4 h-4 text-amma-green focus:ring-amma-green accent-amma-green"
                     />
-                    <span class="text-sm font-medium text-grey-text">Sim (Raízes não agressivas)</span>
+                    <span class="text-sm font-medium text-grey-text"
+                      >Sim (Raízes não agressivas)</span
+                    >
                   </label>
                   <label class="flex items-center gap-2 cursor-pointer">
                     <input
                       type="radio"
-                      v-model="formEspecie.adequadoCalcada"
+                      v-model="form.adequadoCalcada"
                       value="Não"
                       class="w-4 h-4 text-amma-green focus:ring-amma-green accent-amma-green"
                     />
@@ -220,9 +269,11 @@ const submeterEspecie = () => {
               </div>
 
               <div class="flex flex-col gap-1.5">
-                <label class="text-sm font-semibold text-grey-text pl-1">Tempo médio de germinação (em dias)</label>
+                <label class="text-sm font-semibold text-grey-text pl-1"
+                  >Tempo médio de germinação (em dias)</label
+                >
                 <input
-                  v-model="formEspecie.tempoGerminacaoDias"
+                  v-model="form.tempoGerminacaoDias"
                   type="number"
                   placeholder="Ex: 15"
                   class="w-full bg-white focus:bg-amma-green-lighter border-2 border-amma-green-light focus:border-amma-green rounded-btn py-3 px-4 text-grey-text outline-none transition-all text-sm font-medium"
@@ -232,9 +283,11 @@ const submeterEspecie = () => {
           </div>
 
           <div class="flex flex-col gap-1.5">
-            <label class="text-sm font-semibold text-grey-text pl-1">Descrição / Orientações de Cultivo</label>
+            <label class="text-sm font-semibold text-grey-text pl-1"
+              >Descrição / Orientações de Cultivo</label
+            >
             <textarea
-              v-model="formEspecie.descricao"
+              v-model="form.descricao"
               rows="3"
               placeholder="Descreva as características da espécie, época de florada, recomendações de solo e rega..."
               class="w-full bg-white focus:bg-amma-green-lighter border-2 border-amma-green-light focus:border-amma-green rounded-btn py-3 px-4 text-grey-text outline-none transition-all text-sm font-medium resize-none"
