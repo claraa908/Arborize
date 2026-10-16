@@ -3,9 +3,11 @@ import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import DocumentoCard from '@/components/biblioteca/DocumentoCard.vue'
 import capaBanner from '@/assets/images/capa-biblioteca.png'
-import axios from 'axios'
+import { useLibraryStore } from '@/stores/libraryStore'
 
 const router = useRouter()
+const libraryStore = useLibraryStore()
+
 const searchQuery = ref('')
 const selectedCategory = ref('Todas')
 const rootEl = ref<HTMLElement | null>(null)
@@ -16,31 +18,8 @@ let isTicking = false
 
 const categorias = ['Todas', 'Arborização Urbana', 'Caatinga', 'Educação Ambiental', 'Legislação']
 
-const documentos = ref<any[]>([])
-
-// Função para buscar os materiais publicados do back-end
-const carregarCatalogoPublico = async () => {
-  try {
-    const response = await axios.get('http://localhost:8080/api/materials')
-
-    // Mapeia os dados do back-end para o formato que o componente/card espera
-    documentos.value = response.data.map((item: any) => ({
-      id: String(item.id),
-      titulo: item.title,
-      descricao: item.description,
-      categoria: item.category, // Certifique-se de que bate com os textos das categorias ou ajuste o mapeamento
-      tipo: item.materialType,
-      data: item.uploadDate ? new Date(item.uploadDate).toLocaleDateString('pt-BR') : '-',
-      tamanho: item.documents && item.documents.length > 0 ? `${(item.documents[0].sizeBytes / 1024 / 1024).toFixed(1)} MB` : '2.0 MB',
-      capaUrl: `http://localhost:8080/api/materials/${item.id}/cover`
-    }))
-  } catch (error) {
-    console.error('Erro ao carregar o catálogo público:', error)
-  }
-}
-
 onMounted(() => {
-  carregarCatalogoPublico()
+  libraryStore.fetchPublicCatalog()
 
   const main = rootEl.value?.closest('main')
   if (main) {
@@ -60,7 +39,7 @@ onUnmounted(() => {
 })
 
 const documentosFiltrados = computed(() => {
-  return documentos.value.filter(doc => {
+  return libraryStore.publicMaterials.filter(doc => {
     const matchPesquisa = doc.titulo.toLowerCase().includes(searchQuery.value.toLowerCase()) || doc.descricao.toLowerCase().includes(searchQuery.value.toLowerCase())
     const matchCategoria = selectedCategory.value === 'Todas' || doc.categoria === selectedCategory.value
     return matchPesquisa && matchCategoria
@@ -92,9 +71,7 @@ const handleScroll = (e: Event) => {
 
 <template>
   <div ref="rootEl" class="max-w-7xl mx-auto flex flex-col gap-6 relative pb-10" style="overflow-anchor: none;">
-
     <div class="sticky top-0 -mt-2 -mx-6 md:-mx-10 px-6 md:px-10 z-30 pt-1 pb-4 bg-white/70 backdrop-blur-md" style="overflow-anchor: none;">
-
       <div
         class="relative overflow-hidden shadow-md transition-all duration-300 ease-out"
         :class="isScrolled ? 'rounded-btn p-2.5 md:p-3' : 'rounded-box py-4 px-5 md:py-5 md:px-6'"
@@ -215,7 +192,6 @@ const handleScroll = (e: Event) => {
         Limpar Filtros
       </button>
     </div>
-
   </div>
 </template>
 

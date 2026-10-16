@@ -1,11 +1,24 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, computed, onMounted } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import AppBreadcrumb from '@/components/ui/AppBreadcrumb.vue'
+import { useViveiroStore } from '@/stores/viveiroStore'
+import { especieService } from '@/services/especieService'
+import { useFeedbackStore } from '@/stores/feedbackStore'
+import type { CreateEspeciePayload } from '@/types/viveiro'
 
 const router = useRouter()
+const route = useRoute()
+const viveiroStore = useViveiroStore()
+const feedback = useFeedbackStore()
 
-const form = ref({
+const especieId = computed(() => route.params.id as string | undefined)
+const isEditing = computed(() => !!especieId.value)
+
+const isSubmitting = ref(false)
+const isLoadingData = ref(false)
+
+const form = ref<CreateEspeciePayload>({
   nomePopular: '',
   nomeCientifico: '',
   familiaBotanica: '',
@@ -14,12 +27,11 @@ const form = ref({
   adequadoCalcada: 'Sim',
   tempoGerminacaoDias: '',
   descricao: '',
-  imagem: null as File | null,
+  imagem: null,
 })
 
 const previewImagem = ref<string | null>(null)
 const imageInput = ref<HTMLInputElement | null>(null)
-const mostrarPopup = ref(false)
 
 const categorias = ['Nativa da Caatinga', 'Frutífera', 'Ornamental', 'Medicinal', 'Exótica']
 const portes = [
@@ -28,14 +40,41 @@ const portes = [
   { valor: 'Grande', rotulo: 'Grande (Acima de 8m)' },
 ]
 
-const breadcrumbItems = [
+const breadcrumbItems = computed(() => [
   { label: 'Viveiro', icon: 'psychiatry', routeName: 'viveiro' },
-  { label: 'Cadastrar Espécie' },
-]
+  { label: isEditing.value ? 'Editar Espécie' : 'Cadastrar Espécie' },
+])
 
 const goBack = () => {
   router.push({ name: 'viveiro' })
 }
+
+onMounted(async () => {
+  if (!isEditing.value || !especieId.value) return
+
+  isLoadingData.value = true
+  try {
+    const data = await especieService.getById(especieId.value)
+    form.value = {
+      nomePopular: data.nomePopular || '',
+      nomeCientifico: data.nomeCientifico || '',
+      familiaBotanica: data.familiaBotanica || '',
+      categoria: data.categoria || 'Nativa da Caatinga',
+      porte: data.porteArvore || 'Médio',
+      adequadoCalcada: data.recomendadaCalcadas ? 'Sim' : 'Não',
+      tempoGerminacaoDias: data.tempoGerminacaoDias ? String(data.tempoGerminacaoDias) : '',
+      descricao: data.descricaoCultivo || '',
+      imagem: null,
+    }
+
+    previewImagem.value = data.fotoUrl || especieService.getFotoUrl(especieId.value)
+  } catch (error) {
+    feedback.showToast('Erro ao carregar os dados da espécie.', 'error')
+    goBack()
+  } finally {
+    isLoadingData.value = false
+  }
+})
 
 const triggerImageInput = () => {
   if (imageInput.value) {
@@ -46,8 +85,10 @@ const triggerImageInput = () => {
 const handleFileUpload = (event: Event) => {
   const target = event.target as HTMLInputElement
   if (!target || !target.files || target.files.length === 0) {
-    form.value.imagem = null
-    previewImagem.value = null
+    if (!isEditing.value) {
+      form.value.imagem = null
+      previewImagem.value = null
+    }
     return
   }
 
@@ -56,64 +97,51 @@ const handleFileUpload = (event: Event) => {
     form.value.imagem = file
     previewImagem.value = URL.createObjectURL(file)
   } else {
-    alert('Por favor, selecione apenas arquivos de imagem (PNG, JPG, WEBP).')
+    feedback.showToast('Por favor, selecione apenas arquivos de imagem (PNG, JPG, WEBP).', 'warning')
     target.value = ''
-    form.value.imagem = null
-    previewImagem.value = null
+    if (!isEditing.value) {
+      form.value.imagem = null
+      previewImagem.value = null
+    }
   }
 }
 
-const formVazio = () => ({
-  nomePopular: '',
-  nomeCientifico: '',
-  familiaBotanica: '',
-  categoria: 'Nativa da Caatinga',
-  porte: 'Médio',
-  adequadoCalcada: 'Sim',
-  tempoGerminacaoDias: '',
-  descricao: '',
-  imagem: null as File | null,
-})
-
 const submeterEspecie = async () => {
-  const formData = new FormData()
-
-  // Nomes no FormData (esquerda) têm de bater com o DTO do Java.
-  // Nomes no form.value (direita) têm de bater com o seu objeto "form" do Vue.
-  formData.append('nomePopular', form.value.nomePopular)
-  formData.append('nomeCientifico', form.value.nomeCientifico)
-  formData.append('familiaBotanica', form.value.familiaBotanica)
-  formData.append('categoria', form.value.categoria)
-
-  // CORREÇÕES AQUI:
-  formData.append('porteArvore', form.value.porte)
-  formData.append('descricaoCultivo', form.value.descricao)
-
-  // Converter o 'Sim'/'Não' para 'true'/'false'
-  const calcadaBoolean = form.value.adequadoCalcada === 'Sim' ? 'true' : 'false'
-  formData.append('recomendadaCalcadas', calcadaBoolean)
-
-  formData.append('tempoGerminacaoDias', form.value.tempoGerminacaoDias?.toString() || '')
-
-  if (form.value.imagem) {
-    formData.append('foto', form.value.imagem)
+  if (!isEditing.value && !form.value.imagem) {
+    feedback.showToast('Por favor, anexe uma imagem representativa da espécie.', 'warning')
+    return
   }
 
-  try {
-    const response = await fetch('http://localhost:8080/especies', {
-      method: 'POST',
-      // IMPORTANTE: Não coloque headers com 'Content-Type' aqui. O navegador trata do Multipart!
-      body: formData,
-    })
+  const actionTitle = isEditing.value ? 'Salvar Alterações' : 'Cadastrar Espécie Botânica'
+  const actionMessage = isEditing.value
+    ? `Deseja salvar as alterações da espécie "${form.value.nomePopular}"?`
+    : `Confirma a inclusão de "${form.value.nomePopular}" no viveiro municipal?`
 
-    if (response.ok) {
-      alert('Espécie criada com sucesso!')
-    } else {
-      const errorText = await response.text()
-      console.error('Erro:', errorText)
-    }
-  } catch (error) {
-    console.error('Erro de conexão:', error)
+  const confirmed = await feedback.showConfirm({
+    title: actionTitle,
+    message: actionMessage,
+    confirmText: isEditing.value ? 'Salvar' : 'Cadastrar',
+    cancelText: 'Cancelar',
+    variant: 'primary',
+  })
+
+  if (!confirmed) {
+    return
+  }
+
+  isSubmitting.value = true
+
+  let sucesso = false
+  if (isEditing.value && especieId.value) {
+    sucesso = await viveiroStore.updateEspecie(especieId.value, form.value)
+  } else {
+    sucesso = await viveiroStore.createEspecie(form.value)
+  }
+
+  isSubmitting.value = false
+
+  if (sucesso) {
+    goBack()
   }
 }
 </script>
@@ -122,19 +150,35 @@ const submeterEspecie = async () => {
   <div class="flex flex-col w-full">
     <AppBreadcrumb :items="breadcrumbItems" />
 
-    <div class="px-6 md:px-10 pb-6 pt-6 flex flex-col gap-6 w-full">
+    <div
+      v-if="isLoadingData"
+      class="p-12 text-center text-grey-text font-semibold flex items-center justify-center gap-3"
+    >
+      <span class="material-symbols-outlined animate-spin text-amma-green text-2xl"
+        >progress_activity</span
+      >
+      <span>Carregando dados da espécie...</span>
+    </div>
+
+    <div v-else class="px-6 md:px-10 pb-6 pt-6 flex flex-col gap-6 w-full">
       <div class="flex items-center gap-4">
         <div
           class="w-12 h-12 flex items-center justify-center bg-amma-green-lighter/50 text-amma-green rounded-full shadow-sm"
         >
-          <span class="material-symbols-outlined text-[24px]">add</span>
+          <span class="material-symbols-outlined text-[24px]">
+            {{ isEditing ? 'edit_square' : 'add' }}
+          </span>
         </div>
         <div>
           <h2 class="text-2xl font-bold text-amma-green-dark leading-none">
-            Cadastrar Espécie Botânica
+            {{ isEditing ? 'Editar Espécie Botânica' : 'Cadastrar Espécie Botânica' }}
           </h2>
           <p class="text-sm text-grey-text mt-1">
-            Preencha os dados e características da espécie para o viveiro municipal.
+            {{
+              isEditing
+                ? 'Atualize as características, imagem ou orientações da espécie.'
+                : 'Preencha os dados e características da espécie para o viveiro municipal.'
+            }}
           </p>
         </div>
       </div>
@@ -203,7 +247,9 @@ const submeterEspecie = async () => {
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div class="flex flex-col gap-1.5">
-              <label class="text-sm font-semibold text-grey-text pl-1">Imagem da Espécie *</label>
+              <label class="text-sm font-semibold text-grey-text pl-1">
+                Imagem da Espécie {{ isEditing ? '(Opcional para substituição)' : '*' }}
+              </label>
               <div
                 @click="triggerImageInput"
                 class="relative w-full border-2 border-dashed border-amma-green-light hover:border-amma-green bg-amma-green-lighter/30 rounded-box p-4 flex flex-col items-center justify-center cursor-pointer transition-colors h-[150px] overflow-hidden"
@@ -225,14 +271,14 @@ const submeterEspecie = async () => {
                   <div
                     class="absolute inset-0 bg-black/40 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-semibold"
                   >
-                    Alterar Imagem
+                    Substituir Imagem
                   </div>
                 </template>
 
                 <template v-else>
                   <span class="material-symbols-outlined text-3xl text-amma-green mb-1">image</span>
                   <p class="text-xs font-medium text-grey-text text-center">
-                    Clique para selecionar a imagem *<br />
+                    Clique para selecionar a imagem {{ isEditing ? '' : '*' }}<br />
                     <span class="text-[11px] text-grey-text/60 font-normal">PNG, JPG ou WEBP</span>
                   </p>
                 </template>
@@ -299,35 +345,20 @@ const submeterEspecie = async () => {
               type="button"
               @click="goBack"
               class="bg-white hover:bg-amma-bg text-grey-text font-bold py-2.5 px-6 rounded-btn border-2 border-amma-green-light transition-colors shadow-sm text-sm"
+              :disabled="isSubmitting"
             >
               Cancelar
             </button>
             <button
               type="submit"
-              class="bg-amma-green hover:bg-amma-green-dark text-white font-bold py-2.5 px-6 rounded-btn shadow-md text-sm border-none outline-none efeito-zoom"
+              class="bg-amma-green hover:bg-amma-green-dark text-white font-bold py-2.5 px-6 rounded-btn shadow-md text-sm border-none outline-none efeito-zoom disabled:opacity-50 disabled:cursor-not-allowed"
+              :disabled="isSubmitting"
             >
-              Salvar Espécie
+              {{ isSubmitting ? 'A salvar...' : isEditing ? 'Salvar Alterações' : 'Salvar Espécie' }}
             </button>
           </div>
         </form>
       </div>
     </div>
-
-    <Transition
-      enter-active-class="transition duration-300 ease-out"
-      enter-from-class="opacity-0 -translate-y-6"
-      enter-to-class="opacity-100 translate-y-0"
-      leave-active-class="transition duration-200 ease-in"
-      leave-from-class="opacity-100 translate-y-0"
-      leave-to-class="opacity-0 -translate-y-6"
-    >
-      <div
-        v-if="mostrarPopup"
-        class="fixed top-6 left-1/2 -translate-x-1/2 z-50 bg-amma-green text-white font-bold py-3 px-8 rounded-btn shadow-xl border border-white/20 text-center text-sm md:text-base flex items-center gap-3"
-      >
-        <span class="material-symbols-outlined text-2xl">check_circle</span>
-        <span>Espécie cadastrada com sucesso!</span>
-      </div>
-    </Transition>
   </div>
 </template>

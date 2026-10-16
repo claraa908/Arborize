@@ -1,10 +1,10 @@
 @import "tailwindcss";
 
 @theme {
-    /*Fontes*/ 
+    /* Fontes */ 
     --font-sans: "League Spartan", sans-serif;
 
-    /*Cores do sistema*/
+    /* Cores do sistema */
     --color-amma-green: #6B8B3F;
     --color-amma-green-dark: #4D6E1F;
     --color-amma-green-light: #E1E8D9;
@@ -12,14 +12,29 @@
     --color-amma-bg: #EEF2EA;
     --color-grey-text: #6F6F6F;
 
+    /* Tons pasteis para feedback, toasts e ações */
+    --color-feedback-success: #5F8233;
+    --color-feedback-success-bg: #EEF4E8;
+    --color-feedback-success-border: #D6E4C9;
+
+    --color-feedback-danger: #B85342;
+    --color-feedback-danger-bg: #FBEAE8;
+    --color-feedback-danger-border: #F3C7C0;
+
+    --color-feedback-warning: #B37424;
+    --color-feedback-warning-bg: #FDF4E7;
+    --color-feedback-warning-border: #F7DFC0;
+
+    --color-feedback-info: #467185;
+    --color-feedback-info-bg: #EBF3F6;
+    --color-feedback-info-border: #C8DFE7;
+
     /* Arredondamento formato folha */
     --radius-btn: 10px 20px;
     --radius-btn-sidebar: 10px 30px;
     --radius-box: 15px 60px;
     --radius-btn-l-small: 5px 10px;
     --radius-btn-r-small: 10px 5px;
-    
-    
 }
 
 /* Animação de botões */

@@ -1,35 +1,112 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, computed, onMounted } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import AppBreadcrumb from '@/components/ui/AppBreadcrumb.vue'
-import axios from 'axios'
+import { useLibraryStore } from '@/stores/libraryStore'
+import { materialService } from '@/services/materialService'
+import { useFeedbackStore } from '@/stores/feedbackStore'
+import type { MaterialTypeUI, MaterialCategoryUI } from '@/types/library'
 
 const router = useRouter()
+const route = useRoute()
+const libraryStore = useLibraryStore()
+const feedback = useFeedbackStore()
+
+const docId = computed(() => route.params.id as string | undefined)
+const isEditing = computed(() => !!docId.value)
+
+const isSubmitting = ref(false)
+const isLoadingData = ref(false)
 
 const titulo = ref('')
 const descricao = ref('')
-const tipoMaterial = ref('')
-const categoria = ref('')
+const tipoMaterial = ref<MaterialTypeUI | ''>('')
+const categoria = ref<MaterialCategoryUI | ''>('')
 const statusPublicacao = ref('RASCUNHO')
 const fileName = ref('')
 const fileInput = ref<HTMLInputElement | null>(null)
 
-// Variáveis para a Foto de Capa e Pré-visualização
 const coverName = ref('')
 const coverPreview = ref<string | null>(null)
 const coverInput = ref<HTMLInputElement | null>(null)
 
-const tiposMaterial = ['Cartilha', 'Manual', 'Relatório Técnico', 'Guia', 'Outros']
-const categorias = ['Arborização Urbana', 'Caatinga', 'Educação Ambiental', 'Legislação']
+const tiposMaterial: MaterialTypeUI[] = ['Cartilha', 'Manual', 'Relatório Técnico', 'Guia', 'Outros']
+const categorias: MaterialCategoryUI[] = ['Arborização Urbana', 'Caatinga', 'Educação Ambiental', 'Legislação']
 
-const breadcrumbItems = [
+const breadcrumbItems = computed(() => [
   { label: 'Biblioteca Digital', icon: 'local_library', routeName: 'biblioteca-lista' },
-  { label: 'Novo Documento' }
-]
+  { label: isEditing.value ? 'Editar Documento' : 'Novo Documento' }
+])
 
 const goBack = () => {
   router.push({ name: 'biblioteca-lista' })
 }
+
+const reverseMapCategory = (cat: string): MaterialCategoryUI => {
+  const map: Record<string, MaterialCategoryUI> = {
+    'ARBORIZACAO_URBANA': 'Arborização Urbana',
+    'Arborização Urbana': 'Arborização Urbana',
+    'CAATINGA': 'Caatinga',
+    'Caatinga': 'Caatinga',
+    'EDUCACAO_AMBIENTAL': 'Educação Ambiental',
+    'Educação Ambiental': 'Educação Ambiental',
+    'LEGISLACAO': 'Legislação',
+    'Legislação': 'Legislação',
+  }
+  return map[cat] || 'Arborização Urbana'
+}
+
+const reverseMapType = (tipo: string): MaterialTypeUI => {
+  const map: Record<string, MaterialTypeUI> = {
+    'CARTILHA': 'Cartilha',
+    'Cartilha': 'Cartilha',
+    'MANUAL': 'Manual',
+    'Manual': 'Manual',
+    'RELATORIO_TECNICO': 'Relatório Técnico',
+    'Relatório Técnico': 'Relatório Técnico',
+    'GUIA': 'Guia',
+    'Guia': 'Guia',
+    'OUTROS': 'Outros',
+    'Outros': 'Outros',
+  }
+  return map[tipo] || 'Outros'
+}
+
+onMounted(async () => {
+  if (!isEditing.value || !docId.value) return
+
+  isLoadingData.value = true
+  try {
+    const data = await materialService.getMaterialById(docId.value)
+    titulo.value = data.title || ''
+    descricao.value = data.description || ''
+    statusPublicacao.value = data.status || 'RASCUNHO'
+
+    if (data.type || data.materialType) {
+      tipoMaterial.value = reverseMapType((data.type || data.materialType) as string)
+    }
+
+    if (data.category) {
+      categoria.value = reverseMapCategory(data.category)
+    }
+
+    const firstDoc = data.documents?.[0]
+    if (firstDoc) {
+      fileName.value = firstDoc.originalFilename || firstDoc.fileName
+    }
+
+    const hasCover = (data.documents?.length ?? 0) > 1
+    if (hasCover) {
+      coverPreview.value = materialService.getCoverUrl(docId.value)
+      coverName.value = 'capa_existente.jpg'
+    }
+  } catch (error) {
+    feedback.showToast('Erro ao carregar os dados para edição.', 'error')
+    goBack()
+  } finally {
+    isLoadingData.value = false
+  }
+})
 
 const triggerFileInput = () => {
   if (fileInput.value) {
@@ -41,7 +118,7 @@ const handleFileUpload = (event: Event) => {
   const inputElement = event.target as HTMLInputElement
 
   if (!inputElement || !inputElement.files || inputElement.files.length === 0) {
-    fileName.value = ''
+    if (!isEditing.value) fileName.value = ''
     return
   }
 
@@ -50,9 +127,9 @@ const handleFileUpload = (event: Event) => {
   if (uploadedFile && uploadedFile.type === 'application/pdf') {
     fileName.value = uploadedFile.name
   } else {
-    alert('Por favor, selecione apenas ficheiros PDF.')
+    feedback.showToast('Por favor, selecione apenas ficheiros PDF.', 'warning')
     inputElement.value = ''
-    fileName.value = ''
+    if (!isEditing.value) fileName.value = ''
   }
 }
 
@@ -66,8 +143,10 @@ const handleCoverUpload = (event: Event) => {
   const inputElement = event.target as HTMLInputElement
 
   if (!inputElement || !inputElement.files || inputElement.files.length === 0) {
-    coverName.value = ''
-    coverPreview.value = null
+    if (!isEditing.value) {
+      coverName.value = ''
+      coverPreview.value = null
+    }
     return
   }
 
@@ -75,64 +154,75 @@ const handleCoverUpload = (event: Event) => {
 
   if (uploadedCover && uploadedCover.type.startsWith('image/')) {
     coverName.value = uploadedCover.name
-    // Cria uma URL temporária para pré-visualizar a imagem escolhida
     coverPreview.value = URL.createObjectURL(uploadedCover)
   } else {
-    alert('Por favor, selecione apenas ficheiros de imagem (PNG, JPG, WEBP).')
+    feedback.showToast('Por favor, selecione apenas ficheiros de imagem (PNG, JPG, WEBP).', 'warning')
     inputElement.value = ''
-    coverName.value = ''
-    coverPreview.value = null
+    if (!isEditing.value) {
+      coverName.value = ''
+      coverPreview.value = null
+    }
   }
 }
 
 const saveDocument = async () => {
-  try {
-    const formData = new FormData()
+  if (!isEditing.value && !fileInput.value?.files?.[0]) {
+    feedback.showToast('É necessário anexar um arquivo PDF antes de prosseguir.', 'warning')
+    return
+  }
 
-    // Adiciona os campos de texto
-    formData.append('title', titulo.value)
-    formData.append('description', descricao.value)
-    formData.append('status', statusPublicacao.value)
+  const actionTitle = isEditing.value ? 'Salvar Alterações' : 'Guardar Documento'
+  const actionMessage = isEditing.value
+    ? `Deseja salvar as alterações realizadas no documento "${titulo.value}"?`
+    : `Deseja cadastrar o documento "${titulo.value}"?`
 
-    // Mapeia o texto visual do select para o Enum exato do Java
-    const tipoMapeado = tipoMaterial.value === 'Cartilha' ? 'CARTILHA' :
-                        tipoMaterial.value === 'Manual' ? 'MANUAL' :
-                        tipoMaterial.value === 'Relatório Técnico' ? 'RELATORIO_TECNICO' :
-                        tipoMaterial.value === 'Guia' ? 'GUIA' : 'OUTROS';
+  const confirmed = await feedback.showConfirm({
+    title: actionTitle,
+    message: actionMessage,
+    confirmText: isEditing.value ? 'Salvar' : 'Guardar',
+    cancelText: 'Voltar',
+    variant: 'primary',
+  })
 
-    const categoriaMapeada = categoria.value === 'Arborização Urbana' ? 'ARBORIZACAO_URBANA' :
-                             categoria.value === 'Caatinga' ? 'CAATINGA' :
-                             categoria.value === 'Educação Ambiental' ? 'EDUCACAO_AMBIENTAL' : 'LEGISLACAO';
+  if (!confirmed) {
+    return
+  }
 
-    formData.append('type', tipoMapeado)
-    formData.append('category', categoriaMapeada)
+  isSubmitting.value = true
 
-    // Adiciona o arquivo PDF obrigatório
-    if (fileInput.value && fileInput.value.files && fileInput.value.files[0]) {
-      formData.append('file', fileInput.value.files[0])
-    }
+  const fileToUpload = fileInput.value?.files?.[0] || null
+  const coverToUpload = coverInput.value?.files?.[0] || null
 
-    // Adiciona a foto de capa opcional (se o usuário selecionou)
-    if (coverInput.value && coverInput.value.files && coverInput.value.files[0]) {
-      formData.append('coverPhoto', coverInput.value.files[0])
-    }
+  let success = false
 
-    // Envia via POST para o Spring Boot
-    await axios.post('http://localhost:8080/api/materials', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      }
+  if (isEditing.value && docId.value) {
+    success = await libraryStore.updateDocument(docId.value, {
+      title: titulo.value,
+      description: descricao.value,
+      status: statusPublicacao.value as any,
+      type: tipoMaterial.value as MaterialTypeUI,
+      category: categoria.value as MaterialCategoryUI,
+      file: fileToUpload,
+      coverPhoto: coverToUpload,
     })
+  } else if (fileToUpload) {
+    success = await libraryStore.createDocument({
+      title: titulo.value,
+      description: descricao.value,
+      status: statusPublicacao.value as any,
+      type: tipoMaterial.value as MaterialTypeUI,
+      category: categoria.value as MaterialCategoryUI,
+      file: fileToUpload,
+      coverPhoto: coverToUpload,
+    })
+  }
 
-    alert('Documento guardado com sucesso!')
+  isSubmitting.value = false
+
+  if (success) {
     goBack()
-
-  } catch (error) {
-    console.error('Erro ao guardar documento:', error)
-    alert('Ocorreu um erro ao salvar o documento. Verifique a conexão com o servidor.')
   }
 }
-
 </script>
 
 <template>
@@ -140,14 +230,25 @@ const saveDocument = async () => {
 
     <AppBreadcrumb :items="breadcrumbItems" />
 
-    <div class="px-6 md:px-10 pb-6 pt-6 flex flex-col gap-6 w-full">
+    <div v-if="isLoadingData" class="p-12 text-center text-grey-text font-semibold flex items-center justify-center gap-3">
+      <span class="material-symbols-outlined animate-spin text-amma-green text-2xl">progress_activity</span>
+      <span>Carregando dados do documento...</span>
+    </div>
+
+    <div v-else class="px-6 md:px-10 pb-6 pt-6 flex flex-col gap-6 w-full">
       <div class="flex items-center gap-4">
         <div class="w-12 h-12 flex items-center justify-center bg-amma-green-lighter/50 text-amma-green rounded-full shadow-sm">
-            <span class="material-symbols-outlined text-[24px]">note_add</span>
+          <span class="material-symbols-outlined text-[24px]">
+            {{ isEditing ? 'edit_note' : 'note_add' }}
+          </span>
         </div>
         <div>
-            <h2 class="text-2xl font-bold text-amma-green-dark leading-none">Novo Documento</h2>
-            <p class="text-sm text-grey-text mt-1">Preencha os dados e anexe a capa e o ficheiro PDF para o catálogo.</p>
+          <h2 class="text-2xl font-bold text-amma-green-dark leading-none">
+            {{ isEditing ? 'Editar Documento' : 'Novo Documento' }}
+          </h2>
+          <p class="text-sm text-grey-text mt-1">
+            {{ isEditing ? 'Atualize as informações, capa ou substitua o ficheiro PDF do documento.' : 'Preencha os dados e anexe a capa e o ficheiro PDF para o catálogo.' }}
+          </p>
         </div>
       </div>
 
@@ -156,7 +257,6 @@ const saveDocument = async () => {
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
 
-            <!-- Upload de Capa com Pré-visualização -->
             <div class="flex flex-col gap-1.5">
               <label class="text-sm font-semibold text-grey-text pl-1">Foto de Capa (Opcional)</label>
               <div
@@ -171,15 +271,13 @@ const saveDocument = async () => {
                   @change="handleCoverUpload"
                 />
 
-                <!-- Se houver imagem selecionada, mostra a pré-visualização em miniatura -->
                 <template v-if="coverPreview">
                   <img :src="coverPreview" alt="Pré-visualização da Capa" class="absolute inset-0 w-full h-full object-cover rounded-box" />
                   <div class="absolute inset-0 bg-black/40 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-semibold">
-                    Alterar Capa
+                    Substituir Capa
                   </div>
                 </template>
 
-                <!-- Estado padrão (sem imagem) -->
                 <template v-else>
                   <span class="material-symbols-outlined text-3xl text-amma-green mb-1">image</span>
                   <p class="text-xs font-medium text-grey-text text-center">
@@ -190,9 +288,10 @@ const saveDocument = async () => {
               </div>
             </div>
 
-            <!-- Upload de PDF -->
             <div class="flex flex-col gap-1.5">
-              <label class="text-sm font-semibold text-grey-text pl-1">Arquivo PDF *</label>
+              <label class="text-sm font-semibold text-grey-text pl-1">
+                Arquivo PDF {{ isEditing ? '(Opcional para substituição)' : '*' }}
+              </label>
               <div
                 @click="triggerFileInput"
                 class="w-full border-2 border-dashed border-amma-green-light hover:border-amma-green bg-amma-green-lighter/30 rounded-box p-4 flex flex-col items-center justify-center cursor-pointer transition-colors h-[150px]"
@@ -206,12 +305,17 @@ const saveDocument = async () => {
                 />
                 <span class="material-symbols-outlined text-3xl text-amma-green mb-1">picture_as_pdf</span>
                 <p v-if="!fileName" class="text-xs font-medium text-grey-text text-center">
-                  Clique para selecionar o PDF *<br/>
+                  Clique para selecionar o PDF {{ isEditing ? '' : '*' }}<br/>
                   <span class="text-[11px] text-grey-text/60 font-normal">Tamanho máximo: 10MB</span>
                 </p>
-                <p v-else class="text-xs font-bold text-amma-green-dark text-center truncate max-w-full px-2">
-                  {{ fileName }}
-                </p>
+                <div v-else class="text-center px-2">
+                  <p class="text-xs font-bold text-amma-green-dark truncate max-w-full">
+                    {{ fileName }}
+                  </p>
+                  <span v-if="isEditing" class="text-[11px] text-grey-text/70">
+                    Clique para substituir o PDF atual
+                  </span>
+                </div>
               </div>
             </div>
 
@@ -283,14 +387,16 @@ const saveDocument = async () => {
               type="button"
               @click="goBack"
               class="bg-white hover:bg-amma-bg text-grey-text font-bold py-2.5 px-6 rounded-btn border-2 border-amma-green-light transition-colors shadow-sm text-sm"
+              :disabled="isSubmitting"
             >
               Cancelar
             </button>
             <button
               type="submit"
-              class="bg-amma-green hover:bg-amma-green-dark text-white font-bold py-2.5 px-6 rounded-btn shadow-md text-sm border-none outline-none efeito-zoom"
+              class="bg-amma-green hover:bg-amma-green-dark text-white font-bold py-2.5 px-6 rounded-btn shadow-md text-sm border-none outline-none efeito-zoom disabled:opacity-50 disabled:cursor-not-allowed"
+              :disabled="isSubmitting"
             >
-              Guardar Documento
+              {{ isSubmitting ? 'A salvar...' : (isEditing ? 'Atualizar Documento' : 'Guardar Documento') }}
             </button>
           </div>
 

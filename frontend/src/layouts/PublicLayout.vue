@@ -4,6 +4,7 @@ import { RouterView } from 'vue-router'
 import TopBar from '@/components/layout/TopBar.vue'
 import LoginModal from '@/components/modals/LoginModal.vue'
 import RegisterModal from '@/components/modals/RegisterModal.vue'
+import AppToastContainer from '@/components/feedback/AppToastContainer.vue'
 
 const isLoginModalOpen = ref(false)
 const isRegisterModalOpen = ref(false)
@@ -21,8 +22,9 @@ const openRegister = () => {
 
 <template>
   <div class="h-screen bg-amma-bg px-4 py-2 md:px-8 md:py-4 flex justify-center overflow-hidden">
-    <div class="w-full max-w-7xl bg-white rounded-box shadow-xl flex flex-col h-full overflow-hidden">
-      
+    <div class="w-full max-w-7xl bg-white rounded-box shadow-xl flex flex-col h-full overflow-hidden relative">
+      <AppToastContainer />
+
       <TopBar 
         class="shrink-0" 
         @open-login="openLogin" 

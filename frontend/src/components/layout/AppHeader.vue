@@ -1,13 +1,31 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useFeedbackStore } from '@/stores/feedbackStore'
 
 const route = useRoute()
 const router = useRouter()
+const feedback = useFeedbackStore()
+
 const pageTitle = computed(() => route.meta.title as string || 'Arborize')
 
 const navigateToProfile = () => {
   router.push({ name: 'perfil' })
+}
+
+const handleLogout = async () => {
+  const confirmed = await feedback.showConfirm({
+    title: 'Encerrar Sessão',
+    message: 'Tem certeza de que deseja sair da sua conta no sistema Arborize?',
+    confirmText: 'Sair',
+    cancelText: 'Cancelar',
+    variant: 'danger',
+  })
+
+  if (!confirmed) return
+
+  feedback.showToast('Sessão encerrada com sucesso.', 'info')
+  router.push({ name: 'home' })
 }
 </script>
 
@@ -40,7 +58,7 @@ const navigateToProfile = () => {
         <button 
           @click="navigateToProfile"
           :class="[
-            'w-10 h-10 flex items-center justify-center transition-all efeito-zoom',
+            'w-10 h-10 flex items-center justify-center transition-all efeito-zoom cursor-pointer',
             route.name === 'perfil'
               ? 'bg-amma-green-dark text-white shadow-inner rounded-bl-[10px] rounded-tr-[10px] rounded-tl-[20px] rounded-br-[20px]'
               : 'text-grey-text hover:text-white hover:bg-amma-green rounded-bl-[10px] rounded-tr-[10px] rounded-tl-[20px] rounded-br-[20px]'
@@ -51,7 +69,9 @@ const navigateToProfile = () => {
         </button>
         
         <button 
-          class="w-10 h-10 flex items-center justify-center text-grey-text hover:text-red-500 hover:bg-red-50 rounded-bl-[10px] rounded-tr-[10px] rounded-tl-[20px] rounded-br-[20px] transition-all efeito-zoom" 
+          type="button"
+          @click="handleLogout"
+          class="w-10 h-10 flex items-center justify-center text-grey-text hover:text-feedback-danger hover:bg-feedback-danger-bg rounded-bl-[10px] rounded-tr-[10px] rounded-tl-[20px] rounded-br-[20px] transition-all efeito-zoom cursor-pointer" 
           title="Sair"
         >
           <span class="material-symbols-outlined text-[24px]">logout</span>

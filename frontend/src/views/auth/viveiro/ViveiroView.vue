@@ -1,44 +1,30 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue' // onMounted adicionado
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import AppDataTable, { type TableColumn } from '@/components/ui/AppDataTable.vue'
+import { useViveiroStore } from '@/stores/viveiroStore'
 
 const router = useRouter()
+const viveiroStore = useViveiroStore()
 const searchQuery = ref('')
 
 const colunas: TableColumn[] = [
   { key: 'especie', label: 'Espécie Botânica', width: '35%' },
   { key: 'categoria', label: 'Categoria' },
-  { key: 'porteArvore', label: 'Porte', align: 'center' }, // Atualizado
-  { key: 'recomendadaCalcadas', label: 'Calçadas', align: 'center' }, // Atualizado
+  { key: 'porteArvore', label: 'Porte', align: 'center' },
+  { key: 'recomendadaCalcadas', label: 'Calçadas', align: 'center' },
   { key: 'mudasDisponiveis', label: 'Estoque Mudas', align: 'center' },
   { key: 'acoes', label: 'Ações', align: 'center' },
 ]
 
-const especies = ref([])
-
-const carregarEspecies = async () => {
-  try {
-    const resposta = await fetch('http://localhost:8080/especies')
-    if (resposta.ok) {
-      const dados = await resposta.json()
-      especies.value = dados
-    } else {
-      console.error('Falha ao carregar espécies:', resposta.status)
-    }
-  } catch (erro) {
-    console.error('Erro de conexão ao buscar espécies:', erro)
-  }
-}
-
 onMounted(() => {
-  carregarEspecies()
+  viveiroStore.fetchEspecies()
 })
 
 const especiesFiltradas = computed(() => {
-  if (!searchQuery.value) return especies.value
+  if (!searchQuery.value) return viveiroStore.especies
   const query = searchQuery.value.toLowerCase()
-  return especies.value.filter(
+  return viveiroStore.especies.filter(
     (esp) =>
       (esp.nomePopular && esp.nomePopular.toLowerCase().includes(query)) ||
       (esp.nomeCientifico && esp.nomeCientifico.toLowerCase().includes(query)) ||
@@ -48,6 +34,18 @@ const especiesFiltradas = computed(() => {
 
 const navigateToNew = () => {
   router.push({ name: 'viveiro-cadastrar' })
+}
+
+const viewDetails = (id: string | number) => {
+  router.push({ name: 'viveiro-detalhes', params: { id } })
+}
+
+const editEspecie = (id: string | number) => {
+  router.push({ name: 'viveiro-editar', params: { id } })
+}
+
+const handleDelete = async (id: string | number) => {
+  await viveiroStore.removeEspecie(id)
 }
 </script>
 
@@ -84,7 +82,7 @@ const navigateToNew = () => {
             'text-xs font-bold px-3 py-1 rounded-full inline-block min-w-[60px]',
             item.recomendadaCalcadas
               ? 'bg-amma-green/20 text-amma-green-dark'
-              : 'bg-red-100 text-red-700',
+              : 'bg-feedback-danger-bg text-feedback-danger border border-feedback-danger-border',
           ]"
         >
           {{ item.recomendadaCalcadas ? 'Sim' : 'Não' }}
@@ -97,21 +95,34 @@ const navigateToNew = () => {
         </span>
       </template>
 
-      <template #acoes>
+      <template #acoes="{ item }">
         <div class="flex items-center justify-center gap-2">
           <button
+            v-if="item.id"
             type="button"
+            @click="viewDetails(item.id)"
             class="w-8 h-8 flex items-center justify-center text-amma-green hover:bg-amma-green-lighter rounded-full transition-colors efeito-zoom cursor-pointer"
             title="Visualizar Detalhes"
           >
             <span class="material-symbols-outlined text-[20px]">psychiatry</span>
           </button>
           <button
+            v-if="item.id"
             type="button"
+            @click="editEspecie(item.id)"
             class="w-8 h-8 flex items-center justify-center text-grey-text hover:text-amma-green-dark hover:bg-amma-green-lighter rounded-full transition-colors efeito-zoom cursor-pointer"
             title="Editar Espécie"
           >
             <span class="material-symbols-outlined text-[20px]">edit</span>
+          </button>
+          <button
+            v-if="item.id"
+            type="button"
+            @click="handleDelete(item.id)"
+            class="w-8 h-8 flex items-center justify-center text-feedback-danger hover:bg-feedback-danger-bg rounded-full transition-colors efeito-zoom cursor-pointer"
+            title="Excluir Espécie"
+          >
+            <span class="material-symbols-outlined text-[20px]">delete</span>
           </button>
         </div>
       </template>

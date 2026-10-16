@@ -2,9 +2,12 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import AppDataTable, { type TableColumn } from '@/components/ui/AppDataTable.vue'
+import { useEventoStore } from '@/stores/eventoStore'
 
 const router = useRouter()
+const eventoStore = useEventoStore()
 const searchQuery = ref('')
+const selectedStatusFilter = ref<string>('TODOS')
 
 const colunas: TableColumn[] = [
   { key: 'nome', label: 'Nome do Evento', width: '32%' },
@@ -15,40 +18,47 @@ const colunas: TableColumn[] = [
   { key: 'acoes', label: 'Ações', align: 'center' },
 ]
 
-const eventos = ref([])
-
-const carregarEventos = async () => {
-  try {
-    const resposta = await fetch('http://localhost:8080/eventos')
-    if (resposta.ok) {
-      // Pega o JSON devolvido pelo Spring Boot e guarda na variável reativa
-      const dados = await resposta.json()
-      eventos.value = dados
-    } else {
-      console.error('Falha ao carregar eventos:', resposta.status)
-    }
-  } catch (erro) {
-    console.error('Erro de conexão ao buscar eventos:', erro)
-  }
-}
-
 onMounted(() => {
-  carregarEventos()
+  eventoStore.fetchEventos()
+})
+
+const contadores = computed(() => {
+  const total = eventoStore.eventos.length
+  const planejados = eventoStore.eventos.filter((e) => e.status === 'PLANEJADO').length
+  const confirmados = eventoStore.eventos.filter((e) => e.status === 'CONFIRMADO').length
+  const encerrados = eventoStore.eventos.filter((e) => e.status === 'ENCERRADO').length
+  return { total, planejados, confirmados, encerrados }
 })
 
 const eventosFiltrados = computed(() => {
-  if (!searchQuery.value) return eventos.value
-  const query = searchQuery.value.toLowerCase()
-  return eventos.value.filter(
-    (evt) =>
-      (evt.nome && evt.nome.toLowerCase().includes(query)) ||
-      (evt.localConcentracao && evt.localConcentracao.toLowerCase().includes(query)) ||
-      (evt.destinoFinal && evt.destinoFinal.toLowerCase().includes(query)),
-  )
+  return eventoStore.eventos.filter((evt) => {
+    const matchBusca =
+      !searchQuery.value ||
+      (evt.nome && evt.nome.toLowerCase().includes(searchQuery.value.toLowerCase())) ||
+      (evt.localConcentracao && evt.localConcentracao.toLowerCase().includes(searchQuery.value.toLowerCase())) ||
+      (evt.destinoFinal && evt.destinoFinal.toLowerCase().includes(searchQuery.value.toLowerCase()))
+
+    const matchStatus =
+      selectedStatusFilter.value === 'TODOS' || evt.status === selectedStatusFilter.value
+
+    return matchBusca && matchStatus
+  })
 })
 
 const navigateToNew = () => {
   router.push({ name: 'eventos-cadastrar' })
+}
+
+const viewDetails = (id: string | number) => {
+  router.push({ name: 'eventos-detalhes', params: { id } })
+}
+
+const editEvento = (id: string | number) => {
+  router.push({ name: 'eventos-editar', params: { id } })
+}
+
+const handleDelete = async (id: string | number) => {
+  await eventoStore.removeEvento(id)
 }
 
 const statusClass = (status: string) => {
@@ -56,17 +66,78 @@ const statusClass = (status: string) => {
     case 'CONFIRMADO':
       return 'bg-amma-green/20 text-amma-green-dark'
     case 'PLANEJADO':
-      return 'bg-blue-100 text-blue-700'
+      return 'bg-feedback-info-bg text-feedback-info border border-feedback-info-border'
     case 'ENCERRADO':
       return 'bg-black/10 text-grey-text'
     default:
-      return 'bg-orange-100 text-orange-700'
+      return 'bg-feedback-warning-bg text-feedback-warning border border-feedback-warning-border'
   }
 }
 </script>
 
 <template>
   <div class="px-6 md:px-10 pt-6 flex flex-col gap-6">
+    <div class="flex flex-wrap items-center gap-2">
+      <button
+        type="button"
+        @click="selectedStatusFilter = 'TODOS'"
+        :class="[
+          'px-4 py-1.5 rounded-btn text-xs font-bold transition-all border-2 flex items-center gap-2 cursor-pointer',
+          selectedStatusFilter === 'TODOS'
+            ? 'bg-amma-green text-white border-amma-green shadow-xs'
+            : 'bg-white text-grey-text border-amma-green-light hover:border-amma-green'
+        ]"
+      >
+        <span>Todos os Eventos</span>
+        <span class="bg-black/10 px-2 py-0.5 rounded-full text-[11px]">{{ contadores.total }}</span>
+      </button>
+
+      <button
+        type="button"
+        @click="selectedStatusFilter = 'PLANEJADO'"
+        :class="[
+          'px-4 py-1.5 rounded-btn text-xs font-bold transition-all border-2 flex items-center gap-2 cursor-pointer',
+          selectedStatusFilter === 'PLANEJADO'
+            ? 'bg-amma-green text-white border-amma-green shadow-xs'
+            : 'bg-white text-grey-text border-amma-green-light hover:border-amma-green'
+        ]"
+      >
+        <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+        <span>Planejados</span>
+        <span class="bg-black/10 px-2 py-0.5 rounded-full text-[11px]">{{ contadores.planejados }}</span>
+      </button>
+
+      <button
+        type="button"
+        @click="selectedStatusFilter = 'CONFIRMADO'"
+        :class="[
+          'px-4 py-1.5 rounded-btn text-xs font-bold transition-all border-2 flex items-center gap-2 cursor-pointer',
+          selectedStatusFilter === 'CONFIRMADO'
+            ? 'bg-amma-green text-white border-amma-green shadow-xs'
+            : 'bg-white text-grey-text border-amma-green-light hover:border-amma-green'
+        ]"
+      >
+        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+        <span>Confirmados</span>
+        <span class="bg-black/10 px-2 py-0.5 rounded-full text-[11px]">{{ contadores.confirmados }}</span>
+      </button>
+
+      <button
+        type="button"
+        @click="selectedStatusFilter = 'ENCERRADO'"
+        :class="[
+          'px-4 py-1.5 rounded-btn text-xs font-bold transition-all border-2 flex items-center gap-2 cursor-pointer',
+          selectedStatusFilter === 'ENCERRADO'
+            ? 'bg-amma-green text-white border-amma-green shadow-xs'
+            : 'bg-white text-grey-text border-amma-green-light hover:border-amma-green'
+        ]"
+      >
+        <span class="w-2 h-2 rounded-full bg-gray-400"></span>
+        <span>Encerrados</span>
+        <span class="bg-black/10 px-2 py-0.5 rounded-full text-[11px]">{{ contadores.encerrados }}</span>
+      </button>
+    </div>
+
     <AppDataTable
       v-model:search="searchQuery"
       :columns="colunas"
@@ -107,7 +178,6 @@ const statusClass = (status: string) => {
           class="text-sm font-medium text-grey-text block truncate max-w-xs"
           :title="item.localConcentracao"
         >
-          <!-- Altere item.local para item.localConcentracao -->
           {{ item.localConcentracao }}
         </span>
       </template>
@@ -123,21 +193,34 @@ const statusClass = (status: string) => {
         </span>
       </template>
 
-      <template #acoes>
+      <template #acoes="{ item }">
         <div class="flex items-center justify-center gap-2">
           <button
+            v-if="item.id"
             type="button"
+            @click="viewDetails(item.id)"
             class="w-8 h-8 flex items-center justify-center text-amma-green hover:bg-amma-green-lighter rounded-full transition-colors efeito-zoom cursor-pointer"
             title="Visualizar Detalhes"
           >
             <span class="material-symbols-outlined text-[20px]">event</span>
           </button>
           <button
+            v-if="item.id"
             type="button"
+            @click="editEvento(item.id)"
             class="w-8 h-8 flex items-center justify-center text-grey-text hover:text-amma-green-dark hover:bg-amma-green-lighter rounded-full transition-colors efeito-zoom cursor-pointer"
             title="Editar Evento"
           >
             <span class="material-symbols-outlined text-[20px]">edit</span>
+          </button>
+          <button
+            v-if="item.id"
+            type="button"
+            @click="handleDelete(item.id)"
+            class="w-8 h-8 flex items-center justify-center text-feedback-danger hover:bg-feedback-danger-bg rounded-full transition-colors efeito-zoom cursor-pointer"
+            title="Excluir Evento"
+          >
+            <span class="material-symbols-outlined text-[20px]">delete</span>
           </button>
         </div>
       </template>

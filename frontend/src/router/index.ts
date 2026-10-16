@@ -50,6 +50,12 @@ const router = createRouter({
           meta: { title: 'Biblioteca Digital', activeMenu: 'biblioteca-lista' }
         },
         {
+          path: 'biblioteca/:id/editar',
+          name: 'biblioteca-editar',
+          component: () => import('@/views/auth/biblioteca/BibliotecaFormView.vue'),
+          meta: { title: 'Biblioteca Digital', activeMenu: 'biblioteca-lista' }
+        },
+        {
           path: 'biblioteca/:id',
           name: 'biblioteca-detalhes',
           component: () => import('@/views/auth/biblioteca/BibliotecaDetalhesView.vue'),
@@ -62,17 +68,29 @@ const router = createRouter({
           meta: { title: 'Inventário Arbóreo' }
         },
         {
-          path: 'viveiro',
-          name: 'viveiro',
-          component: () => import('@/views/auth/viveiro/ViveiroView.vue'),
-          meta: { title: 'Gestão do Viveiro' }
-        },
-        {
-          path: 'viveiro/cadastrar-especie',
-          name: 'viveiro-cadastrar',
-          component: () => import('@/views/auth/viveiro/ViveiroCadastroView.vue'),
-          meta: { title: 'Gestão do Viveiro', activeMenu: 'viveiro' }
-        },
+  path: 'viveiro',
+  name: 'viveiro',
+  component: () => import('@/views/auth/viveiro/ViveiroView.vue'),
+  meta: { title: 'Gestão do Viveiro' }
+},
+{
+  path: 'viveiro/cadastrar-especie',
+  name: 'viveiro-cadastrar',
+  component: () => import('@/views/auth/viveiro/ViveiroCadastroView.vue'),
+  meta: { title: 'Gestão do Viveiro', activeMenu: 'viveiro' }
+},
+{
+  path: 'viveiro/:id/editar',
+  name: 'viveiro-editar',
+  component: () => import('@/views/auth/viveiro/ViveiroCadastroView.vue'),
+  meta: { title: 'Gestão do Viveiro', activeMenu: 'viveiro' }
+},
+{
+  path: 'viveiro/:id',
+  name: 'viveiro-detalhes',
+  component: () => import('@/views/auth/viveiro/ViveiroDetalhesView.vue'),
+  meta: { title: 'Gestão do Viveiro', activeMenu: 'viveiro' }
+},
         {
           path: 'solicitacoes',
           name: 'solicitacoes',
@@ -94,6 +112,18 @@ const router = createRouter({
         {
           path: 'eventos/cadastrar',
           name: 'eventos-cadastrar',
+          component: () => import('@/views/auth/eventos/EventosCadastroView.vue'),
+          meta: { title: 'Eventos Ambientais', activeMenu: 'eventos' }
+        },
+        {
+          path: 'eventos/:id',
+          name: 'eventos-detalhes',
+          component: () => import('@/views/auth/eventos/EventosDetalhesView.vue'),
+          meta: { title: 'Eventos Ambientais', activeMenu: 'eventos' }
+        },
+        {
+          path: 'eventos/:id/editar',
+          name: 'eventos-editar',
           component: () => import('@/views/auth/eventos/EventosCadastroView.vue'),
           meta: { title: 'Eventos Ambientais', activeMenu: 'eventos' }
         },
