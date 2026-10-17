@@ -5,22 +5,26 @@ import { useRoute, useRouter } from 'vue-router'
 const route = useRoute()
 const router = useRouter()
 
-const menuItems = [
+interface SubMenuItem {
+  name: string
+  routeName: string
+}
+
+interface MenuItem {
+  name: string
+  icon: string
+  routeName?: string
+  children?: SubMenuItem[]
+}
+
+const menuItems: MenuItem[] = [
   { name: 'Dashboard e Relatórios', icon: 'insert_chart', routeName: 'dashboard' },
   { name: 'Biblioteca Digital', icon: 'local_library', routeName: 'biblioteca-lista' },
   { name: 'Inventário', icon: 'pin_drop', routeName: 'inventario' },
-  {
-    name: 'Viveiro',
-    icon: 'psychiatry',
-    routeName: 'viveiro',
-  },
+  { name: 'Viveiro', icon: 'psychiatry', routeName: 'viveiro' },
   { name: 'Solicitações', icon: 'content_paste', routeName: 'solicitacoes' },
   { name: 'Laudos', icon: 'description', routeName: 'laudos' },
-  {
-    name: 'Eventos',
-    icon: 'event',
-    routeName: 'eventos',
-  }
+  { name: 'Eventos', icon: 'event', routeName: 'eventos' }
 ]
 
 const isExpanded = ref(true)
@@ -46,20 +50,27 @@ onUnmounted(() => {
   window.removeEventListener('resize', handleResize)
 })
 
-const navigateTo = (routeName: string) => {
-  router.push({ name: routeName })
-  isMobileOpen.value = false
+const navigateTo = (routeName?: string) => {
+  if (routeName) {
+    router.push({ name: routeName })
+    isMobileOpen.value = false
+  }
 }
 
-const handleItemClick = (item: { children?: unknown; routeName: string }) => {
-  navigateTo(item.routeName)
+const handleItemClick = (item: MenuItem) => {
+  if (item.children && item.children.length > 0) {
+    toggleSubmenu(item.name)
+  } else if (item.routeName) {
+    navigateTo(item.routeName)
+  }
 }
 
 const toggleSubmenu = (itemName: string) => {
   openSubmenus.value[itemName] = !openSubmenus.value[itemName]
 }
 
-const isActive = (routeName: string) => {
+const isActive = (routeName?: string) => {
+  if (!routeName) return false
   return route.name === routeName || route.meta.activeMenu === routeName
 }
 </script>
@@ -100,7 +111,7 @@ const isActive = (routeName: string) => {
           :class="[
             'flex items-center py-3.5 transition-all cursor-pointer rounded-btn-sidebar select-none',
             isExpanded ? 'px-4 gap-4 justify-between' : 'px-0 justify-center',
-            isActive(item.routeName) || (item.children && item.children.some(child => isActive(child.routeName)))
+            isActive(item.routeName) || (Array.isArray(item.children) && item.children.some(child => isActive(child.routeName)))
               ? 'bg-amma-green-dark text-white shadow-inner'
               : 'text-white/80 hover:bg-black/10 hover:text-white'
           ]"
@@ -112,7 +123,7 @@ const isActive = (routeName: string) => {
           </div>
 
           <button
-            v-if="isExpanded && item.children"
+            v-if="isExpanded && item.children && item.children.length > 0"
             type="button"
             class="p-1 hover:bg-black/20 rounded-full transition flex items-center justify-center"
             @click.stop.prevent="toggleSubmenu(item.name)"
@@ -123,7 +134,7 @@ const isActive = (routeName: string) => {
           </button>
         </a>
 
-        <div v-if="isExpanded && item.children && openSubmenus[item.name]" class="pl-6 flex flex-col gap-1">
+        <div v-if="isExpanded && item.children && item.children.length > 0 && openSubmenus[item.name]" class="pl-6 flex flex-col gap-1">
           <a
             v-for="child in item.children"
             :key="child.name"
@@ -185,11 +196,11 @@ const isActive = (routeName: string) => {
               href="#"
               :class="[
                 'flex items-center justify-between px-4 py-3.5 text-sm font-semibold transition-all cursor-pointer rounded-btn',
-                isActive(item.routeName) || (item.children && item.children.some(child => isActive(child.routeName)))
+                isActive(item.routeName) || (Array.isArray(item.children) && item.children.some(child => isActive(child.routeName)))
                   ? 'bg-amma-green-dark text-white shadow-inner'
                   : 'text-white/80 hover:bg-black/10 hover:text-white'
               ]"
-              @click.prevent="navigateTo(item.routeName)"
+              @click.prevent="handleItemClick(item)"
             >
               <div class="flex items-center gap-4">
                 <span class="material-symbols-outlined text-[24px]">{{ item.icon }}</span>
@@ -197,7 +208,7 @@ const isActive = (routeName: string) => {
               </div>
 
               <button
-                v-if="item.children"
+                v-if="item.children && item.children.length > 0"
                 type="button"
                 class="p-1 hover:bg-black/20 rounded-full transition flex items-center justify-center"
                 @click.stop.prevent="toggleSubmenu(item.name)"
@@ -208,7 +219,7 @@ const isActive = (routeName: string) => {
               </button>
             </a>
 
-            <div v-if="item.children && openSubmenus[item.name]" class="pl-4 flex flex-col gap-1">
+            <div v-if="item.children && item.children.length > 0 && openSubmenus[item.name]" class="pl-4 flex flex-col gap-1">
               <a
                 v-for="child in item.children"
                 :key="child.name"
@@ -230,4 +241,3 @@ const isActive = (routeName: string) => {
     </div>
   </Transition>
 </template>
-
