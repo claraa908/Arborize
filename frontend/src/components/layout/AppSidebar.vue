@@ -9,23 +9,17 @@ const menuItems = [
   { name: 'Dashboard e Relatórios', icon: 'insert_chart', routeName: 'dashboard' },
   { name: 'Biblioteca Digital', icon: 'local_library', routeName: 'biblioteca-lista' },
   { name: 'Inventário', icon: 'pin_drop', routeName: 'inventario' },
-  { 
-    name: 'Viveiro', 
-    icon: 'psychiatry', 
+  {
+    name: 'Viveiro',
+    icon: 'psychiatry',
     routeName: 'viveiro',
-    children: [
-      { name: 'Cadastrar Espécie', routeName: 'viveiro-cadastrar' }
-    ]
   },
   { name: 'Solicitações', icon: 'content_paste', routeName: 'solicitacoes' },
   { name: 'Laudos', icon: 'description', routeName: 'laudos' },
-  { 
-    name: 'Eventos', 
-    icon: 'event', 
+  {
+    name: 'Eventos',
+    icon: 'event',
     routeName: 'eventos',
-    children: [
-      { name: 'Cadastrar Evento', routeName: 'eventos-cadastrar' }
-    ]
   }
 ]
 
@@ -236,3 +230,4 @@ const isActive = (routeName: string) => {
     </div>
   </Transition>
 </template>
+
