@@ -14,6 +14,7 @@ public record EventosResponseDTO(
         String horarioTermino,
         String descricaoPontoPartida,
         String descricaoEncerramento,
+        String status,
         List<DocumentResponseDTO> documentos
 ) {
 }

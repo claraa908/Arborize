@@ -35,6 +35,9 @@ public class Eventos {
 
     private String destinoFinal;
 
+    @Column(name = "status")
+    private String status;
+
     @Column(nullable = false)
     private LocalTime horarioInicio;
 
@@ -95,5 +98,13 @@ public class Eventos {
 
     public void setDocuments(List<DocumentEntities> documents) {
         this.documents = documents;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }
