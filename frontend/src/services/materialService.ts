@@ -17,8 +17,15 @@ const typeMapToBackend: Record<string, string> = {
 };
 
 export const materialService = {
-  async getPublicMaterials(): Promise<MaterialBackendDTO[]> {
-    const response = await api.get<MaterialBackendDTO[]>('/api/materials');
+  async getPublicMaterials(search?: string, category?: string): Promise<MaterialBackendDTO[]> {
+    const params = new URLSearchParams();
+    if (search) params.append('search', search);
+    if (category) {
+      const mappedCategory = categoryMapToBackend[category] || category;
+      params.append('category', mappedCategory);
+    }
+
+    const response = await api.get<MaterialBackendDTO[]>('/api/materials', { params });
     return response.data;
   },
 
@@ -72,6 +79,11 @@ export const materialService = {
     const response = await api.put<MaterialBackendDTO>(`/api/materials/${id}`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     });
+    return response.data;
+  },
+
+  async updateStatus(id: string | number, status: 'PUBLICADO' | 'RASCUNHO'): Promise<MaterialBackendDTO> {
+    const response = await api.patch<MaterialBackendDTO>(`/api/materials/${id}/status`, { status });
     return response.data;
   },
 
