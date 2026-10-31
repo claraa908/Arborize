@@ -9,6 +9,7 @@ import br.com.arborize.mappers.EducationalMaterialMapper;
 import br.com.arborize.repositories.EducationalMaterialRepository;
 import io.minio.GetObjectArgs;
 import io.minio.MinioClient;
+import io.minio.RemoveObjectArgs;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -64,14 +65,19 @@ public class EducationalMaterialService {
         }
     }
 
-    // 2. Lista os materiais PUBLICADOS para o Cidadão (Com suporte a busca e categoria)
+    // 2. Listagem Pública com suporte a busca por título E filtro por categoria
     @Transactional(readOnly = true)
     public List<EducationalMaterialResponseDTO> getPublicMaterials(String search, MaterialCategory category) {
         List<EducationalMaterialEntities> materials;
 
-        if (search != null && !search.isEmpty()) {
+        boolean hasSearch = search != null && !search.trim().isEmpty();
+        boolean hasCategory = category != null;
+
+        if (hasSearch && hasCategory) {
+            materials = repository.findByStatusAndCategoryAndTitleContainingIgnoreCase("PUBLICADO", category, search);
+        } else if (hasSearch) {
             materials = repository.findByStatusAndTitleContainingIgnoreCase("PUBLICADO", search);
-        } else if (category != null) {
+        } else if (hasCategory) {
             materials = repository.findByStatusAndCategory("PUBLICADO", category);
         } else {
             materials = repository.findByStatus("PUBLICADO");
@@ -99,7 +105,63 @@ public class EducationalMaterialService {
         return mapper.toResponseDTO(material);
     }
 
-    // 5. Busca os bytes do PDF no MinIO para download
+    // 5. UPDATE (Modificar dados do material)
+    @Transactional
+    public EducationalMaterialResponseDTO updateMaterial(Long id, EducationalMaterialRequestDTO dto) {
+        EducationalMaterialEntities material = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Material não encontrado para atualização com ID: " + id));
+
+        material.setTitle(dto.title());
+        material.setDescription(dto.description());
+        material.setType(dto.type());
+        material.setCategory(dto.category());
+        material.setStatus(dto.status());
+
+        EducationalMaterialEntities updated = repository.save(material);
+        return mapper.toResponseDTO(updated);
+    }
+
+    // 6. UPDATE exclusivo de status
+    @Transactional
+    public EducationalMaterialResponseDTO updateStatus(Long id, String newStatus) {
+        EducationalMaterialEntities material = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Material não encontrado com ID: " + id));
+
+        if (!newStatus.equals("PUBLICADO") && !newStatus.equals("RASCUNHO")) {
+            throw new IllegalArgumentException("Status inválido. Use 'PUBLICADO' ou 'RASCUNHO'.");
+        }
+
+        material.setStatus(newStatus);
+        EducationalMaterialEntities updated = repository.save(material);
+        return mapper.toResponseDTO(updated);
+    }
+
+    // 7. DELETE (Excluir material e remover arquivos do MinIO)
+    @Transactional
+    public void deleteMaterial(Long id) {
+        EducationalMaterialEntities material = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Material não encontrado para exclusão com ID: " + id));
+
+        // Remove os arquivos associados do MinIO
+        if (material.getDocuments() != null) {
+            for (DocumentEntities doc : material.getDocuments()) {
+                try {
+                    minioClient.removeObject(
+                            RemoveObjectArgs.builder()
+                                    .bucket(bucketName)
+                                    .object(doc.getFilePath())
+                                    .build()
+                    );
+                } catch (Exception e) {
+                    System.err.println("Aviso: Não foi possível remover o arquivo do MinIO: " + doc.getFilePath() + " - " + e.getMessage());
+                }
+            }
+        }
+
+        repository.delete(material);
+    }
+
+    // 8. Busca os bytes do PDF no MinIO para download
     public byte[] getFileStream(Long materialId) {
         EducationalMaterialEntities material = repository.findById(materialId)
                 .orElseThrow(() -> new RuntimeException("Material não encontrado"));

@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import axios from 'axios'
+import { materialService } from '@/services/materialService'
+import { useFeedbackStore } from '@/stores/feedbackStore'
 
 const router = useRouter()
 const route = useRoute()
+const feedback = useFeedbackStore()
 
 const documento = ref<any>({
   id: '',
@@ -18,27 +20,28 @@ const documento = ref<any>({
   capaUrl: ''
 })
 
-// Função para buscar os detalhes do material público pelo ID
+// Função para buscar os detalhes do material público pelo ID usando o materialService
 const carregarDetalhesPublicos = async () => {
   try {
-    const id = route.params.id
-    const response = await axios.get(`http://localhost:8080/api/materials/${id}`)
-    const data = response.data
+    const id = route.params.id as string
+    const data = await materialService.getMaterialById(id)
+
+    const firstDoc = data.documents?.[0]
+    const hasCover = (data.documents?.length ?? 0) > 1
 
     documento.value = {
       id: data.id,
       titulo: data.title,
       descricao: data.description,
       categoria: data.category,
-      tipo: data.materialType,
+      tipo: data.materialType || data.type || '',
       dataPublicacao: data.uploadDate ? new Date(data.uploadDate).toLocaleDateString('pt-BR') : '-',
-      tamanhoArquivo: data.documents && data.documents.length > 0 ? `${(data.documents[0].sizeBytes / 1024 / 1024).toFixed(1)} MB` : '2.0 MB',
-      nomeArquivo: data.documents && data.documents.length > 0 ? data.documents[0].originalFilename : 'cartilha.pdf',
-      // CORRIGIDO: Usa o ID do material retornado pela API para buscar a capa corretamente
-      capaUrl: data.documents && data.documents.length > 1 ? `http://localhost:8080/api/materials/${data.id}/cover` : ''
+      tamanhoArquivo: firstDoc && firstDoc.sizeBytes ? `${(firstDoc.sizeBytes / 1024 / 1024).toFixed(1)} MB` : '2.0 MB',
+      nomeArquivo: firstDoc ? (firstDoc.originalFilename || firstDoc.fileName || 'documento.pdf') : 'documento.pdf',
+      capaUrl: hasCover ? materialService.getCoverUrl(data.id) : ''
     }
   } catch (error) {
-    console.error('Erro ao carregar detalhes do documento público:', error)
+    feedback.showToast('Erro ao carregar detalhes do documento.', 'error')
   }
 }
 
@@ -50,10 +53,10 @@ const goToCatalogo = () => {
   router.push({ name: 'biblioteca-catalogo' })
 }
 
-// Função para abrir ou baixar o PDF diretamente do endpoint do MinIO no back-end
+// Função para abrir ou baixar o PDF usando a URL centralizada do service
 const downloadPdf = () => {
-  const id = route.params.id
-  window.open(`http://localhost:8080/api/materials/${id}/download`, '_blank')
+  const id = route.params.id as string
+  window.open(materialService.getDownloadUrl(id), '_blank')
 }
 </script>
 

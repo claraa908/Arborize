@@ -19,7 +19,10 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable()) // Desativa CSRF para permitir POST/PUT/DELETE
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // Libera requisições de pré-voo CORS
-                        .requestMatchers("/api/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll() // Libera toda a API
+                        .requestMatchers(
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**",
+                                "/swagger-ui.html").permitAll() // Libera toda a API
                         .anyRequest().permitAll() // Temporariamente libera tudo para testes locais sem dor de cabeça
                 );
 
