@@ -33,7 +33,7 @@ class EventosControllerTest {
 
     @Test
     void deveRetornarStatus200EListaDeEventos() throws Exception {
-        EventosResponseDTO dto = new EventosResponseDTO(1L, "Trilha", null, null, null, null, null, null, null, null, null, new ArrayList<>());
+        EventosResponseDTO dto = new EventosResponseDTO(1L, "Trilha", null, null, null, null, null, null, null, null, null, null, new ArrayList<>());
         when(service.listarTodos()).thenReturn(List.of(dto));
 
         mockMvc.perform(get("/eventos"))
@@ -44,7 +44,7 @@ class EventosControllerTest {
     @Test
     void deveCriarEventoRetornarStatus201() throws Exception {
         MockMultipartFile banner = new MockMultipartFile("banner", "teste.png", "image/png", "img".getBytes());
-        EventosResponseDTO dto = new EventosResponseDTO(1L, "Trilha Nova", null, null, null, null, null, null, null, null, null, new ArrayList<>());
+        EventosResponseDTO dto = new EventosResponseDTO(1L, "Trilha Nova", null, null, null, null, null, null, null, null, null, null, new ArrayList<>());
 
         when(service.criarEvento(any(EventosRequestDTO.class))).thenReturn(dto);
 
