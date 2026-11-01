@@ -2,12 +2,16 @@
 import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useFeedbackStore } from '@/stores/feedbackStore'
+import { useAuthStore } from '@/stores/authStore'
 
 const route = useRoute()
 const router = useRouter()
 const feedback = useFeedbackStore()
+const auth = useAuthStore()
 
 const pageTitle = computed(() => route.meta.title as string || 'Arborize')
+const userName = computed(() => auth.nome || 'Cidadão')
+const userInitials = computed(() => userName.value.trim().split(/\s+/).slice(0, 2).map(part => part.charAt(0).toUpperCase()).join(''))
 
 const navigateToProfile = () => {
   router.push({ name: 'perfil' })
@@ -24,6 +28,7 @@ const handleLogout = async () => {
 
   if (!confirmed) return
 
+  auth.logout()
   feedback.showToast('Sessão encerrada com sucesso.', 'info')
   router.push({ name: 'home' })
 }
@@ -40,15 +45,15 @@ const handleLogout = async () => {
       
       <div class="hidden sm:flex items-center gap-4">
         <div class="flex flex-col text-right">
-          <span class="text-sm font-extrabold text-amma-green-dark">Romênia Barros</span>
-          <span class="text-xs font-medium text-grey-text">Superintendente • AMMA</span>
+          <span class="text-sm font-extrabold text-amma-green-dark">{{ userName }}</span>
+          <span class="text-xs font-medium text-grey-text">Cidadão</span>
         </div>
         
         <div 
           class="w-12 h-12 bg-amma-green-light text-dark flex items-center justify-center font-bold text-[15px] shadow-md border-2 border-white"
           style="border-radius: 24px 6px 24px 24px;"
         >
-          RB
+          {{ userInitials }}
         </div>
       </div>
 

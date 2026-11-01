@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { RouterView } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import TopBar from '@/components/layout/TopBar.vue'
 import LoginModal from '@/components/modals/LoginModal.vue'
 import RegisterModal from '@/components/modals/RegisterModal.vue'
@@ -8,6 +9,8 @@ import AppToastContainer from '@/components/feedback/AppToastContainer.vue'
 
 const isLoginModalOpen = ref(false)
 const isRegisterModalOpen = ref(false)
+const route = useRoute()
+const router = useRouter()
 
 const openLogin = () => {
   isRegisterModalOpen.value = false
@@ -18,6 +21,19 @@ const openRegister = () => {
   isLoginModalOpen.value = false
   isRegisterModalOpen.value = true
 }
+
+const handleLoginSuccess = () => {
+  const redirect = route.query.redirect
+  if (typeof redirect === 'string' && redirect.startsWith('/') && !redirect.startsWith('//')) {
+    void router.replace(redirect)
+    return
+  }
+  void router.replace({ name: 'perfil' })
+}
+
+watch(() => route.query.auth, (authRequired) => {
+  if (authRequired === 'required') openLogin()
+}, { immediate: true })
 </script>
 
 <template>
@@ -40,6 +56,7 @@ const openRegister = () => {
     <LoginModal 
       :isOpen="isLoginModalOpen" 
       @close="isLoginModalOpen = false"
+      @login-success="handleLoginSuccess"
     />
 
     <RegisterModal 

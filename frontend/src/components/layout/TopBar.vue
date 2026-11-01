@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/authStore'
+import { useFeedbackStore } from '@/stores/feedbackStore'
 
 interface NavLink {
   label: string
-  routeName: string
+  routeName?: string
 }
 
 const emit = defineEmits<{
@@ -14,29 +16,45 @@ const emit = defineEmits<{
 
 const route = useRoute()
 const router = useRouter()
+const auth = useAuthStore()
+const feedback = useFeedbackStore()
 const isMobileMenuOpen = ref(false)
 
 const navLinks: NavLink[] = [
   { label: 'Início', routeName: 'home' },
-  { label: 'Eventos', routeName: 'eventos' },
+  { label: 'Eventos' },
   { label: 'Arborização', routeName: 'arborizacao' },
   { label: 'Biblioteca Digital', routeName: 'biblioteca-catalogo' },
   { label: 'Sobre Nós', routeName: 'sobre' }
 ]
 
 const isLinkActive = (link: NavLink) => {
+  if (!link.routeName) return false
   if (route.name === link.routeName) return true
   if (link.routeName === 'home' && (route.name === 'home' || route.path === '/')) return true
   return false
 }
 
-const navigateTo = (routeName: string) => {
+const navigateTo = (routeName?: string) => {
+  if (!routeName) return
   isMobileMenuOpen.value = false
   router.push({ name: routeName }).catch(() => {
     if (routeName === 'home') {
       router.push('/')
     }
   })
+}
+
+const navigateToProfile = () => {
+  isMobileMenuOpen.value = false
+  void router.push({ name: 'perfil' })
+}
+
+const handleLogout = () => {
+  auth.logout()
+  feedback.showToast('Sessão encerrada com sucesso.', 'info')
+  isMobileMenuOpen.value = false
+  void router.push({ name: 'home' })
 }
 </script>
 
@@ -55,7 +73,7 @@ const navigateTo = (routeName: string) => {
     <nav class="hidden md:flex items-center gap-8 text-sm">
       <button
         v-for="link in navLinks"
-        :key="link.routeName"
+        :key="link.label"
         type="button"
         @click="navigateTo(link.routeName)"
         :class="[
@@ -70,20 +88,45 @@ const navigateTo = (routeName: string) => {
     </nav>
 
     <div class="flex items-center gap-3 text-sm font-bold">
-      <button 
-        type="button"
-        @click="emit('open-register')" 
-        class="border-2 border-amma-green text-amma-green hover:bg-amma-green-lighter px-5 py-2.5 rounded-btn transition-colors efeito-zoom cursor-pointer"
-      >
-        Cadastrar-se
-      </button>
-      <button 
-        type="button"
-        @click="emit('open-login')" 
-        class="bg-amma-green hover:bg-amma-green-dark text-white px-6 py-2.5 rounded-btn efeito-zoom cursor-pointer"
-      >
-        Entrar
-      </button>
+      <template v-if="auth.isAuthenticated">
+        <button
+          type="button"
+          @click="navigateToProfile"
+          :class="[
+            'inline-flex items-center gap-2 border-2 px-5 py-2.5 transition-colors efeito-zoom cursor-pointer',
+            route.name === 'perfil'
+              ? 'border-transparent bg-amma-green-light text-amma-green-dark rounded-full'
+              : 'border-amma-green text-amma-green hover:bg-amma-green-lighter rounded-btn'
+          ]"
+        >
+          <span class="material-symbols-outlined text-[20px]" aria-hidden="true">person</span>
+          Meu Perfil
+        </button>
+        <button
+          type="button"
+          @click="handleLogout"
+          class="inline-flex items-center gap-2 px-4 py-2.5 text-amma-green-dark hover:bg-amma-green-lighter rounded-btn efeito-zoom cursor-pointer"
+        >
+          <span class="material-symbols-outlined text-[20px]" aria-hidden="true">logout</span>
+          Sair
+        </button>
+      </template>
+      <template v-else>
+        <button
+          type="button"
+          @click="emit('open-register')"
+          class="border-2 border-amma-green text-amma-green hover:bg-amma-green-lighter px-5 py-2.5 rounded-btn transition-colors efeito-zoom cursor-pointer"
+        >
+          Cadastrar-se
+        </button>
+        <button
+          type="button"
+          @click="emit('open-login')"
+          class="bg-amma-green hover:bg-amma-green-dark text-white px-6 py-2.5 rounded-btn efeito-zoom cursor-pointer"
+        >
+          Entrar
+        </button>
+      </template>
       <button 
         type="button"
         @click="isMobileMenuOpen = !isMobileMenuOpen" 
@@ -106,7 +149,7 @@ const navigateTo = (routeName: string) => {
       <div v-if="isMobileMenuOpen" class="md:hidden absolute top-full left-0 w-full bg-white border-b border-gray-200 px-8 py-6 flex flex-col gap-3 shadow-lg">
         <button
           v-for="link in navLinks"
-          :key="link.routeName"
+          :key="link.label"
           type="button"
           @click="navigateTo(link.routeName)"
           :class="[
