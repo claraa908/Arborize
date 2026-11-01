@@ -2,6 +2,8 @@ import { createRouter, createWebHistory } from 'vue-router'
 import PublicLayout from '@/layouts/PublicLayout.vue'
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue'
 import HomeView from '@/views/public/HomeView.vue'
+import { useAssistentePlantioStore } from '@/stores/assistentePlantioStore'
+import { useSolicitacaoMudaStore } from '@/stores/solicitacaoMudaStore'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -24,6 +26,46 @@ const router = createRouter({
           path: 'biblioteca/:id',
           name: 'biblioteca-documento',
           component: () => import('@/views/public/biblioteca/DocumentoView.vue')
+        },
+        {
+          path: 'arborizacao',
+          name: 'arborizacao',
+          redirect: () => {
+            const quizStore = useAssistentePlantioStore()
+            const requestStore = useSolicitacaoMudaStore()
+
+            if (requestStore.resultado) return { name: 'arborizacao-acompanhar' }
+            if (requestStore.form.especieId > 0) {
+              return { name: 'solicitar-muda', query: { especieId: requestStore.form.especieId } }
+            }
+            if (quizStore.recomendacoes !== null) return { name: 'arborizacao-recomendacoes' }
+            return { name: 'arborizacao-assistente' }
+          }
+        },
+        {
+          path: 'arborizacao/assistente',
+          name: 'arborizacao-assistente',
+          component: () => import('@/views/public/arborizacao/AssistentePlantioView.vue')
+        },
+        {
+          path: 'arborizacao/recomendacoes',
+          name: 'arborizacao-recomendacoes',
+          component: () => import('@/views/public/arborizacao/RecomendacoesView.vue')
+        },
+        {
+          path: 'arborizacao/solicitar-muda',
+          name: 'solicitar-muda',
+          component: () => import('@/views/public/arborizacao/SolicitarMudaView.vue')
+        },
+        {
+          path: 'arborizacao/conversao',
+          name: 'arborizacao-conversao',
+          component: () => import('@/views/public/arborizacao/ConversaoMudaView.vue')
+        },
+        {
+          path: 'arborizacao/acompanhar',
+          name: 'arborizacao-acompanhar',
+          component: () => import('@/views/public/arborizacao/AcompanharSolicitacaoView.vue')
         }
       ]
     },

@@ -22,3 +22,10 @@ O sistema tem o propósito de auxiliar a AMMA na divulgação de seus projetos e
 
 ### Link do Figma:
 https://www.figma.com/design/CpatSsboKRabdzBzyetI3b/Arborize?node-id=0-1&p=f&t=nnnVTwkizXyJFbRU-0
+
+### Solicitação de mudas
+
+- `ARBORIZA_SOLICITACAO_MAX_MUDAS`: limite configurável por pedido (padrão `3`, máximo permitido nesta versão: `3`).
+- `ARBORIZA_GARRAFAS_POR_MUDA`: garrafas PET necessárias por muda (padrão `5`).
+
+O endpoint de conversão e a API de solicitações usam esses parâmetros no backend. CPF e telefone são persistidos somente com dígitos e não são retornados pela API nem escritos nos logs da funcionalidade.
