@@ -5,8 +5,8 @@ import br.com.arborize.dtos.response.EventosResponseDTO;
 import br.com.arborize.services.EventosService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
@@ -33,7 +33,8 @@ class EventosControllerTest {
 
     @Test
     void deveRetornarStatus200EListaDeEventos() throws Exception {
-        EventosResponseDTO dto = new EventosResponseDTO(1L, "Trilha", null, null, null, null, null, null, null, null, null, new ArrayList<>());
+        // Ajuste para 13 parâmetros (adicionei mais valores nulos conforme a assinatura real do record)
+        EventosResponseDTO dto = new EventosResponseDTO(1L, "Trilha", null, null, null, null, null, null, null, null, null, null, new ArrayList<>());
         when(service.listarTodos()).thenReturn(List.of(dto));
 
         mockMvc.perform(get("/eventos"))
@@ -44,7 +45,7 @@ class EventosControllerTest {
     @Test
     void deveCriarEventoRetornarStatus201() throws Exception {
         MockMultipartFile banner = new MockMultipartFile("banner", "teste.png", "image/png", "img".getBytes());
-        EventosResponseDTO dto = new EventosResponseDTO(1L, "Trilha Nova", null, null, null, null, null, null, null, null, null, new ArrayList<>());
+        EventosResponseDTO dto = new EventosResponseDTO(1L, "Trilha Nova", null, null, null, null, null, null, null, null, null, null, new ArrayList<>());
 
         when(service.criarEvento(any(EventosRequestDTO.class))).thenReturn(dto);
 

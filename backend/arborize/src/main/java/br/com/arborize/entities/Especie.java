@@ -1,6 +1,7 @@
 package br.com.arborize.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
@@ -35,6 +36,9 @@ public class Especie {
 
     @Column(nullable = false)
     private Boolean recomendadaCalcadas;
+
+    @Min(0)
+    private Integer mudasDisponiveis = 0;
 
     private Integer tempoGerminacaoDias;
 
