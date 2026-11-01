@@ -24,6 +24,36 @@ const router = createRouter({
           path: 'biblioteca/:id',
           name: 'biblioteca-documento',
           component: () => import('@/views/public/biblioteca/DocumentoView.vue')
+        },
+        {
+          path: 'arborizacao',
+          name: 'arborizacao',
+          redirect: { name: 'arborizacao-assistente' }
+        },
+        {
+          path: 'arborizacao/assistente',
+          name: 'arborizacao-assistente',
+          component: () => import('@/views/public/arborizacao/AssistentePlantioView.vue')
+        },
+        {
+          path: 'arborizacao/recomendacoes',
+          name: 'arborizacao-recomendacoes',
+          component: () => import('@/views/public/arborizacao/RecomendacoesView.vue')
+        },
+        {
+          path: 'arborizacao/solicitar-muda',
+          name: 'solicitar-muda',
+          component: () => import('@/views/public/arborizacao/SolicitarMudaView.vue')
+        },
+        {
+          path: 'arborizacao/conversao',
+          name: 'arborizacao-conversao',
+          component: () => import('@/views/public/arborizacao/ConversaoMudaView.vue')
+        },
+        {
+          path: 'arborizacao/acompanhar',
+          name: 'arborizacao-acompanhar',
+          component: () => import('@/views/public/arborizacao/AcompanharSolicitacaoView.vue')
         }
       ]
     },

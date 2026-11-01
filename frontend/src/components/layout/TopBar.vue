@@ -26,6 +26,7 @@ const navLinks: NavLink[] = [
 
 const isLinkActive = (link: NavLink) => {
   if (route.name === link.routeName) return true
+  if (link.routeName === 'arborizacao' && route.path.startsWith('/arborizacao')) return true
   if (link.routeName === 'home' && (route.name === 'home' || route.path === '/')) return true
   return false
 }
