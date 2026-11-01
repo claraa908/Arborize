@@ -13,8 +13,19 @@ import java.util.stream.Collectors;
 @Component
 public class EspecieMapper {
 
+    // Converte de DTO para uma nova Entidade (Usado na Criação)
     public Especie toEntity(EspecieRequestDTO dto) {
         Especie especie = new Especie();
+        return mapearCampos(dto, especie);
+    }
+
+    // Atualiza uma Entidade existente com base no DTO (Usado na Edição)
+    public Especie updateEntity(EspecieRequestDTO dto, Especie especieExistente) {
+        return mapearCampos(dto, especieExistente);
+    }
+
+    // Método centralizado para não repetir código
+    private Especie mapearCampos(EspecieRequestDTO dto, Especie especie) {
         especie.setNomePopular(dto.nomePopular());
         especie.setNomeCientifico(dto.nomeCientifico());
         especie.setFamiliaBotanica(dto.familiaBotanica());
@@ -23,11 +34,18 @@ public class EspecieMapper {
         especie.setDescricaoCultivo(dto.descricaoCultivo());
 
         try {
-            if (dto.tempoGerminacaoDias() != null && !dto.tempoGerminacaoDias().isBlank()) {
+            // Lógica para Germinação
+            if (dto.tempoGerminacaoDias() != null && !dto.tempoGerminacaoDias().isBlank() && !dto.tempoGerminacaoDias().equals("null")) {
                 especie.setTempoGerminacaoDias(Integer.parseInt(dto.tempoGerminacaoDias()));
+            } else {
+                especie.setTempoGerminacaoDias(null);
             }
-            if (dto.recomendadaCalcadas() != null && !dto.recomendadaCalcadas().isBlank()) {
+
+            // Lógica para Calçadas
+            if (dto.recomendadaCalcadas() != null && !dto.recomendadaCalcadas().isBlank() && !dto.recomendadaCalcadas().equals("null")) {
                 especie.setRecomendadaCalcadas(Boolean.parseBoolean(dto.recomendadaCalcadas()));
+            } else {
+                especie.setRecomendadaCalcadas(null);
             }
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException("Erro ao processar números ou opções da espécie.");

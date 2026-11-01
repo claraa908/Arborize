@@ -14,6 +14,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/eventos") // O seu Vue.js deve fazer fetch para http://localhost:8080/eventos
+@CrossOrigin(originPatterns = "*", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE}, allowCredentials = "true")
 @Tag(name = "Eventos", description = "Endpoints de CRUD para Eventos")
 public class EventosController {
 
@@ -73,7 +74,7 @@ public class EventosController {
     }
 
     // Rota para ATUALIZAR o evento
-    @PostMapping(value = "/editar/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PutMapping(value = "/editar/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> atualizarEvento(@PathVariable Long id, @ModelAttribute EventosRequestDTO dto){
         try {
             EventosResponseDTO eventoAtualizado = service.atualizarEvento(id, dto);

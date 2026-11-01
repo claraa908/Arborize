@@ -47,6 +47,8 @@ export const eventoService = {
 
   async update(id: string | number, payload: UpdateEventoPayload): Promise<EventoDTO> {
     const formData = new FormData()
+    formData.append('_method', 'PUT')
+
     formData.append('nome', payload.nome)
     formData.append('descricao', payload.descricao)
     formData.append('dataInicio', payload.dataInicio)
@@ -79,7 +81,7 @@ export const eventoService = {
     // CORREÇÃO 1: Removido o headers com Content-Type
     // CORREÇÃO 2: Alterado de api.put para api.post e ajustado a URL para contornar o erro 405
     // (Certifique-se de que o backend está usando @PostMapping("/editar/{id}"))
-    const response = await api.post<EventoDTO>(`/eventos/editar/${id}`, formData)
+    const response = await api.put<EventoDTO>(`/eventos/editar/${id}`, formData)
 
     return response.data
   },
