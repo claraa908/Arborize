@@ -2,6 +2,7 @@
 import { RouterView } from 'vue-router'
 import AppSidebar from '@/components/layout/AppSidebar.vue'
 import AppHeader from '@/components/layout/AppHeader.vue'
+import AppToastContainer from '@/components/feedback/AppToastContainer.vue'
 </script>
 
 <template>
@@ -10,11 +11,12 @@ import AppHeader from '@/components/layout/AppHeader.vue'
       
       <AppSidebar />
 
-      <div class="flex-1 flex flex-col min-w-0 bg-white h-full">
-        
+      <div class="flex-1 flex flex-col min-w-0 bg-white h-full relative overflow-hidden">
+        <AppToastContainer />
+
         <AppHeader />
 
-        <main class="flex-1 px-10 pb-10 overflow-y-auto">
+        <main class="flex-1 pb-6 md:pb-7 overflow-y-auto">
           <RouterView />
         </main>
       </div>

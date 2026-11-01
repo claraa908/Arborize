@@ -14,6 +14,16 @@ const router = createRouter({
           path: '',
           name: 'home',
           component: HomeView
+        },
+        {
+          path: 'biblioteca',
+          name: 'biblioteca-catalogo',
+          component: () => import('@/views/public/biblioteca/CatalogoView.vue')
+        },
+        {
+          path: 'biblioteca/:id',
+          name: 'biblioteca-documento',
+          component: () => import('@/views/public/biblioteca/DocumentoView.vue')
         }
       ]
     },
@@ -28,10 +38,28 @@ const router = createRouter({
           meta: { title: 'Dashboard e Relatórios' }
         },
         {
-          path: 'solicitacoes',
-          name: 'solicitacoes',
-          component: () => import('@/views/auth/SolicitacoesView.vue'),
-          meta: { title: 'Solicitações de Mudas' }
+          path: 'biblioteca',
+          name: 'biblioteca-lista',
+          component: () => import('@/views/auth/biblioteca/BibliotecaListaView.vue'),
+          meta: { title: 'Biblioteca Digital', activeMenu: 'biblioteca-lista' }
+        },
+        {
+          path: 'biblioteca/nova',
+          name: 'biblioteca-nova',
+          component: () => import('@/views/auth/biblioteca/BibliotecaFormView.vue'),
+          meta: { title: 'Biblioteca Digital', activeMenu: 'biblioteca-lista' }
+        },
+        {
+          path: 'biblioteca/:id/editar',
+          name: 'biblioteca-editar',
+          component: () => import('@/views/auth/biblioteca/BibliotecaFormView.vue'),
+          meta: { title: 'Biblioteca Digital', activeMenu: 'biblioteca-lista' }
+        },
+        {
+          path: 'biblioteca/:id',
+          name: 'biblioteca-detalhes',
+          component: () => import('@/views/auth/biblioteca/BibliotecaDetalhesView.vue'),
+          meta: { title: 'Biblioteca Digital', activeMenu: 'biblioteca-lista' }
         },
         {
           path: 'inventario',
@@ -40,10 +68,34 @@ const router = createRouter({
           meta: { title: 'Inventário Arbóreo' }
         },
         {
-          path: 'viveiro',
-          name: 'viveiro',
-          component: () => import('@/views/auth/ViveiroView.vue'),
-          meta: { title: 'Gestão do Viveiro' }
+  path: 'viveiro',
+  name: 'viveiro',
+  component: () => import('@/views/auth/viveiro/ViveiroView.vue'),
+  meta: { title: 'Gestão do Viveiro' }
+},
+{
+  path: 'viveiro/cadastrar-especie',
+  name: 'viveiro-cadastrar',
+  component: () => import('@/views/auth/viveiro/ViveiroCadastroView.vue'),
+  meta: { title: 'Gestão do Viveiro', activeMenu: 'viveiro' }
+},
+{
+  path: 'viveiro/:id/editar',
+  name: 'viveiro-editar',
+  component: () => import('@/views/auth/viveiro/ViveiroCadastroView.vue'),
+  meta: { title: 'Gestão do Viveiro', activeMenu: 'viveiro' }
+},
+{
+  path: 'viveiro/:id',
+  name: 'viveiro-detalhes',
+  component: () => import('@/views/auth/viveiro/ViveiroDetalhesView.vue'),
+  meta: { title: 'Gestão do Viveiro', activeMenu: 'viveiro' }
+},
+        {
+          path: 'solicitacoes',
+          name: 'solicitacoes',
+          component: () => import('@/views/auth/SolicitacoesView.vue'),
+          meta: { title: 'Solicitações de Mudas' }
         },
         {
           path: 'laudos',
@@ -52,16 +104,28 @@ const router = createRouter({
           meta: { title: 'Laudos Técnicos' }
         },
         {
-          path: 'podas',
-          name: 'podas',
-          component: () => import('@/views/auth/PodasView.vue'),
-          meta: { title: 'Cronograma de Podas' }
-        },
-        {
           path: 'eventos',
           name: 'eventos',
-          component: () => import('@/views/auth/EventosView.vue'),
+          component: () => import('@/views/auth/eventos/EventosView.vue'),
           meta: { title: 'Eventos Ambientais' }
+        },
+        {
+          path: 'eventos/cadastrar',
+          name: 'eventos-cadastrar',
+          component: () => import('@/views/auth/eventos/EventosCadastroView.vue'),
+          meta: { title: 'Eventos Ambientais', activeMenu: 'eventos' }
+        },
+        {
+          path: 'eventos/:id',
+          name: 'eventos-detalhes',
+          component: () => import('@/views/auth/eventos/EventosDetalhesView.vue'),
+          meta: { title: 'Eventos Ambientais', activeMenu: 'eventos' }
+        },
+        {
+          path: 'eventos/:id/editar',
+          name: 'eventos-editar',
+          component: () => import('@/views/auth/eventos/EventosCadastroView.vue'),
+          meta: { title: 'Eventos Ambientais', activeMenu: 'eventos' }
         },
         {
           path: 'perfil',
