@@ -32,6 +32,11 @@ public class EspecieMapper {
         especie.setCategoria(dto.categoria());
         especie.setPorteArvore(dto.porteArvore());
         especie.setDescricaoCultivo(dto.descricaoCultivo());
+        if (dto.mudasDisponiveis() != null) {
+            especie.setMudasDisponiveis(dto.mudasDisponiveis());
+        } else if (especie.getMudasDisponiveis() == null) {
+            especie.setMudasDisponiveis(0);
+        }
 
         try {
             // Lógica para Germinação
@@ -77,6 +82,7 @@ public class EspecieMapper {
                 entity.getDescricaoCultivo(),
                 entity.getTempoGerminacaoDias(),
                 entity.getRecomendadaCalcadas(),
+                entity.getMudasDisponiveis() == null ? 0 : entity.getMudasDisponiveis(),
                 documentDTOs
         );
     }
