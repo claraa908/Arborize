@@ -50,6 +50,11 @@ const navigateToProfile = () => {
   void router.push({ name: 'perfil' })
 }
 
+const navigateToManagement = () => {
+  isMobileMenuOpen.value = false
+  void router.push({ name: auth.isAmmaAdmin ? 'gestao' : 'dashboard' })
+}
+
 const handleLogout = () => {
   auth.logout()
   feedback.showToast('Sessão encerrada com sucesso.', 'info')
@@ -59,7 +64,7 @@ const handleLogout = () => {
 </script>
 
 <template>
-  <header class="relative w-full flex items-center justify-between px-8 py-6 border-b border-gray-200 z-40 bg-white rounded-tl-[15px] rounded-tr-[60px]">
+  <header class="relative z-40 flex w-full items-center justify-between border-b border-gray-200 bg-white px-4 py-5 sm:px-8 sm:py-6 rounded-tl-[15px] rounded-tr-[60px]">
     <div class="flex items-center gap-2 cursor-pointer" @click="navigateTo('home')">
       <div class="text-amma-grey-text flex items-center gap-2">
         <img src="@/assets/images/logoVerde.png" alt="Logo Arborize" class="h-16 w-auto" />
@@ -93,22 +98,34 @@ const handleLogout = () => {
           type="button"
           @click="navigateToProfile"
           :class="[
-            'inline-flex items-center gap-2 border-2 px-5 py-2.5 transition-colors efeito-zoom cursor-pointer',
+            'inline-flex items-center gap-2 border-2 px-2.5 py-2.5 transition-colors efeito-zoom cursor-pointer lg:px-5',
             route.name === 'perfil'
               ? 'border-transparent bg-amma-green-light text-amma-green-dark rounded-full'
               : 'border-amma-green text-amma-green hover:bg-amma-green-lighter rounded-btn'
           ]"
+          aria-label="Meu Perfil"
         >
           <span class="material-symbols-outlined text-[20px]" aria-hidden="true">person</span>
-          Meu Perfil
+          <span class="hidden lg:inline">Meu Perfil</span>
+        </button>
+        <button
+          v-if="auth.canAccessManagement"
+          type="button"
+          @click="navigateToManagement"
+          class="inline-flex items-center gap-2 rounded-btn border-2 border-amma-green px-2.5 py-2.5 text-amma-green transition-colors hover:bg-amma-green-lighter efeito-zoom cursor-pointer lg:px-5"
+          aria-label="Voltar ao Painel de Gestão"
+        >
+          <span class="material-symbols-outlined text-[20px]" aria-hidden="true">dashboard</span>
+          <span class="hidden lg:inline">Painel de Gestão</span>
         </button>
         <button
           type="button"
           @click="handleLogout"
-          class="inline-flex items-center gap-2 px-4 py-2.5 text-amma-green-dark hover:bg-amma-green-lighter rounded-btn efeito-zoom cursor-pointer"
+          class="inline-flex items-center gap-2 rounded-btn px-2.5 py-2.5 text-amma-green-dark hover:bg-amma-green-lighter efeito-zoom cursor-pointer lg:px-4"
+          aria-label="Sair"
         >
           <span class="material-symbols-outlined text-[20px]" aria-hidden="true">logout</span>
-          Sair
+          <span class="hidden lg:inline">Sair</span>
         </button>
       </template>
       <template v-else>
@@ -146,7 +163,7 @@ const handleLogout = () => {
       leave-from-class="opacity-100 translate-y-0"
       leave-to-class="opacity-0 -translate-y-4"
     >
-      <div v-if="isMobileMenuOpen" class="md:hidden absolute top-full left-0 w-full bg-white border-b border-gray-200 px-8 py-6 flex flex-col gap-3 shadow-lg">
+      <div v-if="isMobileMenuOpen" class="md:hidden absolute top-full left-0 z-50 flex w-full flex-col gap-3 border-b border-gray-200 bg-white px-5 py-6 shadow-lg sm:px-8">
         <button
           v-for="link in navLinks"
           :key="link.label"
@@ -161,6 +178,16 @@ const handleLogout = () => {
         >
           {{ link.label }}
         </button>
+        <div v-if="auth.isAuthenticated" class="mt-2 flex flex-col gap-2 border-t border-amma-green-light pt-4">
+          <button type="button" class="flex min-h-11 items-center gap-3 rounded-btn px-4 py-2 text-left font-semibold text-amma-green-dark hover:bg-amma-green-lighter" @click="navigateToProfile">
+            <span class="material-symbols-outlined" aria-hidden="true">person</span>
+            Meu Perfil
+          </button>
+          <button v-if="auth.canAccessManagement" type="button" class="flex min-h-11 items-center gap-3 rounded-btn px-4 py-2 text-left font-semibold text-amma-green-dark hover:bg-amma-green-lighter" @click="navigateToManagement">
+            <span class="material-symbols-outlined" aria-hidden="true">dashboard</span>
+            Voltar ao Painel de Gestão
+          </button>
+        </div>
       </div>
     </Transition>
   </header>

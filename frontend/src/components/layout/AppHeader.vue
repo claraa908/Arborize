@@ -12,9 +12,22 @@ const auth = useAuthStore()
 const pageTitle = computed(() => route.meta.title as string || 'Arborize')
 const userName = computed(() => auth.nome || 'Cidadão')
 const userInitials = computed(() => userName.value.trim().split(/\s+/).slice(0, 2).map(part => part.charAt(0).toUpperCase()).join(''))
+const roleLabel = computed(() => ({
+  ROLE_GESTOR_IFCE: 'Gestor do Laboratório IFCE',
+  ROLE_CIDADAO: 'Cidadão',
+  ROLE_ADMINISTRADOR_AMMA: 'Administrador da AMMA',
+  ROLE_FUNCIONARIO_AMMA: 'Funcionário da AMMA',
+  ROLE_AMMA: 'Funcionário da AMMA',
+  ROLE_IFCE_GESTOR: 'Gestor do Laboratório IFCE',
+  ROLE_IFCE_BOLSISTA: 'Bolsista IFCE'
+}[auth.role ?? 'ROLE_CIDADAO']))
 
 const navigateToProfile = () => {
   router.push({ name: 'perfil' })
+}
+
+const navigateToManagement = () => {
+  router.push({ name: 'gestao' })
 }
 
 const handleLogout = async () => {
@@ -46,7 +59,7 @@ const handleLogout = async () => {
       <div class="hidden sm:flex items-center gap-4">
         <div class="flex flex-col text-right">
           <span class="text-sm font-extrabold text-amma-green-dark">{{ userName }}</span>
-          <span class="text-xs font-medium text-grey-text">Cidadão</span>
+          <span class="text-xs font-medium text-grey-text">{{ roleLabel }}</span>
         </div>
         
         <div 
@@ -60,6 +73,21 @@ const handleLogout = async () => {
       <div class="hidden sm:block w-px h-8 bg-amma-green-light"></div>
 
       <div class="flex items-center gap-2">
+        <button
+          v-if="auth.isAmmaAdmin"
+          type="button"
+          @click="navigateToManagement"
+          :class="[
+            'w-10 h-10 flex items-center justify-center transition-all efeito-zoom cursor-pointer rounded-bl-[10px] rounded-tr-[10px] rounded-tl-[20px] rounded-br-[20px]',
+            route.name === 'gestao'
+              ? 'bg-amma-green-dark text-white shadow-inner'
+              : 'text-grey-text hover:text-white hover:bg-amma-green'
+          ]"
+          aria-label="Painel de gestão de usuários"
+          title="Painel de Gestão"
+        >
+          <span class="material-symbols-outlined text-[24px]" aria-hidden="true">manage_accounts</span>
+        </button>
         <button 
           @click="navigateToProfile"
           :class="[

@@ -35,10 +35,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String token = authorization.substring(7).trim();
             try {
                 Long usuarioId = tokenService.validarEObterUsuarioId(token);
+                String role = tokenService.validarEObterRole(token);
                 var authentication = new UsernamePasswordAuthenticationToken(
                         usuarioId,
                         null,
-                        List.of(new SimpleGrantedAuthority("ROLE_CITIZEN"))
+                        List.of(new SimpleGrantedAuthority(role))
                 );
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             } catch (JWTVerificationException | IllegalArgumentException exception) {

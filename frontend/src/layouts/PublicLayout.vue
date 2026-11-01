@@ -6,11 +6,13 @@ import TopBar from '@/components/layout/TopBar.vue'
 import LoginModal from '@/components/modals/LoginModal.vue'
 import RegisterModal from '@/components/modals/RegisterModal.vue'
 import AppToastContainer from '@/components/feedback/AppToastContainer.vue'
+import { useAuthStore } from '@/stores/authStore'
 
 const isLoginModalOpen = ref(false)
 const isRegisterModalOpen = ref(false)
 const route = useRoute()
 const router = useRouter()
+const auth = useAuthStore()
 
 const openLogin = () => {
   isRegisterModalOpen.value = false
@@ -28,7 +30,7 @@ const handleLoginSuccess = () => {
     void router.replace(redirect)
     return
   }
-  void router.replace({ name: 'perfil' })
+  void router.replace({ name: auth.canAccessManagement ? 'dashboard' : 'home' })
 }
 
 watch(() => route.query.auth, (authRequired) => {

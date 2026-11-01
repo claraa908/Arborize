@@ -1,6 +1,7 @@
 package br.com.arborize.services;
 
 import br.com.arborize.entities.Usuario;
+import br.com.arborize.enums.UsuarioRole;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.JWTVerifier;
@@ -62,6 +63,7 @@ public class TokenService {
                 .withIssuer(ISSUER)
                 .withSubject(usuario.getId().toString())
                 .withClaim("nome", usuario.getNome())
+                .withClaim("role", usuario.getRole().getAuthority())
                 .withIssuedAt(Date.from(agora))
                 .withExpiresAt(Date.from(agora.plus(TOKEN_EXPIRATION_HOURS, ChronoUnit.HOURS)))
                 .sign(algorithm);
@@ -69,5 +71,10 @@ public class TokenService {
 
     public Long validarEObterUsuarioId(String token) {
         return Long.valueOf(verifier.verify(token).getSubject());
+    }
+
+    public String validarEObterRole(String token) {
+        String authority = verifier.verify(token).getClaim("role").asString();
+        return UsuarioRole.fromAuthority(authority).getAuthority();
     }
 }

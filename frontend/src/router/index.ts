@@ -37,7 +37,7 @@ const router = createRouter({
     {
       path: '/sistema',
       component: AuthenticatedLayout,
-      meta: { requiresAdmin: true },
+      meta: { requiresManagement: true },
       children: [
         {
           path: '',
@@ -136,6 +136,19 @@ const router = createRouter({
           meta: { title: 'Eventos Ambientais', activeMenu: 'eventos' }
         },
       ]
+    },
+    {
+      path: '/gestao',
+      component: AuthenticatedLayout,
+      meta: { requiresAdmin: true },
+      children: [
+        {
+          path: '',
+          name: 'gestao',
+          component: () => import('@/views/auth/GestaoView.vue'),
+          meta: { title: 'Painel de Gestão' }
+        }
+      ]
     }
   ]
 })
@@ -143,8 +156,18 @@ const router = createRouter({
 router.beforeEach((to) => {
   const auth = useAuthStore()
 
-  if (to.matched.some((record) => record.meta.requiresAdmin)) {
-    return auth.isAuthenticated ? { name: 'perfil' } : { name: 'home' }
+  if (to.matched.some((record) => record.meta.requiresAdmin) && !auth.isAmmaAdmin) {
+    return { name: 'home' }
+  }
+
+  if (to.matched.some((record) => record.meta.requiresManagement)) {
+    if (!auth.isAuthenticated) {
+      return {
+        name: 'home',
+        query: { auth: 'required', redirect: to.fullPath }
+      }
+    }
+    if (!auth.canAccessManagement) return { name: 'home' }
   }
 
   if (to.matched.some((record) => record.meta.requiresAuth) && !auth.isAuthenticated) {

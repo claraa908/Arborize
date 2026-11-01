@@ -1,4 +1,5 @@
 import { api } from '@/services/api'
+import type { UserRole } from '@/types/auth'
 
 export interface LoginRequest {
   login: string
@@ -9,6 +10,7 @@ export interface LoginResponse {
   token: string
   tipo: 'Bearer'
   nome: string
+  role: UserRole
 }
 
 export async function autenticarUsuario(dados: LoginRequest) {

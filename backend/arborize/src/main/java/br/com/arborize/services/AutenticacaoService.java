@@ -3,40 +3,45 @@ package br.com.arborize.services;
 import br.com.arborize.dtos.request.LoginRequestDTO;
 import br.com.arborize.dtos.response.LoginResponseDTO;
 import br.com.arborize.entities.Usuario;
-import br.com.arborize.repositories.UsuarioRepository;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.Locale;
 
 @Service
 public class AutenticacaoService {
 
-    private final UsuarioRepository usuarioRepository;
+    private final UsuarioDetailsService usuarioDetailsService;
     private final PasswordEncoder passwordEncoder;
     private final TokenService tokenService;
 
     public AutenticacaoService(
-            UsuarioRepository usuarioRepository,
+            UsuarioDetailsService usuarioDetailsService,
             PasswordEncoder passwordEncoder,
             TokenService tokenService
     ) {
-        this.usuarioRepository = usuarioRepository;
+        this.usuarioDetailsService = usuarioDetailsService;
         this.passwordEncoder = passwordEncoder;
         this.tokenService = tokenService;
     }
 
     public LoginResponseDTO login(LoginRequestDTO request) {
-        String identificador = request.login().trim();
-        Usuario usuario = identificador.contains("@")
-                ? usuarioRepository.findByEmailIgnoreCase(identificador.toLowerCase(Locale.ROOT)).orElse(null)
-                : usuarioRepository.findByCpf(identificador.replaceAll("\\D", "")).orElse(null);
-
-        if (usuario == null || !passwordEncoder.matches(request.senha(), usuario.getSenha())) {
+        Usuario usuario;
+        try {
+            usuario = usuarioDetailsService.loadUserByUsername(request.login());
+        } catch (UsernameNotFoundException exception) {
             throw new CredenciaisInvalidasException();
         }
 
-        return new LoginResponseDTO(tokenService.gerarToken(usuario), "Bearer", usuario.getNome());
+        if (!passwordEncoder.matches(request.senha(), usuario.getPassword())) {
+            throw new CredenciaisInvalidasException();
+        }
+
+        return new LoginResponseDTO(
+                tokenService.gerarToken(usuario),
+                "Bearer",
+                usuario.getNome(),
+                usuario.getRole().getAuthority()
+        );
     }
 
     public static class CredenciaisInvalidasException extends RuntimeException {

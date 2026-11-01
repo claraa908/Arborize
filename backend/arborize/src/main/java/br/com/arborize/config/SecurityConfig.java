@@ -8,12 +8,14 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
@@ -41,7 +43,28 @@ public class SecurityConfig {
                                 "/v3/api-docs/**",
                                 "/swagger-ui.html").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/login", "/usuarios/cadastro").permitAll()
-                        .requestMatchers("/usuarios/me", "/api/materials/admin").authenticated()
+                        .requestMatchers("/admin/usuarios", "/admin/usuarios/**").hasRole("ADMINISTRADOR_AMMA")
+                        .requestMatchers("/usuarios/me", "/usuarios/me/**").authenticated()
+                        .requestMatchers("/api/materials/admin", "/api/materials/admin/**")
+                        .hasAnyRole("AMMA", "ADMINISTRADOR_AMMA", "FUNCIONARIO_AMMA", "GESTOR_IFCE", "IFCE_GESTOR", "IFCE_BOLSISTA")
+                        .requestMatchers(
+                                HttpMethod.POST,
+                                "/eventos", "/eventos/**",
+                                "/especies", "/especies/**",
+                                "/api/materials", "/api/materials/**"
+                        ).hasAnyRole("AMMA", "ADMINISTRADOR_AMMA", "FUNCIONARIO_AMMA", "GESTOR_IFCE", "IFCE_GESTOR", "IFCE_BOLSISTA")
+                        .requestMatchers(
+                                HttpMethod.PUT,
+                                "/eventos", "/eventos/**",
+                                "/especies", "/especies/**",
+                                "/api/materials", "/api/materials/**"
+                        ).hasAnyRole("AMMA", "ADMINISTRADOR_AMMA", "FUNCIONARIO_AMMA", "GESTOR_IFCE", "IFCE_GESTOR", "IFCE_BOLSISTA")
+                        .requestMatchers(
+                                HttpMethod.DELETE,
+                                "/eventos", "/eventos/**",
+                                "/especies", "/especies/**",
+                                "/api/materials", "/api/materials/**"
+                        ).hasAnyRole("AMMA", "ADMINISTRADOR_AMMA", "FUNCIONARIO_AMMA", "GESTOR_IFCE", "IFCE_GESTOR", "IFCE_BOLSISTA")
                         .requestMatchers(
                                 HttpMethod.GET,
                                 "/especies", "/especies/**",
