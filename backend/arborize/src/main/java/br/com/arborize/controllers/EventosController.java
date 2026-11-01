@@ -14,6 +14,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/eventos") // O seu Vue.js deve fazer fetch para http://localhost:8080/eventos
+@CrossOrigin(originPatterns = "*", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE}, allowCredentials = "true")
 @Tag(name = "Eventos", description = "Endpoints de CRUD para Eventos")
 public class EventosController {
 
@@ -39,5 +40,60 @@ public class EventosController {
     @GetMapping
     public ResponseEntity<List<EventosResponseDTO>> listarEventos() {
         return ResponseEntity.ok(service.listarTodos());
+    }
+
+    // Rota para BUSCAR UM EVENTO POR ID
+    @GetMapping("/{id}")
+    public ResponseEntity<EventosResponseDTO> buscarEventoPorId(@PathVariable Long id) {
+        try {
+            EventosResponseDTO evento = service.buscarPorId(id);
+            return ResponseEntity.ok(evento);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.notFound().build(); // Retorna erro 404 se não existir
+        }
+    }
+
+    @GetMapping("/{id}/banner")
+    public ResponseEntity<byte[]> buscarBannerDoEvento(@PathVariable Long id) {
+        try {
+            // Busca o evento para pegar o tipo de conteúdo (ex: image/png, image/jpeg)
+            EventosResponseDTO evento = service.buscarPorId(id);
+            String contentType = evento.documentos().isEmpty() ? "image/jpeg" : evento.documentos().get(0).contentType();
+
+            // Busca os bytes da imagem no MinIO
+            byte[] imagemBytes = service.obterBytesDoBanner(id);
+
+            return ResponseEntity.ok()
+                    .contentType(MediaType.parseMediaType(contentType))
+                    .body(imagemBytes);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    // Rota para ATUALIZAR o evento
+    @PutMapping(value = "/editar/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> atualizarEvento(@PathVariable Long id, @ModelAttribute EventosRequestDTO dto){
+        try {
+            EventosResponseDTO eventoAtualizado = service.atualizarEvento(id, dto);
+            return ResponseEntity.ok(eventoAtualizado);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body("Falha ao atualizar: " + e.getMessage());
+        }
+    }
+
+    // Rota para DELETAR o evento
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deletarEvento(@PathVariable Long id) {
+        try {
+            service.deletarEvento(id);
+            return ResponseEntity.noContent().build(); // Retorna 204 (No Content) em caso de sucesso
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body("Falha ao deletar: " + e.getMessage());
+        }
     }
 }

@@ -13,6 +13,7 @@ public record EventosRequestDTO(
         String horarioTermino,
         String descricaoPontoPartida,
         String descricaoEncerramento,
+        String status,
         MultipartFile banner
 ) {
 }

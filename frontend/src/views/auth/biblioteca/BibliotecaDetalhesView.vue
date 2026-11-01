@@ -77,9 +77,22 @@ const editDocument = () => {
 }
 
 const deleteDocument = async () => {
-  const removido = await libraryStore.removeDocument(documento.value.id)
-  if (removido) {
+  const confirmed = await feedback.showConfirm({
+    title: 'Excluir Documento',
+    message: `Tem certeza de que deseja excluir permanentemente "${documento.value.titulo}"? Esta ação removerá o arquivo do servidor e não poderá ser desfeita.`,
+    confirmText: 'Excluir',
+    cancelText: 'Cancelar',
+    variant: 'danger',
+  })
+
+  if (!confirmed) return
+
+  try {
+    await materialService.deleteMaterial(documento.value.id)
+    feedback.showToast('Documento excluído com sucesso!', 'success')
     goBack()
+  } catch (error) {
+    feedback.showToast('Erro ao excluir o documento.', 'error')
   }
 }
 
@@ -99,16 +112,12 @@ const togglePublishStatus = async () => {
 
   if (!confirmed) return
 
-  const sucesso = await libraryStore.updateDocument(documento.value.id, {
-    title: documento.value.titulo,
-    description: documento.value.descricao,
-    status: newStatus as any,
-    type: documento.value.tipoMaterial as any,
-    category: documento.value.categoria as any,
-  })
-
-  if (sucesso) {
+  try {
+    await materialService.updateStatus(documento.value.id, newStatus)
     documento.value.status = newStatus
+    feedback.showToast(`Documento ${newStatus === 'PUBLICADO' ? 'publicado' : 'arquivado'} com sucesso!`, 'success')
+  } catch (error) {
+    feedback.showToast('Erro ao alterar o status do documento.', 'error')
   }
 }
 

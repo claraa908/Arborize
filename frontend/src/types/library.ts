@@ -17,9 +17,10 @@ export interface MaterialBackendDTO {
   uploadDate?: string;
   documents?: Array<{
     id: number | string;
-    fileName: string;
+    fileName?: string;
     originalFilename?: string;
-    sizeBytes: number;
+    filePath?: string;
+    sizeBytes?: number;
   }>;
 }
 

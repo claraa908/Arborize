@@ -25,6 +25,7 @@ const form = ref<CreateEspeciePayload>({
   categoria: 'Nativa da Caatinga',
   porte: 'Médio',
   adequadoCalcada: 'Sim',
+  mudasDisponiveis: 0,
   tempoGerminacaoDias: '',
   descricao: '',
   imagem: null,
@@ -62,6 +63,7 @@ onMounted(async () => {
       categoria: data.categoria || 'Nativa da Caatinga',
       porte: data.porteArvore || 'Médio',
       adequadoCalcada: data.recomendadaCalcadas ? 'Sim' : 'Não',
+      mudasDisponiveis: data.mudasDisponiveis ?? 0,
       tempoGerminacaoDias: data.tempoGerminacaoDias ? String(data.tempoGerminacaoDias) : '',
       descricao: data.descricaoCultivo || '',
       imagem: null,
@@ -195,6 +197,23 @@ const submeterEspecie = async () => {
                 placeholder="Ex: Ipê-amarelo, Aroeira-do-sertão, Mulungu"
                 class="w-full bg-white focus:bg-amma-green-lighter border-2 border-amma-green-light focus:border-amma-green rounded-btn py-3 px-4 text-grey-text outline-none transition-all text-sm font-medium"
               />
+            </div>
+
+            <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
+              <div class="flex flex-col gap-1.5">
+                <label for="mudas-disponiveis" class="text-sm font-semibold text-grey-text pl-1">
+                  Estoque atual de mudas
+                </label>
+                <input
+                  id="mudas-disponiveis"
+                  v-model.number="form.mudasDisponiveis"
+                  type="number"
+                  min="0"
+                  step="1"
+                  required
+                  class="w-full bg-white focus:bg-amma-green-lighter border-2 border-amma-green-light focus:border-amma-green rounded-btn py-3 px-4 text-grey-text outline-none transition-all text-sm font-medium focus-visible:ring-2 focus-visible:ring-amma-green/30"
+                />
+              </div>
             </div>
 
             <div class="flex flex-col gap-1.5">

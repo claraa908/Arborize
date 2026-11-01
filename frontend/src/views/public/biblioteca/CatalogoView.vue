@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import DocumentoCard from '@/components/biblioteca/DocumentoCard.vue'
 import capaBanner from '@/assets/images/capa-biblioteca.png'
@@ -18,8 +18,31 @@ let isTicking = false
 
 const categorias = ['Todas', 'Arborização Urbana', 'Caatinga', 'Educação Ambiental', 'Legislação']
 
+// Mapeia o texto da UI para o formato esperado pelo back-end (Enum)
+const categoryMapToBackend: Record<string, string> = {
+  'Arborização Urbana': 'ARBORIZACAO_URBANA',
+  'Caatinga': 'CAATINGA',
+  'Educação Ambiental': 'EDUCACAO_AMBIENTAL',
+  'Legislação': 'LEGISLACAO',
+}
+
+// Função para buscar no catálogo enviando os filtros para o back-end
+const carregarCatalogo = async () => {
+  const searchParam = searchQuery.value.trim() !== '' ? searchQuery.value : undefined
+  const categoryParam = selectedCategory.value !== 'Todas'
+    ? categoryMapToBackend[selectedCategory.value]
+    : undefined
+
+  await libraryStore.fetchPublicCatalog(searchParam, categoryParam)
+}
+
+// Dispara a busca sempre que o usuário mudar a categoria ou digitar na barra de pesquisa
+watch([searchQuery, selectedCategory], () => {
+  carregarCatalogo()
+})
+
 onMounted(() => {
-  libraryStore.fetchPublicCatalog()
+  carregarCatalogo()
 
   const main = rootEl.value?.closest('main')
   if (main) {
@@ -36,14 +59,6 @@ onUnmounted(() => {
   if (scrollContainer) {
     scrollContainer.removeEventListener('scroll', handleScroll as EventListener)
   }
-})
-
-const documentosFiltrados = computed(() => {
-  return libraryStore.publicMaterials.filter(doc => {
-    const matchPesquisa = doc.titulo.toLowerCase().includes(searchQuery.value.toLowerCase()) || doc.descricao.toLowerCase().includes(searchQuery.value.toLowerCase())
-    const matchCategoria = selectedCategory.value === 'Todas' || doc.categoria === selectedCategory.value
-    return matchPesquisa && matchCategoria
-  })
 })
 
 const viewDocument = (id: string) => {
@@ -172,9 +187,9 @@ const handleScroll = (e: Event) => {
       </div>
     </div>
 
-    <div v-if="documentosFiltrados.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pt-4">
+    <div v-if="libraryStore.publicMaterials.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pt-4">
       <DocumentoCard
-        v-for="doc in documentosFiltrados"
+        v-for="doc in libraryStore.publicMaterials"
         :key="doc.id"
         :documento="doc"
         @click="viewDocument(doc.id)"

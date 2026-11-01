@@ -34,7 +34,7 @@ class EspecieControllerTest {
 
     @Test
     void deveRetornarStatus200EListaDeEspecies() throws Exception {
-        EspecieResponseDTO dto = new EspecieResponseDTO(1L, "Cajueiro", null, null, null, null, null, null, null, new ArrayList<>());
+        EspecieResponseDTO dto = new EspecieResponseDTO(1L, "Cajueiro", null, null, null, null, null, null, null, 0, new ArrayList<>());
         when(service.listarTodos()).thenReturn(List.of(dto));
 
         mockMvc.perform(get("/especies"))
@@ -45,7 +45,7 @@ class EspecieControllerTest {
     @Test
     void deveCriarEspecieRetornarStatus201() throws Exception {
         MockMultipartFile foto = new MockMultipartFile("foto", "caju.png", "image/png", "img".getBytes());
-        EspecieResponseDTO dto = new EspecieResponseDTO(1L, "Cajueiro Anão", null, null, null, null, null, null, null, new ArrayList<>());
+        EspecieResponseDTO dto = new EspecieResponseDTO(1L, "Cajueiro Anão", null, null, null, null, null, null, null, 0, new ArrayList<>());
 
         when(service.criarEspecie(any(EspecieRequestDTO.class))).thenReturn(dto);
 

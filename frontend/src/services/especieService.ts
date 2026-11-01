@@ -27,6 +27,7 @@ export const especieService = {
 
     const calcadaBoolean = payload.adequadoCalcada === 'Sim' ? 'true' : 'false';
     formData.append('recomendadaCalcadas', calcadaBoolean);
+    formData.append('mudasDisponiveis', payload.mudasDisponiveis.toString());
 
     if (payload.tempoGerminacaoDias) {
       formData.append('tempoGerminacaoDias', payload.tempoGerminacaoDias.toString());
@@ -47,6 +48,8 @@ export const especieService = {
 
   async update(id: string | number, payload: UpdateEspeciePayload): Promise<EspecieDTO> {
     const formData = new FormData();
+    formData.append('_method', 'PUT')
+
     formData.append('nomePopular', payload.nomePopular);
     formData.append('nomeCientifico', payload.nomeCientifico);
 
@@ -60,6 +63,7 @@ export const especieService = {
 
     const calcadaBoolean = payload.adequadoCalcada === 'Sim' ? 'true' : 'false';
     formData.append('recomendadaCalcadas', calcadaBoolean);
+    formData.append('mudasDisponiveis', payload.mudasDisponiveis.toString());
 
     if (payload.tempoGerminacaoDias) {
       formData.append('tempoGerminacaoDias', payload.tempoGerminacaoDias.toString());
@@ -69,7 +73,7 @@ export const especieService = {
       formData.append('foto', payload.imagem);
     }
 
-    const response = await api.put<EspecieDTO>(`/especies/${id}`, formData, {
+    const response = await api.put<EspecieDTO>(`/especies/editar/${id}`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
@@ -83,6 +87,6 @@ export const especieService = {
   },
 
   getFotoUrl(id: string | number): string {
-    return `${api.defaults.baseURL}/especies/${id}/foto`;
+    return `${api.defaults.baseURL}/especies/${id}/imagem`;
   },
 };

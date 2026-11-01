@@ -16,33 +16,33 @@ export const useLibraryStore = defineStore('library', () => {
   const adminMaterials = ref<MaterialAdminItem[]>([]);
   const isLoading = ref(false);
 
-  async function fetchPublicCatalog() {
-    isLoading.value = true;
-    try {
-      const data = await materialService.getPublicMaterials();
-      publicMaterials.value = data.map((item) => {
-        const firstDoc = item.documents?.[0];
-        const tamanho = firstDoc
-          ? `${(firstDoc.sizeBytes / 1024 / 1024).toFixed(1)} MB`
-          : '2.0 MB';
+  async function fetchPublicCatalog(search?: string, category?: string) {
+      isLoading.value = true;
+      try {
+        const data = await materialService.getPublicMaterials(search, category);
+        publicMaterials.value = data.map((item) => {
+          const firstDoc = item.documents?.[0];
+          const tamanho = firstDoc && firstDoc.sizeBytes
+            ? `${(firstDoc.sizeBytes / 1024 / 1024).toFixed(1)} MB`
+            : '2.0 MB';
 
-        return {
-          id: String(item.id),
-          titulo: item.title,
-          descricao: item.description,
-          categoria: item.category,
-          tipo: item.materialType || '',
-          data: item.uploadDate ? new Date(item.uploadDate).toLocaleDateString('pt-BR') : '-',
-          tamanho,
-          capaUrl: materialService.getCoverUrl(item.id),
-        };
-      });
-    } catch (error) {
-      feedback.showToast('Erro ao carregar o catálogo de materiais.', 'error');
-    } finally {
-      isLoading.value = false;
+          return {
+            id: String(item.id),
+            titulo: item.title,
+            descricao: item.description,
+            categoria: item.category,
+            tipo: item.materialType || '',
+            data: item.uploadDate ? new Date(item.uploadDate).toLocaleDateString('pt-BR') : '-',
+            tamanho,
+            capaUrl: materialService.getCoverUrl(item.id),
+          };
+        });
+      } catch (error) {
+        feedback.showToast('Erro ao carregar o catálogo de materiais.', 'error');
+      } finally {
+        isLoading.value = false;
+      }
     }
-  }
 
   async function fetchAdminMaterials() {
     isLoading.value = true;
