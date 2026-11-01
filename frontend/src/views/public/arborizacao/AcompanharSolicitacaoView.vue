@@ -1,11 +1,16 @@
 <script setup lang="ts">
-import { computed, onMounted } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useFeedbackStore } from '@/stores/feedbackStore'
+import { useAssistentePlantioStore } from '@/stores/assistentePlantioStore'
 import { useSolicitacaoMudaStore } from '@/stores/solicitacaoMudaStore'
 
 const router = useRouter()
+const feedback = useFeedbackStore()
+const quizStore = useAssistentePlantioStore()
 const store = useSolicitacaoMudaStore()
 const result = computed(() => store.resultado)
+const protocolCopied = ref(false)
 
 onMounted(() => {
   if (!store.resultado) void router.replace({ name: 'arborizacao-assistente' })
@@ -17,6 +22,33 @@ const timeline = [
   { title: 'Aprovação da AMMA', description: 'Será liberada após a conferência.', state: 'bloqueada', icon: 'lock' },
   { title: 'Retirada da muda', description: 'Apresente o comprovante no ponto de retirada.', state: 'bloqueada', icon: 'lock' }
 ]
+
+function resetFluxo() {
+  store.resetFluxo()
+  quizStore.resetFluxo()
+}
+
+async function voltarAoInicio() {
+  resetFluxo()
+  await router.push({ name: 'arborizacao' })
+}
+
+async function solicitarOutraMuda() {
+  resetFluxo()
+  await router.push({ name: 'arborizacao-assistente' })
+}
+
+async function copiarProtocolo() {
+  if (!result.value) return
+  try {
+    await navigator.clipboard.writeText(result.value.protocolo)
+    protocolCopied.value = true
+    feedback.showToast('Protocolo copiado para a área de transferência.', 'success')
+  } catch {
+    protocolCopied.value = false
+    feedback.showToast('Não foi possível copiar o protocolo neste dispositivo.', 'error')
+  }
+}
 </script>
 
 <template>
@@ -54,6 +86,20 @@ const timeline = [
         </dl>
         <p class="mt-5 rounded-btn border border-feedback-info-border bg-feedback-info-bg p-4 text-sm text-feedback-info">Guarde o protocolo para referência. Esta tela é exibida a partir da confirmação do envio.</p>
       </section>
+    </div>
+
+    <div class="mt-7 flex flex-col-reverse gap-3 border-t border-amma-green-light pt-5 sm:flex-row sm:items-center sm:justify-between">
+      <div class="flex flex-col gap-3 sm:flex-row">
+        <button type="button" class="rounded-btn border-2 border-amma-green bg-white px-5 py-2.5 font-bold text-amma-green hover:bg-amma-green-lighter focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amma-green" @click="copiarProtocolo">
+          {{ protocolCopied ? 'Protocolo Copiado' : 'Copiar Protocolo' }}
+        </button>
+        <button type="button" class="rounded-btn border-2 border-amma-green bg-white px-5 py-2.5 font-bold text-amma-green hover:bg-amma-green-lighter focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amma-green" @click="solicitarOutraMuda">
+          Solicitar Outra Muda
+        </button>
+      </div>
+      <button type="button" class="rounded-btn bg-amma-green px-6 py-2.5 font-bold text-white hover:bg-amma-green-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amma-green" @click="voltarAoInicio">
+        Voltar ao Início
+      </button>
     </div>
   </section>
 </template>

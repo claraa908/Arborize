@@ -27,6 +27,11 @@ export const useAssistentePlantioStore = defineStore('assistentePlantio', () => 
     if (currentIndex.value > 0) currentIndex.value -= 1
   }
 
+  function irParaPergunta(index: number) {
+    if (!Number.isInteger(index)) return
+    currentIndex.value = Math.min(Math.max(index, 0), assistentePlantioQuestions.length - 1)
+  }
+
   async function carregarRecomendacoes() {
     if (isLoading.value) return
     isLoading.value = true
@@ -49,13 +54,17 @@ export const useAssistentePlantioStore = defineStore('assistentePlantio', () => 
     especieSelecionada.value = species
   }
 
-  function refazerQuiz() {
+  function resetFluxo() {
     respostas.value = {}
     currentIndex.value = 0
     recomendacoes.value = null
     especieSelecionada.value = null
     errorMessage.value = null
     isLoading.value = false
+  }
+
+  function refazerQuiz() {
+    resetFluxo()
   }
 
   return {
@@ -69,8 +78,10 @@ export const useAssistentePlantioStore = defineStore('assistentePlantio', () => 
     setResposta,
     avancar,
     voltar,
+    irParaPergunta,
     carregarRecomendacoes,
     selecionarEspecie,
+    resetFluxo,
     refazerQuiz
   }
 })

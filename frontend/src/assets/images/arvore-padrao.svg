@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 240" role="img" aria-labelledby="title">
+  <title id="title">Ilustração de uma árvore</title>
+  <rect width="320" height="240" rx="20" fill="#e9f1df"/>
+  <path d="M147 147h26v57h-26z" fill="#8b5e3c"/>
+  <path d="M160 24 99 102h34l-47 52h148l-47-52h34z" fill="#4d6e1f"/>
+  <path d="M52 204h216" stroke="#789b47" stroke-linecap="round" stroke-width="8"/>
+</svg>

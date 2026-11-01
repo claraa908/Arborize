@@ -1,16 +1,32 @@
 <script setup lang="ts">
+import { computed, ref, watch } from 'vue'
+import { especieService } from '@/services/especieService'
 import type { SpeciesRecommendation } from '@/types/assistentePlantio'
+import defaultTreeImage from '@/assets/images/arvore-padrao.svg'
 
-defineProps<{ species: SpeciesRecommendation }>()
+const props = defineProps<{ species: SpeciesRecommendation }>()
 defineEmits<{ select: [species: SpeciesRecommendation] }>()
+
+const imageFailed = ref(false)
+const imageUrl = computed(() => {
+  const providedUrl = props.species.fotoUrl?.trim()
+    || props.species.imagemUrl?.trim()
+    || props.species.urlFoto?.trim()
+
+  return providedUrl || especieService.getFotoUrl(props.species.id)
+})
+
+watch(imageUrl, () => {
+  imageFailed.value = false
+})
 </script>
 
 <template>
   <article class="flex h-full flex-col overflow-hidden rounded-box border border-amma-green-light bg-white shadow-sm">
     <div class="flex h-40 items-center justify-center bg-amma-green-lighter">
-      <img v-if="species.fotoUrl" :src="species.fotoUrl" :alt="`Foto de ${species.nomePopular}`" class="h-full w-full object-cover" />
+      <img v-if="!imageFailed" :src="imageUrl" :alt="`Foto de ${species.nomePopular}`" class="h-full w-full object-cover" @error="imageFailed = true" />
       <div v-else class="flex flex-col items-center gap-2 text-amma-green-dark" aria-label="Foto indisponível">
-        <span class="material-symbols-outlined text-5xl" aria-hidden="true">park</span>
+        <img :src="defaultTreeImage" alt="Ilustração padrão de uma árvore" class="h-20 w-20 object-contain" />
         <span class="text-xs font-semibold">Foto indisponível</span>
       </div>
     </div>

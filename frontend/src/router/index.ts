@@ -2,6 +2,8 @@ import { createRouter, createWebHistory } from 'vue-router'
 import PublicLayout from '@/layouts/PublicLayout.vue'
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue'
 import HomeView from '@/views/public/HomeView.vue'
+import { useAssistentePlantioStore } from '@/stores/assistentePlantioStore'
+import { useSolicitacaoMudaStore } from '@/stores/solicitacaoMudaStore'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -28,7 +30,17 @@ const router = createRouter({
         {
           path: 'arborizacao',
           name: 'arborizacao',
-          redirect: { name: 'arborizacao-assistente' }
+          redirect: () => {
+            const quizStore = useAssistentePlantioStore()
+            const requestStore = useSolicitacaoMudaStore()
+
+            if (requestStore.resultado) return { name: 'arborizacao-acompanhar' }
+            if (requestStore.form.especieId > 0) {
+              return { name: 'solicitar-muda', query: { especieId: requestStore.form.especieId } }
+            }
+            if (quizStore.recomendacoes !== null) return { name: 'arborizacao-recomendacoes' }
+            return { name: 'arborizacao-assistente' }
+          }
         },
         {
           path: 'arborizacao/assistente',

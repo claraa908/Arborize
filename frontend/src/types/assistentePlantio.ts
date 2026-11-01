@@ -17,6 +17,8 @@ export interface SpeciesRecommendation {
   nomeCientifico: string
   porte: string
   fotoUrl?: string | null
+  imagemUrl?: string | null
+  urlFoto?: string | null
 }
 
 export interface QuizAnswer {

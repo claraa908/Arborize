@@ -70,6 +70,17 @@ export const useSolicitacaoMudaStore = defineStore('solicitacaoMuda', () => {
     }
   }
 
+  function resetFluxo() {
+    form.value = emptyForm()
+    conversao.value = null
+    resultado.value = null
+    isCalculating.value = false
+    isSubmitting.value = false
+    conversionError.value = null
+    submitError.value = null
+    serverErrors.value = {}
+  }
+
   return {
     form,
     conversao,
@@ -81,6 +92,7 @@ export const useSolicitacaoMudaStore = defineStore('solicitacaoMuda', () => {
     serverErrors,
     calcularConversao,
     enviarSolicitacao,
-    preencherEspecie
+    preencherEspecie,
+    resetFluxo
   }
 })
