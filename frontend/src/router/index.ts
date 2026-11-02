@@ -115,7 +115,25 @@ const router = createRouter({
           path: 'inventario',
           name: 'inventario',
           component: () => import('@/views/auth/InventarioView.vue'),
-          meta: { title: 'Inventário Arbóreo' }
+          meta: { title: 'Inventário Arbóreo', activeMenu: 'inventario' }
+        },
+        {
+          path: 'inventario/nova',
+          name: 'inventario-nova',
+          component: () => import('@/views/auth/inventario/ArvoreFormView.vue'),
+          meta: { title: 'Inventário Arbóreo', activeMenu: 'inventario' }
+        },
+        {
+          path: 'inventario/:id/editar',
+          name: 'inventario-editar',
+          component: () => import('@/views/auth/inventario/ArvoreFormView.vue'),
+          meta: { title: 'Inventário Arbóreo', activeMenu: 'inventario' }
+        },
+        {
+          path: 'inventario/:id',
+          name: 'inventario-detalhes',
+          component: () => import('@/views/auth/inventario/ArvoreDetalhesView.vue'),
+          meta: { title: 'Inventário Arbóreo', activeMenu: 'inventario' }
         },
         {
   path: 'viveiro',

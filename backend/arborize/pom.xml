@@ -105,6 +105,12 @@
             <artifactId>minio</artifactId>
             <version>8.5.7</version>
         </dependency>
+        <!-- ImageIO do JDK não decodifica WebP; necessário para validar o conteúdo enviado. -->
+        <dependency>
+            <groupId>com.twelvemonkeys.imageio</groupId>
+            <artifactId>imageio-webp</artifactId>
+            <version>3.15.0</version>
+        </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
