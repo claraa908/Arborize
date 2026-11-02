@@ -30,56 +30,96 @@ https://www.figma.com/design/CpatSsboKRabdzBzyetI3b/Arborize?node-id=0-1&p=f&t=n
 
 O endpoint de conversão e a API de solicitações usam esses parâmetros no backend. CPF e telefone são persistidos somente com dígitos e não são retornados pela API nem escritos nos logs da funcionalidade.
 
-## Ambiente local reproduzível
+## Ambiente local de desenvolvimento
 
-O ambiente de desenvolvimento usa serviços isolados, portas vinculadas somente ao loopback e credenciais fornecidas localmente. A relação de 24 bairros é uma referência pública provisória, baseada no Plano Municipal da Primeira Infância de Quixadá; ainda depende de validação institucional da AMMA.
+O projeto utiliza o `docker-compose.yml` original da equipe: PostgreSQL 15 em `5433`,
+pgAdmin em `5050` e MinIO em `9000` (API) e `9001` (console). Os nomes fixos são
+`arborize-postgres`, `arborize-pgadmin` e `arborize-minio`. Não é necessário criar nem
+preencher um `.env` na raiz para iniciar esses serviços ou o backend local.
+
+**Somente desenvolvimento:** esse Compose contém credenciais fixas e configura
+`POSTGRES_HOST_AUTH_METHOD=trust`. As portas não têm restrição explícita ao loopback.
+Essa configuração não é adequada para produção nem para exposição em redes não confiáveis.
 
 ### Preparar os serviços
 
-1. Copie o exemplo de variáveis e preencha as senhas locais. Gere senhas locais com `openssl rand -hex 24`; se definir `JWT_SECRET`, gere 32 bytes com `openssl rand -hex 32`. Não use credenciais institucionais nem reutilize segredos de outros ambientes.
+1. Confira nomes e portas antes de iniciar:
 
    ```sh
-   cp .env.example .env
+   docker ps -a
    ```
 
-   Configure ao menos `ARBORIZA_DB_PASSWORD`, `ARBORIZA_MINIO_ACCESS_KEY` e `ARBORIZA_MINIO_SECRET_KEY`; se usar o pgAdmin, defina também `ARBORIZA_PGADMIN_PASSWORD`. O arquivo `.env` é ignorado pelo Git.
+   Se algum nome ou porta já pertencer a outro ambiente, não pare nem recrie seus serviços.
+   Resolva o conflito com o responsável antes de prosseguir. Em especial, um PostgreSQL
+   existente na porta `5433` pode conter dados de outro worktree; não inicie o backend
+   contra esse destino sem confirmar banco, volume e autorização.
 
-2. Inicie apenas PostgreSQL e MinIO com um nome de projeto próprio. Isso cria volumes namespaced `arborize-dev_*`, separados de volumes existentes com outros nomes de projeto:
+2. Em uma máquina sem conflitos, na raiz do projeto, inicie os serviços:
 
    ```sh
-   docker compose -p arborize-dev up -d postgres minio
+   docker compose up -d
+   docker compose ps
    ```
 
-   O PostgreSQL 15 usa SCRAM para conexões TCP e publica a porta padrão `55433` somente em `127.0.0.1`. O MinIO publica `19000`/`19001` no loopback. Não use `down -v`: os volumes locais contêm os dados do ambiente.
+   Aguarde PostgreSQL e MinIO aceitarem conexões. O Compose original não possui healthcheck
+   do PostgreSQL. Os volumes lógicos `postgres_data` e `minio_data` preservam banco e arquivos;
+   os nomes físicos dependem do nome do projeto Compose. Preserve o nome do projeto usado
+   anteriormente para não criar volumes paralelos sem os dados esperados.
 
-3. Exporte as variáveis para o processo Spring e inicie o backend no perfil local:
+3. Inicie o backend com Java 17 ou superior no perfil local:
 
    ```sh
-   set -a
-   . ./.env
-   set +a
    APP_PROFILE=local bash backend/arborize/mvnw -f backend/arborize/pom.xml spring-boot:run
    ```
 
-   Se o wrapper Maven não estiver disponível na cópia local, execute `mvn -f backend/arborize/pom.xml spring-boot:run`.
+   Se o wrapper Maven não estiver disponível, use `mvn -f backend/arborize/pom.xml spring-boot:run`.
+   A API utiliza `http://localhost:8080`. Os padrões locais conectam a
+   `jdbc:postgresql://localhost:5433/arborize_db` e ao MinIO em `http://localhost:9000`,
+   com as credenciais de desenvolvimento do Compose original.
 
-O perfil `local` aplica `bairros-referencia-quixada.sql` após a criação/atualização do esquema JPA, em toda inicialização do backend. O script insere somente nomes ainda ausentes após normalização; não renomeia, reativa nem remove bairros e não altera árvores ou associações. Assim, atende tanto um banco novo quanto um esquema de desenvolvimento já existente sem exigir execução manual recorrente. O script territorial de backfill continua manual e não é executado pelo bootstrap.
+As variáveis `ARBORIZA_DB_URL`, `ARBORIZA_DB_PORT`, `ARBORIZA_DB_NAME`, `ARBORIZA_DB_USER`,
+`ARBORIZA_DB_PASSWORD`, `ARBORIZA_MINIO_URL`, `ARBORIZA_MINIO_API_PORT`,
+`ARBORIZA_MINIO_ACCESS_KEY` e `ARBORIZA_MINIO_SECRET_KEY` continuam disponíveis como
+sobrescritas opcionais para ambientes já configurados. Valores exportados anteriormente
+prevalecem sobre os padrões; confira o destino efetivo antes de iniciar o backend.
 
-As variáveis `POSTGRES_*` do Compose e os argumentos de `initdb` só inicializam autenticação em um volume PostgreSQL novo. Eles não mudam senha nem `pg_hba.conf` de um volume já criado. Para usar intencionalmente outro banco local existente, configure `ARBORIZA_DB_URL`, `ARBORIZA_DB_USER` e `ARBORIZA_DB_PASSWORD` no ambiente local; confirme banco, schema e autenticação antes de iniciar, pois o perfil `local` executará a carga idempotente de bairros nesse destino. Não tente converter o volume automaticamente. O comando com `-p arborize-dev` usa um volume separado e não deve ser removido para “reaproveitar” dados de outro projeto.
+Restaurar o Compose não altera autenticação, usuários ou senhas de um volume PostgreSQL
+já inicializado. Não recrie volumes nem altere `pg_hba.conf` para tentar corrigir uma falha
+sem antes verificar a configuração efetiva. O mesmo cuidado vale para dados e credenciais
+já existentes no MinIO. Não use `docker compose down -v`.
+
+O perfil `local` mantém `ddl-auto=update` e aplica `bairros-referencia-quixada.sql` após a
+atualização do esquema JPA em cada inicialização. O script insere somente nomes ausentes
+após normalização, sem renomear, reativar, remover bairros ou alterar árvores e associações.
+A lista de 24 bairros é uma referência pública provisória, baseada no Plano Municipal da
+Primeira Infância de Quixadá, ainda sujeita à validação da AMMA. O backfill territorial
+continua manual e não é executado pela inicialização. Confirme o banco antes de iniciar,
+pois a inicialização normal do perfil local pode atualizar o esquema e inserir bairros.
 
 ### Administrador fictício de desenvolvimento
 
-O bootstrap é desligado por padrão (`ARBORIZA_DEV_ADMIN_BOOTSTRAP_ENABLED=false`) e só é registrado no perfil `local`. Para criar uma conta, altere no `.env`:
+O bootstrap administrativo continua opcional, desligado por padrão e exclusivo do perfil
+`local`. Ele não altera contas existentes. Para utilizá-lo, copie opcionalmente
+`.env.example` para `.env`, habilite `ARBORIZA_DEV_ADMIN_BOOTSTRAP_ENABLED=true` e configure
+`ARBORIZA_DEV_ADMIN_EMAIL` com domínio reservado `.invalid` e uma senha aleatória local em
+`ARBORIZA_DEV_ADMIN_PASSWORD`. Exporte essas variáveis antes de iniciar o backend:
 
-```dotenv
-ARBORIZA_DEV_ADMIN_BOOTSTRAP_ENABLED=true
-ARBORIZA_DEV_ADMIN_EMAIL=admin.dev@example.invalid
-ARBORIZA_DEV_ADMIN_PASSWORD=
+```sh
+set -a
+. ./.env
+set +a
+APP_PROFILE=local bash backend/arborize/mvnw -f backend/arborize/pom.xml spring-boot:run
 ```
 
-Gere uma senha aleatória local, reinicie o backend e faça login em `/auth/login` com esses valores. O e-mail deve usar o domínio reservado `.invalid`. A senha é codificada com o `PasswordEncoder` BCrypt existente; somente o hash é persistido. Se o e-mail já estiver cadastrado, o bootstrap não altera nome, senha, CPF ou perfil. A rotina usa dados claramente fictícios para os demais campos obrigatórios e não pode iniciar quando o perfil `prod` estiver ativo. Depois da criação, pode desligar a flag; isso não remove a conta nem redefine sua senha.
+O Spring Boot não lê o `.env` automaticamente. Sem bootstrap, esse arquivo e essa etapa
+não são necessários. A senha é codificada pelo PasswordEncoder BCrypt existente; somente
+o hash é persistido. A rotina não altera nome, senha, CPF ou papel de uma conta existente,
+não pode iniciar com `prod` ativo e não modifica as regras de autenticação. Após criar a
+conta fictícia, desligue a flag. O `.env` deve permanecer privado e ignorado pelo Git.
 
-Não coloque segredos no código, em SQL ou neste repositório. O bootstrap não altera regras de autenticação, permissões ou rotas.
+`JWT_SECRET` também é opcional no desenvolvimento: sem valor, o backend gera uma chave
+por processo. Para manter sessões após reinicializações, forneça localmente um segredo
+gerado com `openssl rand -hex 32`. Nunca publique senhas de contas ou segredos JWT.
 
 ### Frontend e MapTiler
 
@@ -99,15 +139,15 @@ A base cartográfica normal funciona sem chave. A chave MapTiler é necessária 
 ### Encerrar e consultar serviços
 
 ```sh
-docker compose -p arborize-dev ps
-docker compose -p arborize-dev stop
-docker compose -p arborize-dev down
+docker compose ps
+docker compose stop
 ```
 
-`down` remove os containers e a rede do projeto, mas preserva os volumes nomeados. Não acrescente `-v` se quiser conservar os dados locais. O pgAdmin é opcional e fica restrito ao loopback:
+Os comandos devem ser executados com o mesmo nome de projeto usado na inicialização e
+somente sobre o ambiente confirmado. Não remova volumes para reiniciar o projeto. O pgAdmin
+faz parte da inicialização padrão do Compose original e fica disponível em `http://localhost:5050`;
+o console MinIO fica em `http://localhost:9001`.
 
-```sh
-docker compose -p arborize-dev --profile tools up -d pgadmin
-```
-
-A configuração do perfil `prod` desativa a carga SQL automática e o bootstrap administrativo. A lista de bairros continua sendo apenas uma referência pública provisória, não homologação da AMMA.
+O perfil `prod` continua desativando a carga SQL automática e o bootstrap administrativo.
+A restauração do ambiente local não equivale à preparação para produção nem à homologação
+dos bairros pela AMMA.
