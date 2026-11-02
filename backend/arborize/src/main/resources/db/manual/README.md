@@ -1,9 +1,13 @@
 # Transição territorial de árvores
 
-Os scripts desta pasta são procedimentos manuais para PostgreSQL. Eles não são carregados
-automaticamente pelo Spring Boot e não adicionam Flyway, Liquibase ou outra ferramenta de
-migração. `ddl-auto=update` pode criar colunas da entidade, mas não executa backfill nem carga
-de bairros.
+O script `bairros-referencia-quixada.sql` também é configurado como carga idempotente do
+perfil `local`: o Spring Boot o executa após a atualização do esquema JPA em cada inicialização
+de desenvolvimento. Isso atende bancos novos e esquemas locais existentes sem aplicar a carga
+em `prod`. A mesma carga continua podendo ser executada manualmente conforme o procedimento
+abaixo, após conferir destino e autorização.
+
+`territorio-arvore-bairro-cep.sql` permanece um procedimento manual; não é carregado pelo Spring
+Boot. `ddl-auto=update` pode criar colunas da entidade, mas não executa backfill.
 
 `territorio-arvore-bairro-cep.sql` adiciona `bairro_nome`, `cep` e `localidade_rural` como
 colunas anuláveis. O backfill copia `bairros.nome` somente para árvores com `bairro_id` válido e
@@ -24,13 +28,14 @@ Fontes consultadas em 2026-11-01:
 - Prefeitura de Quixadá, Plano Municipal da Primeira Infância 2022–2031: <https://quixada.ce.gov.br/conselhoarquivo/1/302/planomunicipalpelaprimeirainfancia.pdf>.
 - CREDE12/SEDUC-CE, referência histórica das Leis Municipais 1.863/1999 e 2.319/2007: <https://www.ce.gov.br/crede12-seduc/2016/02/25/quixada-historico/>.
 
-## Procedimento controlado
+## Execução manual controlada
 
-Executar qualquer script somente após autorização operacional explícita, backup confirmado e
-revisão do banco e schema de destino. A aplicação não chama esses scripts na inicialização. A
-carga de bairros pode ser reexecutada sem duplicar nomes equivalentes, mas idempotência não
-substitui a aprovação da lista nem a revisão de bairros inativos e aliases. O backfill de
-`bairroNome` não deve ser repetido depois que operadores puderem editar/limpar esse campo.
+Ao executar manualmente qualquer script, exigir autorização operacional explícita, backup
+confirmado e revisão do banco e schema de destino. No perfil `local`, somente a carga de bairros
+é aplicada automaticamente pelo Spring Boot. Ela pode ser reexecutada sem duplicar nomes
+equivalentes, mas idempotência não substitui a validação institucional da lista nem a revisão de
+bairros inativos e aliases. O backfill de `bairroNome` permanece manual e não deve ser repetido
+depois que operadores puderem editar/limpar esse campo.
 
 Antes da execução, conferir destino, contagens e duplicidades normalizadas:
 
