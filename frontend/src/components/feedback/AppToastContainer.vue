@@ -51,7 +51,7 @@ const stylesMap: Record<FeedbackType, StyleConfig> = {
 
 <template>
   <div
-    class="absolute top-5 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center gap-2.5 max-w-md w-[calc(100%-2.5rem)] pointer-events-none"
+    class="absolute top-5 left-1/2 -translate-x-1/2 z-[60] flex flex-col items-center gap-2.5 max-w-md w-[calc(100%-2.5rem)] pointer-events-none"
     aria-live="polite"
   >
     <TransitionGroup

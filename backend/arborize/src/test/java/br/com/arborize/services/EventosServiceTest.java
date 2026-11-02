@@ -38,7 +38,7 @@ class EventosServiceTest {
     @Test
     void deveListarTodosOsEventos() {
         Eventos evento = new Eventos();
-        EventosResponseDTO dto = new EventosResponseDTO(1L, "Caminhada", null, null, null, null, null, null, null, null, null, new ArrayList<>());
+        EventosResponseDTO dto = new EventosResponseDTO(1L, "Caminhada", null, null, null, null, null, null, null, null, null, null, new ArrayList<>());
 
         when(repository.findAll()).thenReturn(List.of(evento));
         when(mapper.toResponseDTO(evento)).thenReturn(dto);
@@ -53,13 +53,13 @@ class EventosServiceTest {
     @Test
     void deveCriarEventoComBanner() {
         MockMultipartFile bannerFalso = new MockMultipartFile("banner", "banner.png", "image/png", "conteudo".getBytes());
-        EventosRequestDTO requestDTO = new EventosRequestDTO("Plantio", "Desc", "2026-10-15", "2026-10-16", "UFC", "Cedro", "08:00", "12:00", "Saída", "Fim", bannerFalso);
+        EventosRequestDTO requestDTO = new EventosRequestDTO("Plantio", "Desc", "2026-10-15", "2026-10-16", "UFC", "Cedro", "08:00", "12:00", "Saída", "Fim", null, bannerFalso);
 
         Eventos eventoMapeado = new Eventos();
         eventoMapeado.setDocuments(new ArrayList<>());
 
         DocumentEntities documentoSalvo = new DocumentEntities();
-        EventosResponseDTO responseDTO = new EventosResponseDTO(1L, "Plantio", null, null, null, null, null, null, null, null, null, new ArrayList<>());
+        EventosResponseDTO responseDTO = new EventosResponseDTO(1L, "Plantio", null, null, null, null, null, null, null, null, null, null, new ArrayList<>());
 
         when(mapper.toEntity(requestDTO)).thenReturn(eventoMapeado);
         when(documentService.uploadAndCreateDocument(bannerFalso)).thenReturn(documentoSalvo);
