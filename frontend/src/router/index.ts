@@ -4,6 +4,7 @@ import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue'
 import HomeView from '@/views/public/HomeView.vue'
 import { useAssistentePlantioStore } from '@/stores/assistentePlantioStore'
 import { useSolicitacaoMudaStore } from '@/stores/solicitacaoMudaStore'
+import { useAuthStore } from '@/stores/authStore'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -66,12 +67,19 @@ const router = createRouter({
           path: 'arborizacao/acompanhar',
           name: 'arborizacao-acompanhar',
           component: () => import('@/views/public/arborizacao/AcompanharSolicitacaoView.vue')
+        },
+        {
+          path: 'perfil',
+          name: 'perfil',
+          component: () => import('@/views/public/PerfilView.vue'),
+          meta: { requiresAuth: true, title: 'Meu Perfil' }
         }
       ]
     },
     {
       path: '/sistema',
       component: AuthenticatedLayout,
+      meta: { requiresManagement: true },
       children: [
         {
           path: '',
@@ -169,15 +177,65 @@ const router = createRouter({
           component: () => import('@/views/auth/eventos/EventosCadastroView.vue'),
           meta: { title: 'Eventos Ambientais', activeMenu: 'eventos' }
         },
+      ]
+    },
+    {
+      path: '/gestao',
+      component: AuthenticatedLayout,
+      meta: { requiresAdmin: true },
+      children: [
         {
-          path: 'perfil',
-          name: 'perfil',
-          component: () => import('@/views/auth/PerfilView.vue'),
-          meta: { title: 'Meu Perfil' }
+          path: '',
+          name: 'gestao',
+          component: () => import('@/views/auth/GestaoView.vue'),
+          meta: { title: 'Painel de Gestão' }
+        }
+      ]
+    },
+    {
+      path: '/ifce',
+      component: AuthenticatedLayout,
+      meta: { requiresIfceTeam: true },
+      children: [
+        {
+          path: 'equipe',
+          name: 'ifce-equipe',
+          component: () => import('@/views/auth/GestaoIfceView.vue'),
+          meta: { title: 'Equipe do Laboratório' }
         }
       ]
     }
   ]
+})
+
+router.beforeEach((to) => {
+  const auth = useAuthStore()
+
+  if (to.matched.some((record) => record.meta.requiresAdmin) && !auth.isAmmaAdmin) {
+    return { name: 'home' }
+  }
+
+  if (to.matched.some((record) => record.meta.requiresIfceTeam) && !auth.canManageIfceTeam) {
+    return { name: 'home' }
+  }
+
+  if (to.matched.some((record) => record.meta.requiresManagement)) {
+    if (!auth.isAuthenticated) {
+      return {
+        name: 'home',
+        query: { auth: 'required', redirect: to.fullPath }
+      }
+    }
+    if (!auth.canAccessManagement) return { name: 'home' }
+  }
+
+  if (to.matched.some((record) => record.meta.requiresAuth) && !auth.isAuthenticated) {
+    return {
+      name: 'home',
+      query: { auth: 'required', redirect: to.fullPath }
+    }
+  }
+  return true
 })
 
 export default router

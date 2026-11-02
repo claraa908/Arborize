@@ -53,7 +53,6 @@ class EventosServiceTest {
     @Test
     void deveCriarEventoComBanner() {
         MockMultipartFile bannerFalso = new MockMultipartFile("banner", "banner.png", "image/png", "conteudo".getBytes());
-        // Ajuste para preencher todos os parâmetros exigidos pelo EventosRequestDTO atual
         EventosRequestDTO requestDTO = new EventosRequestDTO("Plantio", "Desc", "2026-10-15", "2026-10-16", "UFC", "Cedro", "08:00", "12:00", "Saída", "Fim", null, bannerFalso);
 
         Eventos eventoMapeado = new Eventos();
