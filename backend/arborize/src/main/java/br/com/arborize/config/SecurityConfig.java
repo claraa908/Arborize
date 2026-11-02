@@ -44,27 +44,28 @@ public class SecurityConfig {
                                 "/swagger-ui.html").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/login", "/usuarios/cadastro").permitAll()
                         .requestMatchers("/admin/usuarios", "/admin/usuarios/**").hasRole("ADMINISTRADOR_AMMA")
+                        .requestMatchers("/ifce/bolsistas", "/ifce/bolsistas/**").hasRole("GESTOR_IFCE")
                         .requestMatchers("/usuarios/me", "/usuarios/me/**").authenticated()
                         .requestMatchers("/api/materials/admin", "/api/materials/admin/**")
-                        .hasAnyRole("AMMA", "ADMINISTRADOR_AMMA", "FUNCIONARIO_AMMA", "GESTOR_IFCE", "IFCE_GESTOR", "IFCE_BOLSISTA")
+                        .hasAnyRole("AMMA", "ADMINISTRADOR_AMMA", "FUNCIONARIO_AMMA", "GESTOR_IFCE", "IFCE_GESTOR", "BOLSISTA_IFCE", "IFCE_BOLSISTA")
                         .requestMatchers(
                                 HttpMethod.POST,
                                 "/eventos", "/eventos/**",
                                 "/especies", "/especies/**",
                                 "/api/materials", "/api/materials/**"
-                        ).hasAnyRole("AMMA", "ADMINISTRADOR_AMMA", "FUNCIONARIO_AMMA", "GESTOR_IFCE", "IFCE_GESTOR", "IFCE_BOLSISTA")
+                        ).hasAnyRole("AMMA", "ADMINISTRADOR_AMMA", "FUNCIONARIO_AMMA", "GESTOR_IFCE", "IFCE_GESTOR", "BOLSISTA_IFCE", "IFCE_BOLSISTA")
                         .requestMatchers(
                                 HttpMethod.PUT,
                                 "/eventos", "/eventos/**",
                                 "/especies", "/especies/**",
                                 "/api/materials", "/api/materials/**"
-                        ).hasAnyRole("AMMA", "ADMINISTRADOR_AMMA", "FUNCIONARIO_AMMA", "GESTOR_IFCE", "IFCE_GESTOR", "IFCE_BOLSISTA")
+                        ).hasAnyRole("AMMA", "ADMINISTRADOR_AMMA", "FUNCIONARIO_AMMA", "GESTOR_IFCE", "IFCE_GESTOR", "BOLSISTA_IFCE", "IFCE_BOLSISTA")
                         .requestMatchers(
                                 HttpMethod.DELETE,
                                 "/eventos", "/eventos/**",
                                 "/especies", "/especies/**",
                                 "/api/materials", "/api/materials/**"
-                        ).hasAnyRole("AMMA", "ADMINISTRADOR_AMMA", "FUNCIONARIO_AMMA", "GESTOR_IFCE", "IFCE_GESTOR", "IFCE_BOLSISTA")
+                        ).hasAnyRole("AMMA", "ADMINISTRADOR_AMMA", "FUNCIONARIO_AMMA", "GESTOR_IFCE", "IFCE_GESTOR", "BOLSISTA_IFCE", "IFCE_BOLSISTA")
                         .requestMatchers(
                                 HttpMethod.GET,
                                 "/especies", "/especies/**",

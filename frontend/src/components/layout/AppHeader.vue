@@ -13,6 +13,7 @@ const pageTitle = computed(() => route.meta.title as string || 'Arborize')
 const userName = computed(() => auth.nome || 'Cidadão')
 const userInitials = computed(() => userName.value.trim().split(/\s+/).slice(0, 2).map(part => part.charAt(0).toUpperCase()).join(''))
 const roleLabel = computed(() => ({
+  ROLE_BOLSISTA_IFCE: 'Bolsista IFCE',
   ROLE_GESTOR_IFCE: 'Gestor do Laboratório IFCE',
   ROLE_CIDADAO: 'Cidadão',
   ROLE_ADMINISTRADOR_AMMA: 'Administrador da AMMA',
@@ -28,6 +29,10 @@ const navigateToProfile = () => {
 
 const navigateToManagement = () => {
   router.push({ name: 'gestao' })
+}
+
+const navigateToIfceTeam = () => {
+  router.push({ name: 'ifce-equipe' })
 }
 
 const handleLogout = async () => {
@@ -73,6 +78,21 @@ const handleLogout = async () => {
       <div class="hidden sm:block w-px h-8 bg-amma-green-light"></div>
 
       <div class="flex items-center gap-2">
+        <button
+          v-if="auth.canManageIfceTeam"
+          type="button"
+          @click="navigateToIfceTeam"
+          :class="[
+            'w-10 h-10 flex items-center justify-center transition-all efeito-zoom cursor-pointer rounded-bl-[10px] rounded-tr-[10px] rounded-tl-[20px] rounded-br-[20px]',
+            route.name === 'ifce-equipe'
+              ? 'bg-amma-green-dark text-white shadow-inner'
+              : 'text-grey-text hover:text-white hover:bg-amma-green'
+          ]"
+          aria-label="Equipe do Laboratório IFCE"
+          title="Equipe do Laboratório"
+        >
+          <span class="material-symbols-outlined text-[24px]" aria-hidden="true">groups</span>
+        </button>
         <button
           v-if="auth.isAmmaAdmin"
           type="button"

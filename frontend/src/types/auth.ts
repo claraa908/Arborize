@@ -5,6 +5,7 @@ export const USER_ROLES = [
   'ROLE_AMMA',
   'ROLE_GESTOR_IFCE',
   'ROLE_IFCE_GESTOR',
+  'ROLE_BOLSISTA_IFCE',
   'ROLE_IFCE_BOLSISTA'
 ] as const
 

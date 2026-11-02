@@ -149,6 +149,19 @@ const router = createRouter({
           meta: { title: 'Painel de Gestão' }
         }
       ]
+    },
+    {
+      path: '/ifce',
+      component: AuthenticatedLayout,
+      meta: { requiresIfceTeam: true },
+      children: [
+        {
+          path: 'equipe',
+          name: 'ifce-equipe',
+          component: () => import('@/views/auth/GestaoIfceView.vue'),
+          meta: { title: 'Equipe do Laboratório' }
+        }
+      ]
     }
   ]
 })
@@ -157,6 +170,10 @@ router.beforeEach((to) => {
   const auth = useAuthStore()
 
   if (to.matched.some((record) => record.meta.requiresAdmin) && !auth.isAmmaAdmin) {
+    return { name: 'home' }
+  }
+
+  if (to.matched.some((record) => record.meta.requiresIfceTeam) && !auth.canManageIfceTeam) {
     return { name: 'home' }
   }
 

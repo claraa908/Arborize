@@ -12,6 +12,7 @@ export const useAuthStore = defineStore('auth', () => {
   const isCitizen = computed(() => role.value === 'ROLE_CIDADAO')
   const isAmmaAdmin = computed(() => role.value === 'ROLE_ADMINISTRADOR_AMMA')
   const canAccessManagement = computed(() => Boolean(role.value && role.value !== 'ROLE_CIDADAO'))
+  const canManageIfceTeam = computed(() => role.value === 'ROLE_GESTOR_IFCE')
 
   async function login(credentials: LoginRequest) {
     const session = await autenticarUsuario(credentials)
@@ -34,5 +35,5 @@ export const useAuthStore = defineStore('auth', () => {
     clearAuthSession()
   }
 
-  return { token, nome, role, isAuthenticated, isCitizen, isAmmaAdmin, canAccessManagement, login, updateName, logout }
+  return { token, nome, role, isAuthenticated, isCitizen, isAmmaAdmin, canAccessManagement, canManageIfceTeam, login, updateName, logout }
 })

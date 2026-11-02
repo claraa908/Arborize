@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
+import { computed, ref, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/authStore'
 
 const route = useRoute()
 const router = useRouter()
+const auth = useAuthStore()
 
 interface SubMenuItem {
   name: string
@@ -26,6 +28,10 @@ const menuItems: MenuItem[] = [
   { name: 'Laudos', icon: 'description', routeName: 'laudos' },
   { name: 'Eventos', icon: 'event', routeName: 'eventos' }
 ]
+
+const visibleMenuItems = computed(() => auth.canManageIfceTeam
+  ? [...menuItems.slice(0, 1), { name: 'Equipe do Laboratório', icon: 'groups', routeName: 'ifce-equipe' }, ...menuItems.slice(1)]
+  : menuItems)
 
 const isExpanded = ref(true)
 const isMobileOpen = ref(false)
@@ -104,7 +110,7 @@ const isActive = (routeName?: string) => {
     </div>
 
     <nav class="flex-1 px-3 py-4 flex flex-col gap-2 overflow-y-auto overflow-x-hidden mt-2">
-      <div v-for="item in menuItems" :key="item.name" class="flex flex-col gap-1">
+      <div v-for="item in visibleMenuItems" :key="item.name" class="flex flex-col gap-1">
         <a
           href="#"
           :title="!isExpanded ? item.name : ''"
@@ -191,7 +197,7 @@ const isActive = (routeName?: string) => {
         </div>
 
         <nav class="flex-1 px-4 py-4 flex flex-col gap-2 overflow-y-auto">
-          <div v-for="item in menuItems" :key="item.name" class="flex flex-col gap-1">
+          <div v-for="item in visibleMenuItems" :key="item.name" class="flex flex-col gap-1">
             <a
               href="#"
               :class="[

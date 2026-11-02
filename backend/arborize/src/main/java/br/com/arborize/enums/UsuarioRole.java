@@ -9,6 +9,7 @@ public enum UsuarioRole {
     AMMA,
     GESTOR_IFCE,
     IFCE_GESTOR,
+    BOLSISTA_IFCE,
     IFCE_BOLSISTA;
 
     public String getAuthority() {
