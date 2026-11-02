@@ -609,7 +609,7 @@ texto territorial e CEP. A nova evolução abaixo volta a exigir associação de
 fluxo urbano; os critérios anteriores permanecem como histórico e compatibilidade dos
 registros legados. O comportamento vigente é o da RN07 e dos CA33–CA39.
 
-### 7.8. Evolução de escopo: seleção explícita urbano/rural e catálogo inicial de referência
+### 7.6. Evolução de escopo: seleção explícita urbano/rural e catálogo inicial de referência
 
 A experiência de cadastro passa a oferecer duas escolhas explícitas. O padrão é urbano,
 com seleção obrigatória de bairro ativo por `bairroId`; o modo rural substitui o seletor por
@@ -646,7 +646,7 @@ aplicada ao PostgreSQL local de desenvolvimento, conforme confirmação do usuá
 executado backfill territorial. Essa carga local não equivale a homologação da AMMA nem autoriza
 aplicação em outros ambientes. A validação institucional continua pendente.
 
-### 7.6. Validações institucionais
+### 7.7. Validações institucionais
 
 Precisam de confirmação com a AMMA:
 
@@ -658,7 +658,7 @@ Precisam de confirmação com a AMMA:
 
 Essas pendências não autorizam a criação de regras técnicas ou institucionais fictícias.
 
-### 7.6. Dependência de autenticação
+### 7.8. Dependência de autenticação
 
 O backend atual ainda não possui autenticação e autorização efetivas.
 
@@ -666,7 +666,7 @@ A implementação dessas proteções é necessária para atender à RN11 e ao CA
 
 O módulo poderá ser desenvolvido e testado em ambiente controlado, mas não poderá ser considerado integralmente concluído ou pronto para uso administrativo em produção enquanto as restrições de acesso não estiverem implementadas.
 
-### 7.7. Base técnica adotada
+### 7.9. Base técnica adotada
 
 O design e a implementação registrados para esta spec utilizam:
 

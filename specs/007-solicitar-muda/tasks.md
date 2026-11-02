@@ -1,6 +1,6 @@
 # Tasks — Solicitação de Muda
 
-> Pré-requisito: spec `001-assistente-plantio` com ao menos T01 a T05 concluídas (a espécie selecionada precisa chegar aqui).
+> Pré-requisito: spec `006-assistente-plantio` com ao menos T01 a T05 concluídas (a espécie selecionada precisa chegar aqui).
 > Ordem: **Frontend com dados fictícios (design first)** → **Backend** → **Integração** → **Verificação**. Siga a ordem numérica.
 > Antes de começar, leia `docs/padroes-de-projeto.md` e resolva ou assuma explicitamente as "Questões em aberto" de `requirements.md`.
 > Caminhos: frontend em `frontend/src/`; backend em `backend/arborize/src/main/java/br/com/arborize/`.

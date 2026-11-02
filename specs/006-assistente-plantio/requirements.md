@@ -5,7 +5,7 @@
 
 ## Objetivo
 
-Ajudar o cidadão a descobrir quais espécies nativas da Caatinga combinam com o local onde ele quer plantar, por meio de um quiz curto, e levá-lo a escolher uma espécie para pedir a muda (spec `002-solicitar-muda`).
+Ajudar o cidadão a descobrir quais espécies nativas da Caatinga combinam com o local onde ele quer plantar, por meio de um quiz curto, e levá-lo a escolher uma espécie para pedir a muda (spec `007-solicitar-muda`).
 
 ## Histórias de usuário
 
@@ -47,7 +47,7 @@ para seguir direto ao pedido de doação da muda.
   - Quando mais de uma regra se aplicar, vale a mais restritiva.
 - **RN06:** São exibidas **até 3 espécies**. Ordenação provisória: ordem alfabética do nome popular.
 - **RN07:** As respostas e a espécie escolhida ficam **apenas em memória** no navegador (store Pinia). Recarregar a página reinicia o quiz. Nada é gravado no banco nesta spec.
-- **RN08:** A espécie escolhida em "Selecionar Espécie" é repassada para a spec `002-solicitar-muda`.
+- **RN08:** A espécie escolhida em "Selecionar Espécie" é repassada para a spec `007-solicitar-muda`.
 - **RN09:** A funcionalidade é **pública**: não exige login.
 
 ## Critérios de aceitação

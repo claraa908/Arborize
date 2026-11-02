@@ -1198,7 +1198,7 @@ compatível com nomes recuperados de associações legadas.
 
 A carga de referência usa os 24 nomes do Plano Municipal da Primeira Infância de Quixadá,
 publicado pela Prefeitura e exibido na tabela municipal com fonte indicada como IBGE 2023.
-A lista consta na subseção 7.8 dos requisitos e é apenas um conjunto inicial de referência,
+A lista consta na subseção 7.6 dos requisitos e é apenas um conjunto inicial de referência,
 sujeito à validação da AMMA. A referência histórica da Lei Municipal 2.319/2007 relaciona 22
 bairros, com “Carrascal” não dividido e sem “Residencial”; essa divergência é mantida explícita.
 Não inserir distritos/comunidades rurais no catálogo de bairros urbanos.

@@ -66,5 +66,5 @@ Trabalhe de forma **design first**. A interface dita os contratos de dados, e n�
 2. Leia todos os arquivos de especificação localizados em `specs/<funcionalidade>/` (`requirements.md`, `design.md` e `tasks.md`).
 3. É expressamente proibido implementar rotas, criar tabelas no banco de dados ou construir fluxos de interface que não constem na especificação.
 4. Execute as tarefas estritamente na ordem numérica e respeite os agrupamentos (Frontend vs Backend) estabelecidos no `tasks.md`.
-5. Estruturação física: O código Java da API REST encontra-se dentro de `backend/src/main/java/` e a SPA Vue encontra-se dentro de `frontend/src/`. Mantenha as dependências nos respectivos arquivos `pom.xml` e `package.json` rigorosamente limpas.
+5. Estruturação física: O código Java da API REST encontra-se dentro de `backend/arborize/src/main/java/` e a SPA Vue encontra-se dentro de `frontend/src/`. Mantenha as dependências nos respectivos arquivos `pom.xml` e `package.json` rigorosamente limpas.
 6. Marque as tarefas como concluídas apenas quando todos os Critérios de Aceitação BDD (`requirements.md`) puderem ser validados na prática.

@@ -462,8 +462,8 @@ preservados. A interface cartográfica aprovada não deve ser redesenhada.
 | RN10/RN12/RN16; CA08, CA10, CA16, CA18, CA25–CA26 | Endpoints e interface de fotografias; prévia, uploads e sucesso parcial têm cobertura automatizada | Defeito visual observado na seleção durante cadastro permanece sem causa/correção confirmada (T28); aceite live após T19/T21. |
 | RN11; CA12 | Rotas liberadas temporariamente com `permitAll()` para testes locais | Autenticação, política de perfis e autorização; não está pronto para produção (T19). |
 | RN13; CA20–CA21 | Mapa OSM e opção MapTiler implementados | Chave, origem e tiles reais (T12/T21). |
-| RN14; CA22 | ID numérico permanente já existe | Código derivado, pesquisa e apresentação nas três visualizações (T26). |
-| RN15; CA23–CA24 | Endpoints protegidos de conteúdo de foto já existem | Metadado de capa no resumo, leitura em lote e miniaturas tardias (T27); segurança efetiva depende T19. |
+| RN14; CA22 | ID numérico permanente já existe | Código derivado, pesquisa e apresentação nas três visualizações implementados em T26; verificação protegida e integrada pendente de T19/T21. |
+| RN15; CA23–CA24 | Endpoints protegidos de conteúdo de foto já existem | Metadado de capa no resumo, leitura em lote e miniaturas tardias implementados em T27; verificação protegida e integrada pendente de T19/T21. |
 
 ## 14. Ordem recomendada para encerrar
 

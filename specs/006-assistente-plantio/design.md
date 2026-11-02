@@ -23,7 +23,7 @@ A pessoa deve conseguir descrever o local de plantio respondendo perguntas rápi
 2. O sistema mostra a pergunta 1 de 10 com as opções.
 3. A pessoa escolhe uma opção e clica em "Próxima"; repete até a última pergunta, onde o botão passa a ser "Finalizar".
 4. O sistema envia as respostas ao backend e mostra "Espécies recomendadas".
-5. A pessoa clica em "Selecionar Espécie" e segue para o formulário (`002-solicitar-muda`), ou em "Refazer Quiz" para recomeçar.
+5. A pessoa clica em "Selecionar Espécie" e segue para o formulário (`007-solicitar-muda`), ou em "Refazer Quiz" para recomeçar.
 
 ## Estrutura da interface
 

@@ -24,7 +24,7 @@
   - **Relacionada a:** HU02, HU03
 
 - [ ] **T05 — Store e service do assistente**
-  - Store Pinia com respostas, passo, recomendações, espécie selecionada e estados; service Axios que preserva status e `ProblemDetail`. Nesta fase o service pode devolver dados fictícios. "Selecionar Espécie" navega para o formulário (spec 002).
+  - Store Pinia com respostas, passo, recomendações, espécie selecionada e estados; service Axios que preserva status e `ProblemDetail`. Nesta fase o service pode devolver dados fictícios. "Selecionar Espécie" navega para o formulário (spec 007).
   - **Relacionada a:** HU03, HU04, RN07, RN08
 
 ## Backend

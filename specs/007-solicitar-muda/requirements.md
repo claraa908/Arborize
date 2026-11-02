@@ -1,6 +1,6 @@
 # Requisitos — Solicitação de Muda (formulário, conversão e acompanhamento)
 
-> Referências: RF006 e RF007 (Essenciais), Épico 03 (história de solicitação e conversão). Depende de `001-assistente-plantio`.
+> Referências: RF006 e RF007 (Essenciais), Épico 03 (história de solicitação e conversão). Depende de `006-assistente-plantio`.
 > Padrões técnicos e visuais: `docs/padroes-de-projeto.md`.
 
 ## Objetivo
@@ -35,7 +35,7 @@ para saber que devo entregar os recicláveis no Eco Ponto.
 
 ## Regras de negócio
 
-- **RN01:** O pedido só pode ser iniciado com uma **espécie selecionada** vinda do assistente (spec 001). Sem espécie, o cidadão é levado de volta ao assistente com a mensagem "Escolha uma espécie para continuar."
+- **RN01:** O pedido só pode ser iniciado com uma **espécie selecionada** vinda do assistente (spec 006). Sem espécie, o cidadão é levado de volta ao assistente com a mensagem "Escolha uma espécie para continuar."
 - **RN02:** A quantidade de mudas começa em **1** e é um inteiro entre 1 e o máximo configurável (ver "Questões em aberto").
 - **RN03:** Campos obrigatórios: quantidade, rua, número, bairro, nome completo, CPF e telefone. **Complemento** é opcional.
 - **RN04:** O CPF deve ser válido (dígitos verificadores) e o telefone deve ter DDD + número. A validação ocorre no navegador **e** no servidor.

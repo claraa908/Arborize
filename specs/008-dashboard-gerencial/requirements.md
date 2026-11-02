@@ -48,5 +48,5 @@ para monitorar o cumprimento das metas estratégicas da autarquia.
 
 - **Back-end:** As agregações de dados devem ser feitas preferencialmente via métodos de repositório otimizados com Spring Data JPA em `backend/arborize/src/main/java/br/com/arborize/repositories`, retornando DTOs em `record` sem expor entidades JPA diretamente no contrato HTTP.
 - **Front-end:** A interface deve seguir rigorosamente o design system e a paleta de cores definidos em `frontend/src/assets/main.css` (utilizando classes como `amma-green`, `amma-green-dark`, `amma-bg`, etc.), aplicando os tokens de arredondamento oficiais (`rounded-box`, `rounded-btn`) e garantindo responsividade em desktop e mobile.
-- **Referências Visuais:** A estrutura de layout, os componentes de modais, calendários e tabelas devem ser construídos estritamente com base nos mockups salvos na pasta `docs/` do projeto.
+- **Referências Visuais:** A estrutura de layout, os componentes de modais, calendários e tabelas devem ser construídos estritamente com base nos mockups salvos em `specs/008-dashboard-gerencial/docs/`.
 - **Fonte de laudos:** Enquanto não existir uma fonte de dados do módulo de Laudos, a opção "Laudos Emitidos" permanece desabilitada na interface e é rejeitada pela API, sem contabilização fictícia.
