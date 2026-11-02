@@ -1,9 +1,9 @@
 package br.com.arborize.controllers;
 
-
 import br.com.arborize.dtos.request.EspecieRequestDTO;
 import br.com.arborize.dtos.response.EspecieResponseDTO;
 import br.com.arborize.services.EspecieService;
+import br.com.arborize.services.TokenService; // Importe o TokenService
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
@@ -31,6 +31,10 @@ class EspecieControllerTest {
 
     @MockitoBean
     private EspecieService service;
+
+    // Adicione o Mock do TokenService para o contexto do Spring Security carregar corretamente
+    @MockitoBean
+    private TokenService tokenService;
 
     @Test
     void deveRetornarStatus200EListaDeEspecies() throws Exception {
