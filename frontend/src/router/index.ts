@@ -1,4 +1,5 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory, type RouterHistory, type RouteRecordRaw } from 'vue-router'
+import { sessionNavigation } from './sessionNavigation'
 import PublicLayout from '@/layouts/PublicLayout.vue'
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue'
 import HomeView from '@/views/public/HomeView.vue'
@@ -6,9 +7,7 @@ import { useAssistentePlantioStore } from '@/stores/assistentePlantioStore'
 import { useSolicitacaoMudaStore } from '@/stores/solicitacaoMudaStore'
 import { useAuthStore } from '@/stores/authStore'
 
-const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
-  routes: [
+const routes: RouteRecordRaw[] = [
     {
       path: '/',
       component: PublicLayout,
@@ -69,10 +68,16 @@ const router = createRouter({
           component: () => import('@/views/public/arborizacao/AcompanharSolicitacaoView.vue')
         },
         {
+          path: 'dashboard',
+          name: 'cidadao-dashboard',
+          component: () => import('@/views/public/CidadaoDashboardView.vue'),
+          meta: { requiresAuth: true, requiresCitizen: true, title: 'Dashboard' }
+        },
+        {
           path: 'perfil',
           name: 'perfil',
           component: () => import('@/views/public/PerfilView.vue'),
-          meta: { requiresAuth: true, title: 'Meu Perfil' }
+          meta: { requiresAuth: true, requiresCitizen: true, title: 'Meu Perfil' }
         }
       ]
     },
@@ -86,6 +91,12 @@ const router = createRouter({
           name: 'dashboard',
           component: () => import('@/views/auth/DashboardView.vue'),
           meta: { title: 'Dashboard e Relatórios' }
+        },
+        {
+          path: 'perfil',
+          name: 'perfil-institucional',
+          component: () => import('@/views/auth/PerfilInstitucionalView.vue'),
+          meta: { title: 'Meu Perfil' }
         },
         {
           path: 'biblioteca',
@@ -224,36 +235,11 @@ const router = createRouter({
       ]
     }
   ]
-})
 
-router.beforeEach((to) => {
-  const auth = useAuthStore()
+export function createAppRouter(history: RouterHistory = createWebHistory(import.meta.env.BASE_URL)) {
+  const router = createRouter({ history, routes })
+  router.beforeEach((to) => sessionNavigation(to, useAuthStore()))
+  return router
+}
 
-  if (to.matched.some((record) => record.meta.requiresAdmin) && !auth.isAmmaAdmin) {
-    return { name: 'home' }
-  }
-
-  if (to.matched.some((record) => record.meta.requiresIfceTeam) && !auth.canManageIfceTeam) {
-    return { name: 'home' }
-  }
-
-  if (to.matched.some((record) => record.meta.requiresManagement)) {
-    if (!auth.isAuthenticated) {
-      return {
-        name: 'home',
-        query: { auth: 'required', redirect: to.fullPath }
-      }
-    }
-    if (!auth.canAccessManagement) return { name: 'home' }
-  }
-
-  if (to.matched.some((record) => record.meta.requiresAuth) && !auth.isAuthenticated) {
-    return {
-      name: 'home',
-      query: { auth: 'required', redirect: to.fullPath }
-    }
-  }
-  return true
-})
-
-export default router
+export default createAppRouter()

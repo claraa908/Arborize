@@ -7,6 +7,7 @@ import LoginModal from '@/components/modals/LoginModal.vue'
 import RegisterModal from '@/components/modals/RegisterModal.vue'
 import AppToastContainer from '@/components/feedback/AppToastContainer.vue'
 import { useAuthStore } from '@/stores/authStore'
+import { postLoginTarget } from '@/router/sessionNavigation'
 
 const isLoginModalOpen = ref(false)
 const isRegisterModalOpen = ref(false)
@@ -25,16 +26,11 @@ const openRegister = () => {
 }
 
 const handleLoginSuccess = () => {
-  const redirect = route.query.redirect
-  if (typeof redirect === 'string' && redirect.startsWith('/') && !redirect.startsWith('//')) {
-    void router.replace(redirect)
-    return
-  }
-  void router.replace({ name: auth.canAccessManagement ? 'dashboard' : 'home' })
+  void router.replace(postLoginTarget(router, auth, route.query.redirect))
 }
 
 watch(() => route.query.auth, (authRequired) => {
-  if (authRequired === 'required') openLogin()
+  if (authRequired === 'required' && !auth.isAuthenticated) openLogin()
 }, { immediate: true })
 </script>
 

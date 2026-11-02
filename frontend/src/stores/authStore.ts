@@ -2,17 +2,19 @@ import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
 import { autenticarUsuario, type LoginRequest } from '@/services/authService'
 import { clearAuthSession, readAuthName, readAuthRole, readAuthToken, saveAuthSession } from '@/services/authStorage'
-import type { UserRole } from '@/types/auth'
+import { USER_ROLES, type UserRole } from '@/types/auth'
 
 export const useAuthStore = defineStore('auth', () => {
   const token = ref(readAuthToken())
   const nome = ref(readAuthName() ?? '')
   const role = ref<UserRole | null>(readAuthRole())
   const isAuthenticated = computed(() => Boolean(token.value && role.value))
-  const isCitizen = computed(() => role.value === 'ROLE_CIDADAO')
-  const isAmmaAdmin = computed(() => role.value === 'ROLE_ADMINISTRADOR_AMMA')
-  const canAccessManagement = computed(() => Boolean(role.value && role.value !== 'ROLE_CIDADAO'))
-  const canManageIfceTeam = computed(() => role.value === 'ROLE_GESTOR_IFCE')
+  const isCitizen = computed(() => isAuthenticated.value && role.value === 'ROLE_CIDADAO')
+  const isAmmaAdmin = computed(() => isAuthenticated.value && role.value === 'ROLE_ADMINISTRADOR_AMMA')
+  const canAccessManagement = computed(() => isAuthenticated.value && USER_ROLES.some(value => value !== 'ROLE_CIDADAO' && value === role.value))
+  const canManageIfceTeam = computed(() => isAuthenticated.value && role.value === 'ROLE_GESTOR_IFCE')
+  const dashboardRouteName = computed(() => isCitizen.value ? 'cidadao-dashboard' : canAccessManagement.value ? 'dashboard' : 'home')
+  const profileRouteName = computed(() => isCitizen.value ? 'perfil' : 'perfil-institucional')
 
   async function login(credentials: LoginRequest) {
     const session = await autenticarUsuario(credentials)
@@ -35,5 +37,5 @@ export const useAuthStore = defineStore('auth', () => {
     clearAuthSession()
   }
 
-  return { token, nome, role, isAuthenticated, isCitizen, isAmmaAdmin, canAccessManagement, canManageIfceTeam, login, updateName, logout }
+  return { token, nome, role, isAuthenticated, isCitizen, isAmmaAdmin, canAccessManagement, canManageIfceTeam, dashboardRouteName, profileRouteName, login, updateName, logout }
 })

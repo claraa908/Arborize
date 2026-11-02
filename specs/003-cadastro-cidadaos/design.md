@@ -68,3 +68,10 @@ Permitir que um cidadão consiga criar a sua conta de forma rápida através do 
 - Desktop: Tela de Perfil centralizada (max-width 600px). Modais sobrepostos com fundo escurecido.
 - Mobile: Elementos ocupam 100% da largura.
 - Acessibilidade: Navegação correta via `Tab` entre os inputs de senha.
+
+
+## Integração de layouts e perfil pessoal — 2026-11-02
+
+O cidadão acessa Meu perfil em `/perfil`, dentro do layout público e pela navbar autenticada. O mesmo formulário e serviços são reutilizados por usuários institucionais em `/sistema/perfil`, dentro do layout administrativo, conforme `../002-login-usuarios/design.md` (HU08/RN10–RN13). Não se trata da gestão de usuários.
+
+Remover métricas demonstrativas do perfil: somente dados reais de `/usuarios/me` são apresentados. CPF e e-mail permanecem não editáveis; nome, WhatsApp e endereço preservam a validação existente. O formulário não recebe nem envia papel. O modal de alteração de senha existente é compartilhado, sem mudança de contrato. Falhas não confirmam sucesso e não apagam o preenchimento. A sessão expirada pede novo login, preservando um destino de retorno adequado ao layout. As verificações desta adaptação estão em 002/T14–T17; os testes de senha e cadastro ainda pendentes nesta spec não são encerrados por essa adaptação.
