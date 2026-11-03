@@ -1,9 +1,9 @@
 package br.com.arborize.controllers;
 
-
 import br.com.arborize.dtos.request.EspecieRequestDTO;
 import br.com.arborize.dtos.response.EspecieResponseDTO;
 import br.com.arborize.services.EspecieService;
+import br.com.arborize.services.TokenService; // Importe o TokenService
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
@@ -32,9 +32,13 @@ class EspecieControllerTest {
     @MockitoBean
     private EspecieService service;
 
+    // Adicione o Mock do TokenService para o contexto do Spring Security carregar corretamente
+    @MockitoBean
+    private TokenService tokenService;
+
     @Test
     void deveRetornarStatus200EListaDeEspecies() throws Exception {
-        EspecieResponseDTO dto = new EspecieResponseDTO(1L, "Cajueiro", null, null, null, null, null, null, null, new ArrayList<>());
+        EspecieResponseDTO dto = new EspecieResponseDTO(1L, "Cajueiro", null, null, null, null, null, null, null, 0, new ArrayList<>());
         when(service.listarTodos()).thenReturn(List.of(dto));
 
         mockMvc.perform(get("/especies"))
@@ -45,7 +49,7 @@ class EspecieControllerTest {
     @Test
     void deveCriarEspecieRetornarStatus201() throws Exception {
         MockMultipartFile foto = new MockMultipartFile("foto", "caju.png", "image/png", "img".getBytes());
-        EspecieResponseDTO dto = new EspecieResponseDTO(1L, "Cajueiro Anão", null, null, null, null, null, null, null, new ArrayList<>());
+        EspecieResponseDTO dto = new EspecieResponseDTO(1L, "Cajueiro Anão", null, null, null, null, null, null, null, 0, new ArrayList<>());
 
         when(service.criarEspecie(any(EspecieRequestDTO.class))).thenReturn(dto);
 

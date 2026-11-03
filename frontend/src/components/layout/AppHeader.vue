@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { RouterLink, useRoute, useRouter } from 'vue-router'
 import { useFeedbackStore } from '@/stores/feedbackStore'
 import { useAuthStore } from '@/stores/authStore'
 
@@ -10,7 +10,7 @@ const feedback = useFeedbackStore()
 const auth = useAuthStore()
 
 const pageTitle = computed(() => route.meta.title as string || 'Arborize')
-const userName = computed(() => auth.nome || 'Cidadão')
+const userName = computed(() => auth.nome || 'Usuário')
 const userInitials = computed(() => userName.value.trim().split(/\s+/).slice(0, 2).map(part => part.charAt(0).toUpperCase()).join(''))
 const roleLabel = computed(() => ({
   ROLE_BOLSISTA_IFCE: 'Bolsista IFCE',
@@ -24,7 +24,7 @@ const roleLabel = computed(() => ({
 }[auth.role ?? 'ROLE_CIDADAO']))
 
 const navigateToProfile = () => {
-  router.push({ name: 'perfil' })
+  router.push({ name: auth.profileRouteName })
 }
 
 const navigateToManagement = () => {
@@ -78,6 +78,15 @@ const handleLogout = async () => {
       <div class="hidden sm:block w-px h-8 bg-amma-green-light"></div>
 
       <div class="flex items-center gap-2">
+        <RouterLink
+          :to="{ name: 'home' }"
+          class="inline-flex min-h-10 min-w-10 items-center justify-center gap-2 rounded-btn px-2 text-grey-text hover:bg-amma-green-lighter hover:text-amma-green-dark focus-visible:outline focus-visible:outline-2 focus-visible:outline-amma-green"
+          aria-label="Visitar página pública"
+          title="Visitar página pública"
+        >
+          <span class="material-symbols-outlined text-[24px]" aria-hidden="true">public</span>
+          <span class="hidden xl:inline text-sm font-semibold">Visitar página pública</span>
+        </RouterLink>
         <button
           v-if="auth.canManageIfceTeam"
           type="button"
@@ -109,10 +118,12 @@ const handleLogout = async () => {
           <span class="material-symbols-outlined text-[24px]" aria-hidden="true">manage_accounts</span>
         </button>
         <button 
+          type="button"
+          aria-label="Meu perfil"
           @click="navigateToProfile"
           :class="[
-            'w-10 h-10 flex items-center justify-center transition-all efeito-zoom cursor-pointer',
-            route.name === 'perfil'
+            'w-10 h-10 flex items-center justify-center transition-all efeito-zoom cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amma-green',
+            route.name === 'perfil-institucional'
               ? 'bg-amma-green-dark text-white shadow-inner rounded-bl-[10px] rounded-tr-[10px] rounded-tl-[20px] rounded-br-[20px]'
               : 'text-grey-text hover:text-white hover:bg-amma-green rounded-bl-[10px] rounded-tr-[10px] rounded-tl-[20px] rounded-br-[20px]'
           ]"

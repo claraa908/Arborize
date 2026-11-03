@@ -38,7 +38,7 @@ class EspecieServiceTest {
     @Test
     void deveListarTodasAsEspecies() {
         Especie especie = new Especie();
-        EspecieResponseDTO dto = new EspecieResponseDTO(1L, "Ipê Amarelo", null, null, null, null, null, null, null, new ArrayList<>());
+        EspecieResponseDTO dto = new EspecieResponseDTO(1L, "Ipê Amarelo", null, null, null, null, null, null, null, 0, new ArrayList<>());
 
         when(repository.findAll()).thenReturn(List.of(especie));
         when(mapper.toResponseDTO(especie)).thenReturn(dto);
@@ -52,13 +52,13 @@ class EspecieServiceTest {
     @Test
     void deveCriarEspecieComFoto() {
         MockMultipartFile fotoFalsa = new MockMultipartFile("foto", "ipe.png", "image/png", "conteudo".getBytes());
-        EspecieRequestDTO requestDTO = new EspecieRequestDTO("Ipê", "Handroanthus", null, null, null, null, null, null, fotoFalsa);
+        EspecieRequestDTO requestDTO = new EspecieRequestDTO("Ipê", "Handroanthus", null, null, null, null, null, null, null, fotoFalsa);
 
         Especie especieMapeada = new Especie();
         especieMapeada.setDocuments(new ArrayList<>());
 
         DocumentEntities documentoSalvo = new DocumentEntities();
-        EspecieResponseDTO responseDTO = new EspecieResponseDTO(1L, "Ipê", null, null, null, null, null, null, null, new ArrayList<>());
+        EspecieResponseDTO responseDTO = new EspecieResponseDTO(1L, "Ipê", null, null, null, null, null, null, null, 0, new ArrayList<>());
 
         when(mapper.toEntity(requestDTO)).thenReturn(especieMapeada);
         when(documentService.uploadAndCreateDocument(fotoFalsa)).thenReturn(documentoSalvo);

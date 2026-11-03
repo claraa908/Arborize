@@ -19,6 +19,7 @@ export interface CreateEspeciePayload {
   categoria: string;
   porte: string;
   adequadoCalcada: 'Sim' | 'Não';
+  mudasDisponiveis: number;
   tempoGerminacaoDias?: string | number;
   descricao?: string;
   imagem: File | null;
@@ -31,6 +32,7 @@ export interface UpdateEspeciePayload {
   categoria: string;
   porte: string;
   adequadoCalcada: 'Sim' | 'Não';
+  mudasDisponiveis: number;
   tempoGerminacaoDias?: string | number;
   descricao?: string;
   imagem?: File | null;

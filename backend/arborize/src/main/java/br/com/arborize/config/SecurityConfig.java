@@ -38,10 +38,10 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers(
-                                "/swagger-ui/**",
-                                "/v3/api-docs/**",
-                                "/swagger-ui.html").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/solicitacoes-muda").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/solicitacoes-muda/conversao").permitAll()
+                        .requestMatchers("/api/assistente-plantio/**").permitAll()
+                        .requestMatchers("/api/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/login", "/usuarios/cadastro").permitAll()
                         .requestMatchers("/admin/usuarios", "/admin/usuarios/**").hasRole("ADMINISTRADOR_AMMA")
                         .requestMatchers("/ifce/bolsistas", "/ifce/bolsistas/**").hasRole("GESTOR_IFCE")

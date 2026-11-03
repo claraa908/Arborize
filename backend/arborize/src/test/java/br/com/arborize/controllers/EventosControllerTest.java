@@ -3,6 +3,7 @@ package br.com.arborize.controllers;
 import br.com.arborize.dtos.request.EventosRequestDTO;
 import br.com.arborize.dtos.response.EventosResponseDTO;
 import br.com.arborize.services.EventosService;
+import br.com.arborize.services.TokenService; // Importe o TokenService
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
@@ -30,6 +31,10 @@ class EventosControllerTest {
 
     @MockitoBean
     private EventosService service;
+
+    // Adicione o Mock do TokenService
+    @MockitoBean
+    private TokenService tokenService;
 
     @Test
     void deveRetornarStatus200EListaDeEventos() throws Exception {

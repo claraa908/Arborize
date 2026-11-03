@@ -1,12 +1,13 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory, type RouterHistory, type RouteRecordRaw } from 'vue-router'
+import { sessionNavigation } from './sessionNavigation'
 import PublicLayout from '@/layouts/PublicLayout.vue'
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue'
 import HomeView from '@/views/public/HomeView.vue'
+import { useAssistentePlantioStore } from '@/stores/assistentePlantioStore'
+import { useSolicitacaoMudaStore } from '@/stores/solicitacaoMudaStore'
 import { useAuthStore } from '@/stores/authStore'
 
-const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
-  routes: [
+const routes: RouteRecordRaw[] = [
     {
       path: '/',
       component: PublicLayout,
@@ -27,10 +28,56 @@ const router = createRouter({
           component: () => import('@/views/public/biblioteca/DocumentoView.vue')
         },
         {
+          path: 'arborizacao',
+          name: 'arborizacao',
+          redirect: () => {
+            const quizStore = useAssistentePlantioStore()
+            const requestStore = useSolicitacaoMudaStore()
+
+            if (requestStore.resultado) return { name: 'arborizacao-acompanhar' }
+            if (requestStore.form.especieId > 0) {
+              return { name: 'solicitar-muda', query: { especieId: requestStore.form.especieId } }
+            }
+            if (quizStore.recomendacoes !== null) return { name: 'arborizacao-recomendacoes' }
+            return { name: 'arborizacao-assistente' }
+          }
+        },
+        {
+          path: 'arborizacao/assistente',
+          name: 'arborizacao-assistente',
+          component: () => import('@/views/public/arborizacao/AssistentePlantioView.vue')
+        },
+        {
+          path: 'arborizacao/recomendacoes',
+          name: 'arborizacao-recomendacoes',
+          component: () => import('@/views/public/arborizacao/RecomendacoesView.vue')
+        },
+        {
+          path: 'arborizacao/solicitar-muda',
+          name: 'solicitar-muda',
+          component: () => import('@/views/public/arborizacao/SolicitarMudaView.vue')
+        },
+        {
+          path: 'arborizacao/conversao',
+          name: 'arborizacao-conversao',
+          component: () => import('@/views/public/arborizacao/ConversaoMudaView.vue')
+        },
+        {
+          path: 'arborizacao/acompanhar',
+          name: 'arborizacao-acompanhar',
+          component: () => import('@/views/public/arborizacao/AcompanharSolicitacaoView.vue')
+        },
+        {
+          path: 'dashboard',
+          name: 'cidadao-dashboard',
+          component: () => import('@/views/public/CidadaoDashboardView.vue'),
+          meta: { requiresAuth: true, requiresCitizen: true, title: 'Dashboard' }
+        },
+        {
           path: 'perfil',
           name: 'perfil',
           component: () => import('@/views/public/PerfilView.vue'),
-          meta: { requiresAuth: true, title: 'Meu Perfil' }
+          meta: { requiresAuth: true, requiresCitizen: true, title: 'Meu Perfil' }
         }
       ]
     },
@@ -44,6 +91,12 @@ const router = createRouter({
           name: 'dashboard',
           component: () => import('@/views/auth/DashboardView.vue'),
           meta: { title: 'Dashboard e Relatórios' }
+        },
+        {
+          path: 'perfil',
+          name: 'perfil-institucional',
+          component: () => import('@/views/auth/PerfilInstitucionalView.vue'),
+          meta: { title: 'Meu Perfil' }
         },
         {
           path: 'biblioteca',
@@ -73,7 +126,25 @@ const router = createRouter({
           path: 'inventario',
           name: 'inventario',
           component: () => import('@/views/auth/InventarioView.vue'),
-          meta: { title: 'Inventário Arbóreo' }
+          meta: { title: 'Inventário Arbóreo', activeMenu: 'inventario' }
+        },
+        {
+          path: 'inventario/nova',
+          name: 'inventario-nova',
+          component: () => import('@/views/auth/inventario/ArvoreFormView.vue'),
+          meta: { title: 'Inventário Arbóreo', activeMenu: 'inventario' }
+        },
+        {
+          path: 'inventario/:id/editar',
+          name: 'inventario-editar',
+          component: () => import('@/views/auth/inventario/ArvoreFormView.vue'),
+          meta: { title: 'Inventário Arbóreo', activeMenu: 'inventario' }
+        },
+        {
+          path: 'inventario/:id',
+          name: 'inventario-detalhes',
+          component: () => import('@/views/auth/inventario/ArvoreDetalhesView.vue'),
+          meta: { title: 'Inventário Arbóreo', activeMenu: 'inventario' }
         },
         {
   path: 'viveiro',
@@ -164,36 +235,11 @@ const router = createRouter({
       ]
     }
   ]
-})
 
-router.beforeEach((to) => {
-  const auth = useAuthStore()
+export function createAppRouter(history: RouterHistory = createWebHistory(import.meta.env.BASE_URL)) {
+  const router = createRouter({ history, routes })
+  router.beforeEach((to) => sessionNavigation(to, useAuthStore()))
+  return router
+}
 
-  if (to.matched.some((record) => record.meta.requiresAdmin) && !auth.isAmmaAdmin) {
-    return { name: 'home' }
-  }
-
-  if (to.matched.some((record) => record.meta.requiresIfceTeam) && !auth.canManageIfceTeam) {
-    return { name: 'home' }
-  }
-
-  if (to.matched.some((record) => record.meta.requiresManagement)) {
-    if (!auth.isAuthenticated) {
-      return {
-        name: 'home',
-        query: { auth: 'required', redirect: to.fullPath }
-      }
-    }
-    if (!auth.canAccessManagement) return { name: 'home' }
-  }
-
-  if (to.matched.some((record) => record.meta.requiresAuth) && !auth.isAuthenticated) {
-    return {
-      name: 'home',
-      query: { auth: 'required', redirect: to.fullPath }
-    }
-  }
-  return true
-})
-
-export default router
+export default createAppRouter()

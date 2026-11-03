@@ -1,0 +1,48 @@
+services:
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: ${ARBORIZA_DB_NAME:?Configure ARBORIZA_DB_NAME no .env}
+      POSTGRES_USER: ${ARBORIZA_DB_USER:?Configure ARBORIZA_DB_USER no .env}
+      POSTGRES_PASSWORD: ${ARBORIZA_DB_PASSWORD:?Configure ARBORIZA_DB_PASSWORD no .env}
+      POSTGRES_HOST_AUTH_METHOD: scram-sha-256
+      POSTGRES_INITDB_ARGS: --auth-host=scram-sha-256
+    ports:
+      - "127.0.0.1:${ARBORIZA_DB_PORT:-55433}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - 'pg_isready -U "$${POSTGRES_USER}" -d "$${POSTGRES_DB}"'
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+  pgadmin:
+    image: dpage/pgadmin4
+    profiles: ["tools"]
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${ARBORIZA_PGADMIN_EMAIL:-admin@localhost.invalid}
+      PGADMIN_DEFAULT_PASSWORD: ${ARBORIZA_PGADMIN_PASSWORD:-}
+    ports:
+      - "127.0.0.1:${ARBORIZA_PGADMIN_PORT:-15050}:80"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  minio:
+    image: cgr.dev/chainguard/minio:latest
+    environment:
+      MINIO_ROOT_USER: ${ARBORIZA_MINIO_ACCESS_KEY:?Configure ARBORIZA_MINIO_ACCESS_KEY no .env}
+      MINIO_ROOT_PASSWORD: ${ARBORIZA_MINIO_SECRET_KEY:?Configure ARBORIZA_MINIO_SECRET_KEY no .env}
+    ports:
+      - "127.0.0.1:${ARBORIZA_MINIO_API_PORT:-19000}:9000"
+      - "127.0.0.1:${ARBORIZA_MINIO_CONSOLE_PORT:-19001}:9001"
+    command: server /data --console-address ":9001"
+    volumes:
+      - minio_data:/data
+
+volumes:
+  postgres_data:
+  minio_data:

@@ -3,6 +3,7 @@ package br.com.arborize.controllers;
 import br.com.arborize.dtos.request.EspecieRequestDTO;
 import br.com.arborize.dtos.response.EspecieResponseDTO;
 import br.com.arborize.services.EspecieService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -20,7 +21,7 @@ public class EspecieController {
     private EspecieService service;
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> criarEspecie(@ModelAttribute EspecieRequestDTO dto) {
+    public ResponseEntity<?> criarEspecie(@Valid @ModelAttribute EspecieRequestDTO dto) {
         try {
             EspecieResponseDTO novaEspecie = service.criarEspecie(dto);
             return ResponseEntity.status(HttpStatus.CREATED).body(novaEspecie);
@@ -49,7 +50,7 @@ public class EspecieController {
     // Rota para EDITAR
     // Usamos @PostMapping com "/editar" para evitar o erro 405 do PUT com arquivos
     @PutMapping(value = "/editar/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> atualizarEspecie(@PathVariable Long id, @ModelAttribute EspecieRequestDTO dto) {
+    public ResponseEntity<?> atualizarEspecie(@PathVariable Long id, @Valid @ModelAttribute EspecieRequestDTO dto) {
         try {
             EspecieResponseDTO especieAtualizada = service.atualizarEspecie(id, dto);
             return ResponseEntity.ok(especieAtualizada);

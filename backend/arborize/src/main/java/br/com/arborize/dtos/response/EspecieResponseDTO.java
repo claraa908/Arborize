@@ -12,6 +12,7 @@ public record EspecieResponseDTO(
         String descricaoCultivo,
         Integer tempoGerminacaoDias,
         Boolean recomendadaCalcadas,
+        Integer mudasDisponiveis,
         List<DocumentResponseDTO> documentos
 ) {
 }
