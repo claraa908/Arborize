@@ -1,0 +1,2 @@
+// Geometria compartilhada pelos marcadores DOM e pela legenda.
+export const iconeArvoreMapa = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 40" aria-hidden="true" focusable="false"><path d="M13 27h6v11h-6z" fill="currentColor" stroke="white" stroke-width="2" stroke-linejoin="round"/><path d="M16 2C9 2 6 7 7 12 1 14 1 23 7 26c4 2 6 0 9 0s5 2 9 0c6-3 6-12 0-14 1-5-2-10-9-10Z" fill="currentColor" stroke="white" stroke-width="2" stroke-linejoin="round"/></svg>`

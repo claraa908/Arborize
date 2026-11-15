@@ -1,0 +1,33 @@
+.arvore-mapa-icone {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 36px;
+  height: 44px;
+  padding: 2px;
+  border: 0;
+  background: transparent;
+  color: var(--color-grey-text);
+}
+.arvore-mapa-icone svg {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 32px;
+  height: 40px;
+  overflow: visible;
+  filter: drop-shadow(0 2px 2px rgb(0 0 0 / 40%));
+}
+.arvore-mapa-icone.condicao-saudavel {
+  color: var(--color-amma-green-dark);
+}
+.arvore-mapa-icone.condicao-comprometida {
+  color: var(--color-feedback-warning);
+}
+.arvore-mapa-icone.condicao-morta {
+  color: var(--color-feedback-danger);
+}
+.arvore-mapa-icone.arvore-localizacao-marcador {
+  color: #f97316;
+}

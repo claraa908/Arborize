@@ -239,6 +239,7 @@ onMounted(() => {
           ref="mapa"
           v-model:selecionada-id="idSelecionado"
           :arvores="store.registrosMapa ?? []"
+          :filtros-ativos="filtrosAtivos"
           :mensagem-vazia="mensagemMapaVazio"
           @abrir-ficha="abrirFicha"
         />

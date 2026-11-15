@@ -13,6 +13,8 @@ import {
   useTemplateRef,
   watch,
 } from 'vue'
+import { iconeArvoreMapa } from './arvoreMapaIcone'
+import './arvoreMapaIcone.css'
 import { Maximize2, Search, X } from 'lucide-vue-next'
 import {
   CENTRO_INICIAL,
@@ -262,7 +264,10 @@ function posicionarMarcador(latitude: number, longitude: number) {
   })
   if (!mapa.value || !coordenadaValida(latitude, longitude)) return
   if (!marker.value) {
-    marker.value = new Marker({ color: '#f97316' })
+    const elemento = document.createElement('div')
+    elemento.className = 'arvore-mapa-icone arvore-localizacao-marcador'
+    elemento.innerHTML = iconeArvoreMapa
+    marker.value = new Marker({ element: elemento, anchor: 'bottom' })
       .setLngLat([longitude, latitude])
       .addTo(mapa.value)
     marker.value.getElement().setAttribute('aria-label', 'Localização selecionada para a árvore')

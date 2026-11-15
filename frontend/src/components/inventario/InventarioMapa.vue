@@ -4,6 +4,8 @@ import { Map as MapaLibre, Marker, NavigationControl, setWorkerUrl } from 'mapli
 import 'maplibre-gl/dist/maplibre-gl.css'
 import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url'
 import type { ArvoreResumoResponseDTO } from '@/types/inventario'
+import { iconeArvoreMapa } from './arvoreMapaIcone'
+import './arvoreMapaIcone.css'
 import ArvoreFotoMiniatura from './ArvoreFotoMiniatura.vue'
 import {
   CENTRO_INICIAL,
@@ -21,6 +23,7 @@ setWorkerUrl(workerUrl)
 const props = withDefaults(
   defineProps<{
     arvores: readonly ArvoreResumoResponseDTO[]
+    filtrosAtivos?: boolean
     mensagemVazia?: string
     centroInicial?: [number, number]
     zoomInicial?: number
@@ -91,8 +94,8 @@ function atualizarMarcadores() {
     const condicao = condicoesMapa[arvore.condicaoFitossanitaria]
     const button = document.createElement('button')
     button.type = 'button'
-    button.className = `inventario-marcador ${condicao.classe}`
-    button.textContent = condicao.simbolo
+    button.className = `inventario-marcador arvore-mapa-icone ${condicao.classe}`
+    button.innerHTML = `<span class="inventario-ondas" aria-hidden="true"></span>${iconeArvoreMapa}`
     button.setAttribute(
       'aria-label',
       `Árvore ${arvore.codigo}: ${arvore.especie.nomePopular}. ${condicao.rotulo}`,
@@ -205,7 +208,13 @@ watch(idSelecionado, destacarSelecao)
 </script>
 
 <template>
-  <div class="inventario-mapa min-w-0">
+  <div
+    class="inventario-mapa min-w-0"
+    :class="{
+      'inventario-mapa-filtrado': filtrosAtivos,
+      'inventario-mapa-satelite': baseAtual === 'satelite',
+    }"
+  >
     <div
       role="group"
       aria-label="Visualização do mapa"
@@ -287,9 +296,12 @@ watch(idSelecionado, destacarSelecao)
       class="mt-4 flex flex-wrap gap-x-5 gap-y-3 text-xs text-grey-text"
     >
       <li v-for="(condicao, valor) in condicoesMapa" :key="valor" class="flex items-center gap-2">
-        <span aria-hidden="true" class="inventario-legenda" :class="condicao.classe">{{
-          condicao.simbolo
-        }}</span>
+        <span
+          aria-hidden="true"
+          class="inventario-legenda arvore-mapa-icone"
+          :class="condicao.classe"
+          v-html="iconeArvoreMapa"
+        />
         {{ condicao.rotulo }}
       </li>
     </ul>
@@ -348,51 +360,78 @@ watch(idSelecionado, destacarSelecao)
 </template>
 
 <style scoped>
-/* Os marcadores são nós DOM da biblioteca, por isso recebem estilos via :deep. */
-.inventario-legenda,
-:deep(.inventario-marcador) {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-family: var(--font-sans);
-  font-weight: 800;
-  border-radius: 50%;
-}
+/* Anima somente o elemento interno: o transform do MapLibre posiciona o marcador. */
 .inventario-legenda {
-  width: 1.25rem;
-  height: 1.25rem;
-  flex-shrink: 0;
+  width: 30px;
+  height: 36px;
+}
+.inventario-legenda :deep(svg) {
+  width: 26px;
+  height: 32px;
 }
 :deep(.inventario-marcador) {
-  width: 2.25rem;
-  height: 2.25rem;
-  border: 2px solid white;
-  box-shadow: 0 2px 6px rgb(0 0 0 / 25%);
-  font-size: 1.25rem;
   cursor: pointer;
 }
-:deep(.inventario-marcador:hover),
-:deep(.inventario-marcador:focus-visible),
-:deep(.inventario-marcador[aria-pressed='true']) {
+:deep(.inventario-marcador:focus-visible) {
   outline: 3px solid var(--color-amma-green-dark);
   outline-offset: 3px;
+  border-radius: 6px;
 }
-.condicao-nao-avaliada,
-:deep(.condicao-nao-avaliada) {
-  background: var(--color-grey-text);
+:deep(.inventario-ondas) {
+  display: none;
 }
-.condicao-saudavel,
-:deep(.condicao-saudavel) {
-  background: var(--color-amma-green-dark);
+.inventario-mapa-filtrado :deep(.inventario-ondas),
+:deep(.inventario-marcador:hover .inventario-ondas),
+:deep(.inventario-marcador[aria-pressed='true'] .inventario-ondas) {
+  display: block;
+  position: absolute;
+  width: 28px;
+  height: 28px;
+  top: calc(50% - 14px);
+  left: calc(50% - 14px);
+  pointer-events: none;
+  color: var(--inventario-cor-onda, #a78bfa);
 }
-.condicao-comprometida,
-:deep(.condicao-comprometida) {
-  background: var(--color-feedback-warning);
+.inventario-mapa-satelite {
+  --inventario-cor-onda: white;
 }
-.condicao-morta,
-:deep(.condicao-morta) {
-  background: var(--color-feedback-danger);
+:deep(.inventario-ondas::before),
+:deep(.inventario-ondas::after) {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 3px solid currentColor;
+  border-radius: 50%;
+  animation: inventario-onda 2.8s ease-out infinite;
+}
+:deep(.inventario-ondas::after) {
+  animation-delay: -1.4s;
+}
+@keyframes inventario-onda {
+  from {
+    transform: scale(0.9);
+    opacity: 1;
+  }
+  40% {
+    opacity: 0.85;
+  }
+  to {
+    transform: scale(2.2);
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  :deep(.inventario-ondas::before),
+  :deep(.inventario-ondas::after) {
+    animation: none;
+  }
+  :deep(.inventario-ondas::before) {
+    transform: scale(1.35);
+    opacity: 0.8;
+  }
+  :deep(.inventario-ondas::after) {
+    display: none;
+  }
 }
 :deep(.maplibregl-ctrl-attrib) {
   max-width: 100%;
