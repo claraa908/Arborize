@@ -23,7 +23,7 @@ O sistema tem o propósito de auxiliar a AMMA na divulgação de seus projetos e
 ### Link do Figma:
 https://www.figma.com/design/CpatSsboKRabdzBzyetI3b/Arborize?node-id=0-1&p=f&t=nnnVTwkizXyJFbRU-0
 
-## Executando os Testes de Integração do Back-End
+## 🧪 Executando os Testes de Integração do Back-End
 
 Alguns testes do backend (como o fluxo de solicitação de mudas) são testes de integração reais e exigem que o banco de dados PostgreSQL esteja ativo localmente.
 
@@ -60,7 +60,7 @@ No mesmo terminal onde a variável foi configurada, navegue até a pasta raiz do
 mvn test
 ```
 
-## Executando os Testes do Frontend
+## 🧪 Executando os Testes do Frontend
 
 O frontend do projeto utiliza o **Vitest** e o **Vue Test Utils** para a execução dos testes unitários e de integração de componentes, rodando em um ambiente simulado de navegador (JSDOM).
 
