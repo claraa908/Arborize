@@ -120,7 +120,7 @@ class SolicitacaoMudaFlowIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
                 .andExpect(status().isBadRequest())
-                .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath("$.errors.cpf").exists())
+                .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath("$.errors[0].field").value("cpf"))
                 .andReturn()
                 .getResponse()
                 .getContentAsString();

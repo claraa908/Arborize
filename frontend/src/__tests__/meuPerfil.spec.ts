@@ -1,4 +1,4 @@
-// @vitest-environment node
+
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { createPinia, setActivePinia } from 'pinia'
 import { nextTick } from 'vue'
@@ -31,7 +31,7 @@ beforeEach(() => {
     setItem: (key: string, value: string) => values.set(key, value),
     removeItem: (key: string) => values.delete(key),
   })
-  vi.stubGlobal('document', { activeElement: null })
+  vi.stubGlobal('document', { activeElement: null, querySelector: () => null })
   vi.stubGlobal('Document', class {})
   vi.stubGlobal('ShadowRoot', class {})
   vi.mocked(buscarMeuPerfil).mockResolvedValue(user)

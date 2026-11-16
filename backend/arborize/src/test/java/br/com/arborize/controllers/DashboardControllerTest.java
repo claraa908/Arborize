@@ -4,6 +4,7 @@ import br.com.arborize.dtos.request.DashboardReportFormat;
 import br.com.arborize.dtos.response.DashboardGoalsResponse;
 import br.com.arborize.dtos.response.DashboardOverviewResponse;
 import br.com.arborize.services.DashboardService;
+import br.com.arborize.services.TokenService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
@@ -32,6 +33,9 @@ class DashboardControllerTest {
 
     @MockitoBean
     private DashboardService dashboardService;
+
+    @MockitoBean
+    private TokenService tokenService;
 
     @Test
     void retornaIndicadoresConsolidados() throws Exception {

@@ -1,4 +1,4 @@
-// @vitest-environment node
+
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { createPinia, setActivePinia } from 'pinia'
 import { createSSRApp, nextTick } from 'vue'

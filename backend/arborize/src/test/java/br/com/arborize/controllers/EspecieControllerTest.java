@@ -1,6 +1,7 @@
 package br.com.arborize.controllers;
 
 import br.com.arborize.dtos.request.EspecieRequestDTO;
+import br.com.arborize.dtos.response.DocumentResponseDTO;
 import br.com.arborize.dtos.response.EspecieResponseDTO;
 import br.com.arborize.services.EspecieService;
 import br.com.arborize.services.TokenService; // Importe o TokenService
@@ -19,6 +20,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -44,6 +47,45 @@ class EspecieControllerTest {
         mockMvc.perform(get("/especies"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].nomePopular").value("Cajueiro"));
+    }
+
+    @Test
+    void deveBuscarEspeciePorId() throws Exception {
+        EspecieResponseDTO dto = new EspecieResponseDTO(
+                9L, "Juazeiro", "Ziziphus joazeiro", null, "Nativa", "Médio", null,
+                null, true, 0, new ArrayList<>()
+        );
+        when(service.buscarPorId(9L)).thenReturn(dto);
+
+        mockMvc.perform(get("/especies/9"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.nomePopular").value("Juazeiro"))
+                .andExpect(jsonPath("$.recomendadaCalcadas").value(true));
+    }
+
+    @Test
+    void deveRetornarBytesDaImagemComTipoDeclaradoNoDocumento() throws Exception {
+        byte[] image = {2, 4, 6};
+        DocumentResponseDTO document = new DocumentResponseDTO(2L, "juazeiro.png", "image/png", 3L, "png");
+        EspecieResponseDTO dto = new EspecieResponseDTO(
+                9L, "Juazeiro", "Ziziphus joazeiro", null, "Nativa", "Médio", null,
+                null, true, 0, List.of(document)
+        );
+        when(service.buscarPorId(9L)).thenReturn(dto);
+        when(service.obterBytesDaImagem(9L)).thenReturn(image);
+
+        mockMvc.perform(get("/especies/9/imagem"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("image/png"))
+                .andExpect(content().bytes(image));
+    }
+
+    @Test
+    void deveExcluirEspecieERetornarSemConteudo() throws Exception {
+        mockMvc.perform(delete("/especies/9"))
+                .andExpect(status().isNoContent());
+
+        org.mockito.Mockito.verify(service).deletarEspecie(9L);
     }
 
     @Test

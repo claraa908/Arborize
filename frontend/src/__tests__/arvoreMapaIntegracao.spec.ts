@@ -176,6 +176,7 @@ function montar(editando = false) {
     identificador: editando ? '42' : undefined,
   })
   app.use(createPinia())
+  app.provide('ssrContext', { modules: new Set() })
   app.mount(raiz)
   apps.push(app)
   return raiz
@@ -256,7 +257,11 @@ beforeEach(() => {
   execucao.marcadores.length = 0
   fichaDeEdicao.bairro = null
   vi.stubEnv('VITE_MAPTILER_API_KEY', 'chave-exclusiva-de-teste')
-  vi.stubGlobal('document', { activeElement: null, body: new ElementoTeste('BODY') })
+  vi.stubGlobal('document', {
+    activeElement: null,
+    body: new ElementoTeste('BODY'),
+    createElement: (tag: string) => new ElementoTeste(tag.toUpperCase()),
+  })
   vi.stubGlobal('Document', class {})
   vi.stubGlobal('ShadowRoot', class {})
   vi.spyOn(especieService, 'getAll').mockResolvedValue([])
@@ -671,17 +676,20 @@ describe('Mapa e formulário reais integrados sem WebGL', () => {
   })
 
   it('carrega a foto somente da árvore selecionada e revoga a anterior ao trocar seleção', async () => {
-    const documento = document as unknown as Record<string, unknown>
-    vi.stubGlobal('document', {
-      ...documento,
-      createElement: (nome: string) => new ElementoTeste(nome.toUpperCase()),
-    })
-    vi.stubGlobal('window', {
-      document,
-      setTimeout: vi.fn(() => 1),
-      clearTimeout: vi.fn(),
-      devicePixelRatio: 1,
-    })
+    // 1. Simula o componente miniatura para evitar a quebra do hostInsertStaticContent
+    const MiniaturaOriginal = (await import('@/components/inventario/ArvoreFotoMiniatura.vue'))
+      .default
+    vi.doMock('@/components/inventario/ArvoreFotoMiniatura.vue', () => ({
+      default: {
+        ...MiniaturaOriginal,
+        render: () => {
+          const { h } = require('vue')
+          return h('div', 'Sem fotografia')
+        },
+      },
+    }))
+
+    // 2. Prepara o ambiente
     const recuperar = vi
       .spyOn(inventarioService, 'recuperarFoto')
       .mockResolvedValue(new Blob(['foto']))
@@ -713,6 +721,9 @@ describe('Mapa e formulário reais integrados sem WebGL', () => {
         fotoCapa: null,
       },
     ]
+
+    // 3. Importa e monta a árvore depois do mock
+    const InventarioMapa = (await import('@/components/inventario/InventarioMapa.vue')).default
     const raiz = new ElementoTeste('ROOT')
     const app = renderer.createApp(InventarioMapa, { arvores: registros })
     app.mount(raiz)

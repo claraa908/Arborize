@@ -1,5 +1,38 @@
 # Integração de persistência do Inventário
 
+## Executar os testes do backend
+
+Na pasta `backend/arborize`, rode a suíte Maven:
+
+```sh
+mvn test
+```
+
+A suíte padrão inclui `ArborizeApplicationTests` e `SolicitacaoMudaFlowIntegrationTest`, que
+iniciam a aplicação completa e usam o PostgreSQL configurado no perfil local em
+`src/main/resources/application-local.properties`. Em um clone limpo, configure um PostgreSQL
+local compatível antes de executar a suíte completa. Esses testes não criam um banco descartável.
+
+Os testes unitários dos serviços, JWT, filtro e autorização podem ser executados sem PostgreSQL:
+
+```sh
+mvn "-Dtest=AdminUsuarioServiceTest,IfceBolsistaServiceTest,TokenServiceTest,JwtAuthenticationFilterTest,SecurityAuthorizationTest,EventosServiceTest,EspecieServiceTest,EducationalMaterialServiceTest" test
+```
+
+### Integração do Inventário com PostgreSQL descartável
+
+Para os testes reais de persistência, use o executor isolado, que cria e remove um container próprio:
+
+```sh
+python3 scripts/test-inventario-postgres.py
+```
+
+O executor define `ARBORIZE_IT_JDBC_URL` no processo Maven com a URL do PostgreSQL efêmero, no
+formato `jdbc:postgresql://127.0.0.1:<porta-dinâmica>/arborize_it_<12-hex>`. Ele também define
+`ARBORIZE_IT_DB_USER`, `ARBORIZE_IT_DB_PASSWORD` e `ARBORIZE_IT_EPHEMERAL=true`; não é necessário
+exportar essas variáveis manualmente. O datasource rejeita URLs fora desse padrão, credenciais
+ausentes e as portas locais usuais. Não aponte essas variáveis para um banco existente.
+
 Execução opt-in, pelo ciclo `test` do Maven:
 
 ```sh

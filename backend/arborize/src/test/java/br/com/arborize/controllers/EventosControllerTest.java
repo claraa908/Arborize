@@ -1,6 +1,7 @@
 package br.com.arborize.controllers;
 
 import br.com.arborize.dtos.request.EventosRequestDTO;
+import br.com.arborize.dtos.response.DocumentResponseDTO;
 import br.com.arborize.dtos.response.EventosResponseDTO;
 import br.com.arborize.services.EventosService;
 import br.com.arborize.services.TokenService; // Importe o TokenService
@@ -19,6 +20,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -59,5 +62,43 @@ class EventosControllerTest {
                         .param("dataInicio", "2026-10-20"))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.nome").value("Trilha Nova"));
+    }
+
+    @Test
+    void deveBuscarEventoPorId() throws Exception {
+        EventosResponseDTO dto = new EventosResponseDTO(
+                9L, "Mutirão", "Plantio comunitário", null, null, "UFC", null,
+                null, null, null, null, "PLANEJADO", new ArrayList<>()
+        );
+        when(service.buscarPorId(9L)).thenReturn(dto);
+
+        mockMvc.perform(get("/eventos/9"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.nome").value("Mutirão"))
+                .andExpect(jsonPath("$.status").value("PLANEJADO"));
+    }
+
+    @Test
+    void deveRetornarBytesDoBannerComTipoDeclaradoNoDocumento() throws Exception {
+        byte[] banner = {1, 3, 5};
+        DocumentResponseDTO document = new DocumentResponseDTO(2L, "banner.png", "image/png", 3L, "png");
+        EventosResponseDTO dto = new EventosResponseDTO(
+                9L, "Mutirão", null, null, null, null, null, null, null, null, null, null, List.of(document)
+        );
+        when(service.buscarPorId(9L)).thenReturn(dto);
+        when(service.obterBytesDoBanner(9L)).thenReturn(banner);
+
+        mockMvc.perform(get("/eventos/9/banner"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("image/png"))
+                .andExpect(content().bytes(banner));
+    }
+
+    @Test
+    void deveExcluirEventoERetornarSemConteudo() throws Exception {
+        mockMvc.perform(delete("/eventos/9"))
+                .andExpect(status().isNoContent());
+
+        org.mockito.Mockito.verify(service).deletarEvento(9L);
     }
 }

@@ -41,13 +41,13 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/solicitacoes-muda").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/solicitacoes-muda/conversao").permitAll()
                         .requestMatchers("/api/assistente-plantio/**").permitAll()
+                        .requestMatchers("/api/materials/admin", "/api/materials/admin/**")
+                        .hasAnyRole("AMMA", "ADMINISTRADOR_AMMA", "FUNCIONARIO_AMMA", "GESTOR_IFCE", "IFCE_GESTOR", "BOLSISTA_IFCE", "IFCE_BOLSISTA")
                         .requestMatchers("/api/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/login", "/usuarios/cadastro").permitAll()
                         .requestMatchers("/admin/usuarios", "/admin/usuarios/**").hasRole("ADMINISTRADOR_AMMA")
                         .requestMatchers("/ifce/bolsistas", "/ifce/bolsistas/**").hasRole("GESTOR_IFCE")
                         .requestMatchers("/usuarios/me", "/usuarios/me/**").authenticated()
-                        .requestMatchers("/api/materials/admin", "/api/materials/admin/**")
-                        .hasAnyRole("AMMA", "ADMINISTRADOR_AMMA", "FUNCIONARIO_AMMA", "GESTOR_IFCE", "IFCE_GESTOR", "BOLSISTA_IFCE", "IFCE_BOLSISTA")
                         .requestMatchers(
                                 HttpMethod.POST,
                                 "/eventos", "/eventos/**",
