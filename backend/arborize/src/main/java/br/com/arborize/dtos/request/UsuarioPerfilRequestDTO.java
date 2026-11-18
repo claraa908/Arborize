@@ -1,15 +1,20 @@
 package br.com.arborize.dtos.request;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
 public record UsuarioPerfilRequestDTO(
         @NotBlank(message = "O nome é obrigatório.")
         String nome,
 
-        @NotBlank(message = "O WhatsApp é obrigatório.")
         String whatsapp,
 
-        @NotBlank(message = "O endereço é obrigatório.")
-        String endereco
+        String endereco,
+
+        @Email(message = "Informe um e-mail válido.")
+        String email
 ) {
+    public UsuarioPerfilRequestDTO(String nome, String whatsapp, String endereco) {
+        this(nome, whatsapp, endereco, null);
+    }
 }

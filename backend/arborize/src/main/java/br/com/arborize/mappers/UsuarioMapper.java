@@ -93,7 +93,14 @@ public class UsuarioMapper {
 
     public void updateProfile(UsuarioPerfilRequestDTO request, Usuario usuario) {
         usuario.setNome(request.nome().trim());
-        usuario.setWhatsapp(request.whatsapp().trim());
-        usuario.setEndereco(request.endereco().trim());
+        if (request.whatsapp() != null) {
+            usuario.setWhatsapp(request.whatsapp().trim());
+        }
+        if (request.endereco() != null) {
+            usuario.setEndereco(request.endereco().trim());
+        }
+        if (request.email() != null && !request.email().isBlank()) {
+            usuario.setEmail(request.email().trim().toLowerCase(java.util.Locale.ROOT));
+        }
     }
 }

@@ -20,8 +20,9 @@ export interface UsuarioResponse {
 
 export interface UsuarioPerfilRequest {
   nome: string
-  whatsapp: string
-  endereco: string
+  email?: string
+  whatsapp?: string
+  endereco?: string
 }
 
 export interface AlterarSenhaRequest {

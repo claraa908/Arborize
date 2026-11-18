@@ -58,6 +58,14 @@ public class UsuarioService {
     public UsuarioResponseDTO atualizarPerfil(Long usuarioId, UsuarioPerfilRequestDTO request) {
         var usuario = repository.findById(usuarioId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado."));
+
+        if (request.email() != null && !request.email().isBlank()) {
+            String novoEmail = request.email().trim().toLowerCase(Locale.ROOT);
+            if (!novoEmail.equalsIgnoreCase(usuario.getEmail()) && repository.existsByEmailIgnoreCase(novoEmail)) {
+                throw new UsuarioDuplicadoException(DUPLICATE_MESSAGE);
+            }
+        }
+
         mapper.updateProfile(request, usuario);
         return mapper.toResponseDTO(repository.save(usuario));
     }

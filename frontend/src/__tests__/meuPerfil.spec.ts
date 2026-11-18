@@ -68,9 +68,9 @@ function failure(status: number) {
   return new AxiosError('test-only', undefined, undefined, undefined, { status, data: {}, statusText: '', headers: {}, config: {} as never })
 }
 
-describe('formulário real compartilhado de perfil', () => {
-  it.each([false, true])('carrega dados da API no perfil institucional=%s e salva somente campos permitidos', async institutional => {
-    const { root, auth, toast } = await mount(institutional)
+describe('formulário de perfil', () => {
+  it('carrega dados da API no perfil de cidadão e salva somente campos permitidos', async () => {
+    const { root, auth, toast } = await mount(false)
     await flush()
     expect(input(root, 'perfil-nome').value).toBe(user.nome)
     expect(input(root, 'perfil-email').props).toHaveProperty('disabled', '')
@@ -86,6 +86,24 @@ describe('formulário real compartilhado de perfil', () => {
     const payload = vi.mocked(atualizarMeuPerfil).mock.calls[0]?.[0]
     expect(payload).toEqual({ nome: 'Nome atualizado', endereco: 'Endereço atualizado', whatsapp: '(88) 99999-0000' })
     expect(Object.keys(payload ?? {}).sort()).toEqual(['endereco', 'nome', 'whatsapp'])
+    expect(auth.nome).toBe('Nome atualizado')
+    expect(toast).toHaveBeenCalledWith('Perfil atualizado com sucesso', 'success')
+  })
+
+  it('carrega dados da API no perfil institucional e salva nome e e-mail', async () => {
+    const { root, auth, toast } = await mount(true)
+    await flush()
+    expect(input(root, 'perfil-nome').value).toBe(user.nome)
+    expect(input(root, 'perfil-email').value).toBe(user.email)
+    expect(input(root, 'perfil-cpf').props).toHaveProperty('disabled', '')
+    change(root, 'perfil-nome', ' Nome atualizado ')
+    change(root, 'perfil-email', ' novo@amma.quixada.ce.gov.br ')
+    await nextTick()
+    vi.mocked(atualizarMeuPerfil).mockResolvedValue({ ...user, nome: 'Nome atualizado', email: 'novo@amma.quixada.ce.gov.br' })
+    await encontrar(root, no => no.tagName === 'FORM').dispatch('submit')
+    await flush()
+    const payload = vi.mocked(atualizarMeuPerfil).mock.calls[0]?.[0]
+    expect(payload).toEqual({ nome: 'Nome atualizado', email: 'novo@amma.quixada.ce.gov.br' })
     expect(auth.nome).toBe('Nome atualizado')
     expect(toast).toHaveBeenCalledWith('Perfil atualizado com sucesso', 'success')
   })
