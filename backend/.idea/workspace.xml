@@ -1,7 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="badee39c-dbaf-405b-8844-27bd846f4e5d" name="Changes" comment="" />
+    <list default="true" id="badee39c-dbaf-405b-8844-27bd846f4e5d" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/../.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/arborize/src/main/java/br/com/arborize/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/arborize/src/main/java/br/com/arborize/config/SecurityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/arborize/src/main/java/br/com/arborize/controllers/AssistentePlantioExceptionHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/arborize/src/main/java/br/com/arborize/exceptions/AssistentePlantioExceptionHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/arborize/src/main/java/br/com/arborize/controllers/DashboardExceptionHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/arborize/src/main/java/br/com/arborize/exceptions/DashboardExceptionHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/arborize/src/main/java/br/com/arborize/controllers/FotoArvoreMultipartExceptionResolver.java" beforeDir="false" afterPath="$PROJECT_DIR$/arborize/src/main/java/br/com/arborize/exceptions/FotoArvoreMultipartExceptionResolver.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/arborize/src/main/java/br/com/arborize/controllers/GlobalExceptionHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/arborize/src/main/java/br/com/arborize/exceptions/GlobalExceptionHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/arborize/src/main/java/br/com/arborize/controllers/SolicitacaoMudaExceptionHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/arborize/src/main/java/br/com/arborize/exceptions/SolicitacaoMudaExceptionHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/arborize/src/test/java/br/com/arborize/controllers/ArvoreAtualizacaoControllerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/arborize/src/test/java/br/com/arborize/controllers/ArvoreAtualizacaoControllerTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/arborize/src/test/java/br/com/arborize/controllers/ArvoreConsultaControllerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/arborize/src/test/java/br/com/arborize/controllers/ArvoreConsultaControllerTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/arborize/src/test/java/br/com/arborize/controllers/ArvoreControllerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/arborize/src/test/java/br/com/arborize/controllers/ArvoreControllerTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/arborize/src/test/java/br/com/arborize/controllers/FotoArvoreMultipartExceptionResolverTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/arborize/src/test/java/br/com/arborize/controllers/FotoArvoreMultipartExceptionResolverTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/arborize/src/test/java/br/com/arborize/controllers/GlobalExceptionHandlerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/arborize/src/test/java/br/com/arborize/controllers/GlobalExceptionHandlerTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/arborize/src/test/java/br/com/arborize/integration/FotoArvoreMultipartIT.java" beforeDir="false" afterPath="$PROJECT_DIR$/arborize/src/test/java/br/com/arborize/integration/FotoArvoreMultipartIT.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/arborize/src/test/java/br/com/arborize/integration/InventarioPersistenciaIT.java" beforeDir="false" afterPath="$PROJECT_DIR$/arborize/src/test/java/br/com/arborize/integration/InventarioPersistenciaIT.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/arborize/src/test/java/br/com/arborize/integration/InventarioStorageIT.java" beforeDir="false" afterPath="$PROJECT_DIR$/arborize/src/test/java/br/com/arborize/integration/InventarioStorageIT.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -10,9 +27,9 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 3
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 3
+}</component>
   <component name="ProjectId" id="3Kb46K5OVMOk0E7msL1bFP7xG1T" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -23,14 +40,18 @@
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "integration",
-    "last_opened_file_path": "C:/Users/nixyh/Documents/backup/documentos/GitHub/Arborize/backend"
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "git-widget-placeholder": "fix/ajustes-es",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/nixyh/Documents/backup/documentos/GitHub/Arborize/backend",
+    "python.packages.toolwindow.project.migrated.to.right.top.v2": "true",
+    "studio.ml.bot.history.legacyLocationsMigrated": "true"
   }
 }]]></component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-jdk-9823dce3aa75-bf35d07a577b-intellij.indexing.shared.core-IU-252.28238.7" />
+        <option value="bundled-jdk-30f59d01ecdd-ac68fc9d2b05-intellij.indexing.shared.core-IU-263.7307.200" />
       </set>
     </attachedChunks>
   </component>
@@ -43,5 +64,8 @@
       <updated>1791812759715</updated>
     </task>
     <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
   </component>
 </project>

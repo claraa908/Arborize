@@ -1,6 +1,6 @@
-package br.com.arborize.controllers;
+package br.com.arborize.exceptions;
 
-import br.com.arborize.exceptions.SolicitacaoMudaException;
+import br.com.arborize.controllers.SolicitacaoMudaController;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;

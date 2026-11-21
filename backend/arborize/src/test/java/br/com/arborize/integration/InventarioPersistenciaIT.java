@@ -2,7 +2,7 @@ package br.com.arborize.integration;
 
 import br.com.arborize.dtos.request.*;
 import br.com.arborize.controllers.ArvoreController;
-import br.com.arborize.controllers.GlobalExceptionHandler;
+import br.com.arborize.exceptions.GlobalExceptionHandler;
 import br.com.arborize.entities.*;
 import br.com.arborize.enums.*;
 import br.com.arborize.exceptions.EntradaInventarioInvalidaException;

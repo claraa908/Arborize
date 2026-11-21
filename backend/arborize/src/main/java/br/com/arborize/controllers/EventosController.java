@@ -14,7 +14,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/eventos") // O seu Vue.js deve fazer fetch para http://localhost:8080/eventos
-@CrossOrigin(originPatterns = "*", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE}, allowCredentials = "true")
 @Tag(name = "Eventos", description = "Endpoints de CRUD para Eventos")
 public class EventosController {
 

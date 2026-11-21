@@ -3,6 +3,7 @@ package br.com.arborize.controllers;
 import br.com.arborize.dtos.request.ArvoreAtualizacaoRequestDTO;
 import br.com.arborize.dtos.response.*;
 import br.com.arborize.enums.*;
+import br.com.arborize.exceptions.GlobalExceptionHandler;
 import br.com.arborize.services.ArvoreService;
 import br.com.arborize.exceptions.EntradaInventarioInvalidaException;
 import org.springframework.test.web.servlet.ResultMatcher;

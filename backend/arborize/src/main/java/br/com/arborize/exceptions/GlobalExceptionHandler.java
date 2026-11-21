@@ -1,7 +1,5 @@
-package br.com.arborize.controllers;
+package br.com.arborize.exceptions;
 
-import br.com.arborize.exceptions.EntradaInventarioInvalidaException;
-import br.com.arborize.exceptions.FotografiaMuitoGrandeException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpHeaders;

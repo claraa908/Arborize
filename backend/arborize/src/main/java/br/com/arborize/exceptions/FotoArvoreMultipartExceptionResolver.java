@@ -1,4 +1,4 @@
-package br.com.arborize.controllers;
+package br.com.arborize.exceptions;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

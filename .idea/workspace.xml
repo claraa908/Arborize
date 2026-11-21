@@ -4,7 +4,28 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="470c54c1-7902-4928-9281-ae11c9f04f04" name="Changes" comment="" />
+    <list default="true" id="470c54c1-7902-4928-9281-ae11c9f04f04" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/arborize/src/main/java/br/com/arborize/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/arborize/src/main/java/br/com/arborize/config/SecurityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/arborize/src/main/java/br/com/arborize/controllers/AssistentePlantioExceptionHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/arborize/src/main/java/br/com/arborize/exceptions/AssistentePlantioExceptionHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/arborize/src/main/java/br/com/arborize/controllers/DashboardExceptionHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/arborize/src/main/java/br/com/arborize/exceptions/DashboardExceptionHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/arborize/src/main/java/br/com/arborize/controllers/EventosController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/arborize/src/main/java/br/com/arborize/controllers/EventosController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/arborize/src/main/java/br/com/arborize/controllers/FotoArvoreMultipartExceptionResolver.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/arborize/src/main/java/br/com/arborize/exceptions/FotoArvoreMultipartExceptionResolver.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/arborize/src/main/java/br/com/arborize/controllers/GlobalExceptionHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/arborize/src/main/java/br/com/arborize/exceptions/GlobalExceptionHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/arborize/src/main/java/br/com/arborize/controllers/SolicitacaoMudaExceptionHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/arborize/src/main/java/br/com/arborize/exceptions/SolicitacaoMudaExceptionHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/arborize/src/test/java/br/com/arborize/controllers/ArvoreAtualizacaoControllerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/arborize/src/test/java/br/com/arborize/controllers/ArvoreAtualizacaoControllerTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/arborize/src/test/java/br/com/arborize/controllers/ArvoreConsultaControllerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/arborize/src/test/java/br/com/arborize/controllers/ArvoreConsultaControllerTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/arborize/src/test/java/br/com/arborize/controllers/ArvoreControllerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/arborize/src/test/java/br/com/arborize/controllers/ArvoreControllerTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/arborize/src/test/java/br/com/arborize/controllers/FotoArvoreMultipartExceptionResolverTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/arborize/src/test/java/br/com/arborize/controllers/FotoArvoreMultipartExceptionResolverTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/arborize/src/test/java/br/com/arborize/controllers/GlobalExceptionHandlerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/arborize/src/test/java/br/com/arborize/controllers/GlobalExceptionHandlerTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/arborize/src/test/java/br/com/arborize/integration/FotoArvoreMultipartIT.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/arborize/src/test/java/br/com/arborize/integration/FotoArvoreMultipartIT.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/arborize/src/test/java/br/com/arborize/integration/InventarioPersistenciaIT.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/arborize/src/test/java/br/com/arborize/integration/InventarioPersistenciaIT.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/arborize/src/test/java/br/com/arborize/integration/InventarioStorageIT.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/arborize/src/test/java/br/com/arborize/integration/InventarioStorageIT.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/.env.development" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/.gitignore" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -24,6 +45,65 @@
   <component name="KubernetesApiProvider">{
   &quot;isMigrated&quot;: true
 }</component>
+  <component name="NextEditCompletionFeaturesState">
+    <decayedCancelled>
+      <entry key="MS100" value="1.4402530005831582" />
+      <entry key="MS500" value="3.487670066854533" />
+      <entry key="S2" value="6.110959135594861" />
+      <entry key="S5" value="8.36172920041043" />
+      <entry key="S10" value="10.064221528443843" />
+      <entry key="S30" value="11.82964249741522" />
+      <entry key="S60" value="12.386265949051152" />
+      <entry key="M2" value="12.685594192904114" />
+      <entry key="M5" value="12.872374497443184" />
+      <entry key="M10" value="12.93587211285371" />
+      <entry key="M15" value="12.957177699615558" />
+      <entry key="M30" value="12.978553575227844" />
+      <entry key="H1" value="12.989267952660713" />
+      <entry key="H2" value="12.994631765550118" />
+      <entry key="H4" value="12.997315329824543" />
+      <entry key="D1" value="12.999552478150381" />
+      <entry key="W1" value="12.999936066425601" />
+    </decayedCancelled>
+    <decayedSelected>
+      <entry key="MS100" value="0.0" />
+      <entry key="MS500" value="0.0" />
+      <entry key="S2" value="0.0" />
+      <entry key="S5" value="0.0" />
+      <entry key="S10" value="0.0" />
+      <entry key="S30" value="0.0" />
+      <entry key="S60" value="0.0" />
+      <entry key="M2" value="0.0" />
+      <entry key="M5" value="0.0" />
+      <entry key="M10" value="0.0" />
+      <entry key="M15" value="0.0" />
+      <entry key="M30" value="0.0" />
+      <entry key="H1" value="0.0" />
+      <entry key="H2" value="0.0" />
+      <entry key="H4" value="0.0" />
+      <entry key="D1" value="0.0" />
+      <entry key="W1" value="0.0" />
+    </decayedSelected>
+    <decayedShown>
+      <entry key="MS100" value="1.3651473406513228" />
+      <entry key="MS500" value="3.4500374383545793" />
+      <entry key="S2" value="6.08889139487421" />
+      <entry key="S5" value="8.34048737882494" />
+      <entry key="S10" value="10.047524964898482" />
+      <entry key="S30" value="11.821823720825309" />
+      <entry key="S60" value="12.381992312615212" />
+      <entry key="M2" value="12.683358793168235" />
+      <entry key="M5" value="12.871455650627597" />
+      <entry key="M10" value="12.9354084864982" />
+      <entry key="M15" value="12.956867674733296" />
+      <entry key="M30" value="12.97839809078971" />
+      <entry key="H1" value="12.989190092127497" />
+      <entry key="H2" value="12.994592805665528" />
+      <entry key="H4" value="12.997295842472816" />
+      <entry key="D1" value="12.999549229228922" />
+      <entry key="W1" value="12.999935602268746" />
+    </decayedShown>
+  </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 1
 }</component>
@@ -41,8 +121,9 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "feat/dashboard",
+    "git-widget-placeholder": "fix/ajustes-es",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "C:/Users/nixyh/Documents/backup/documentos/GitHub/Arborize",
@@ -51,7 +132,10 @@
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "python.packages.toolwindow.project.migrated.to.right.top.v2": "true",
+    "settings.editor.selected.configurable": "advanced.settings",
+    "studio.ml.bot.history.legacyLocationsMigrated": "true",
+    "ts.external.directory.path": "C:\\Program Files\\JetBrains\\IntelliJ IDEA 2026.3\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -86,6 +170,8 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="RUN_TOOL" value="" />
+      <option name="RUN_AS_SCRIPT" value="" />
       <option name="SCRIPT_NAME" value="" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
@@ -114,14 +200,15 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="RUN_TOOL" value="" />
+      <option name="RUN_AS_SCRIPT" value="" />
       <method v="2" />
     </configuration>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-jdk-9823dce3aa75-bf35d07a577b-intellij.indexing.shared.core-IU-252.28539.149" />
-        <option value="bundled-js-predefined-d6986cc7102b-a71380e98a7c-JavaScript-IU-252.28539.149" />
+        <option value="bundled-jdk-30f59d01ecdd-ac68fc9d2b05-intellij.indexing.shared.core-IU-263.7307.200" />
       </set>
     </attachedChunks>
   </component>
@@ -140,6 +227,7 @@
       <workItem from="1793506022242" duration="206000" />
       <workItem from="1793546459528" duration="1016000" />
       <workItem from="1793559692642" duration="5205000" />
+      <workItem from="1795182126761" duration="125000" />
     </task>
     <servers />
   </component>

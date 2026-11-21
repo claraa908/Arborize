@@ -2,6 +2,8 @@ package br.com.arborize.integration;
 
 import br.com.arborize.controllers.*;
 import br.com.arborize.dtos.response.FotoArvoreResponseDTO;
+import br.com.arborize.exceptions.FotoArvoreMultipartExceptionResolver;
+import br.com.arborize.exceptions.GlobalExceptionHandler;
 import br.com.arborize.services.FotoArvoreService;
 import jakarta.servlet.MultipartConfigElement;
 import org.apache.catalina.startup.Tomcat;
@@ -67,7 +69,7 @@ class FotoArvoreMultipartIT {
     }
     @TestConfiguration(proxyBeanMethods=false)
     @EnableWebMvc
-    @Import({FotoArvoreController.class,GlobalExceptionHandler.class,FotoArvoreMultipartExceptionResolver.class})
+    @Import({FotoArvoreController.class, GlobalExceptionHandler.class, FotoArvoreMultipartExceptionResolver.class})
     static class WebConfig {
         @Bean StandardServletMultipartResolver multipartResolver(){return new StandardServletMultipartResolver();}
         @Bean FotoArvoreService fotoArvoreService(){

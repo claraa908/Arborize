@@ -1,6 +1,6 @@
-package br.com.arborize.controllers;
+package br.com.arborize.exceptions;
 
-import br.com.arborize.exceptions.AssistentePlantioValidationException;
+import br.com.arborize.controllers.AssistentePlantioController;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
