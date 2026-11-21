@@ -5,26 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="470c54c1-7902-4928-9281-ae11c9f04f04" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/arborize/src/main/java/br/com/arborize/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/arborize/src/main/java/br/com/arborize/config/SecurityConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/arborize/src/main/java/br/com/arborize/controllers/AssistentePlantioExceptionHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/arborize/src/main/java/br/com/arborize/exceptions/AssistentePlantioExceptionHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/arborize/src/main/java/br/com/arborize/controllers/DashboardExceptionHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/arborize/src/main/java/br/com/arborize/exceptions/DashboardExceptionHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/arborize/src/main/java/br/com/arborize/controllers/EventosController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/arborize/src/main/java/br/com/arborize/controllers/EventosController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/arborize/src/main/java/br/com/arborize/controllers/FotoArvoreMultipartExceptionResolver.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/arborize/src/main/java/br/com/arborize/exceptions/FotoArvoreMultipartExceptionResolver.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/arborize/src/main/java/br/com/arborize/controllers/GlobalExceptionHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/arborize/src/main/java/br/com/arborize/exceptions/GlobalExceptionHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/arborize/src/main/java/br/com/arborize/controllers/SolicitacaoMudaExceptionHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/arborize/src/main/java/br/com/arborize/exceptions/SolicitacaoMudaExceptionHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/arborize/src/test/java/br/com/arborize/controllers/ArvoreAtualizacaoControllerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/arborize/src/test/java/br/com/arborize/controllers/ArvoreAtualizacaoControllerTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/arborize/src/test/java/br/com/arborize/controllers/ArvoreConsultaControllerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/arborize/src/test/java/br/com/arborize/controllers/ArvoreConsultaControllerTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/arborize/src/test/java/br/com/arborize/controllers/ArvoreControllerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/arborize/src/test/java/br/com/arborize/controllers/ArvoreControllerTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/arborize/src/test/java/br/com/arborize/controllers/FotoArvoreMultipartExceptionResolverTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/arborize/src/test/java/br/com/arborize/controllers/FotoArvoreMultipartExceptionResolverTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/arborize/src/test/java/br/com/arborize/controllers/GlobalExceptionHandlerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/arborize/src/test/java/br/com/arborize/controllers/GlobalExceptionHandlerTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/arborize/src/test/java/br/com/arborize/integration/FotoArvoreMultipartIT.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/arborize/src/test/java/br/com/arborize/integration/FotoArvoreMultipartIT.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/arborize/src/test/java/br/com/arborize/integration/InventarioPersistenciaIT.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/arborize/src/test/java/br/com/arborize/integration/InventarioPersistenciaIT.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/arborize/src/test/java/br/com/arborize/integration/InventarioStorageIT.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/arborize/src/test/java/br/com/arborize/integration/InventarioStorageIT.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/.env.development" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/.gitignore" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
