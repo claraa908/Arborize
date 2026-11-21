@@ -52,7 +52,7 @@ Priorize o desenvolvimento visual antes da integração completa da lógica. A i
 - **Prevenção de Erros:** Evite telas congestionadas, CTAs ambíguos e confirmações desnecessárias em ações triviais ou reversíveis.
 
 ## Escopo da Sprint 3 (Prioridade Máxima — OpenSpec)
-As funcionalidades de prioridade máxima desta sprint, alinhadas ao documento de especificação de requisitos e às histórias de usuário, são:
+As funcionalidades de prioridade máxima desta sprint, alinhadas ao documento de especificação de requisitos e às histórias de usuário(`docs/engenharia_software/requisitos/Especificação de Requisitos - Arborize.pdf`), são:
 
 - **SPEC-S3-01 — Gestão de Mudas e Baixa de Estoque pelo IFCE (`RF002`, `RF009` | Épico 01 e Épico 03):** Tela para operadores/bolsistas do laboratório do IFCE consultarem/validarem a retirada de mudas, registrarem a entrega física e darem baixa no estoque do viveiro municipal.
 - **SPEC-S3-02 — Gerenciamento de Solicitações de Mudas na Tela da AMMA (`RF007`, `RF008` | Épico 03):** Tela administrativa da AMMA para analisar, aprovar ou rejeitar solicitações de mudas enviadas por cidadãos e gerenciar a emissão/autorização de retirada exclusivamente no fluxo da AMMA (o usuário cidadão não gera o documento/laudo de retirada).
@@ -94,7 +94,7 @@ Antes de finalizar uma tarefa ou especificação:
 
 ## Interface do sistema
 
-- Utilizar como referência visual o arquivo `docs/interfaces/image.png`, caso esteja disponível.
+- Utilizar como referência visual o arquivo `openspec/docs/interfaces/<funcionalidade>/image.png`, caso esteja disponível.
 - Preservar a identidade visual definida para o projeto.
 - Priorizar componentes modernos, organizados e responsivos.
 - Utilizar a abordagem Design First antes de conectar dados reais.
@@ -106,7 +106,7 @@ Antes de finalizar uma tarefa ou especificação:
 Toda implementação deve seguir o OpenSpec e os padrões do projeto, mantendo a qualidade visual, a segurança e a clareza técnica do Arborize.
 
 ## Como trabalhar neste repositório (Spec-Driven Development)
-1. Antes de iniciar qualquer codificação, consulte as especificações, propostas e tarefas dentro da pasta `openspec/`, além de referências visuais disponíveis em `docs/interface/<funcionalidade>` e as diretrizes deste `AGENTS.md`.
+1. Antes de iniciar qualquer codificação, consulte as especificações, propostas e tarefas dentro da pasta `openspec/`, além de referências visuais disponíveis em `openspec/docs/interface/<funcionalidade>` e as diretrizes deste `AGENTS.md`.
 2. Analise os artefatos da especificação correspondente em `openspec/` para entender o escopo, os requisitos, os critérios de aceitação, as decisões de design e as tarefas previstas antes de alterar o código.
 3. É expressamente proibido implementar rotas, criar tabelas ou colunas no banco de dados, ou construir fluxos de interface que não constem na especificação da funcionalidade sem autorização explícita.
 4. Execute as tarefas na ordem prevista dentro da especificação escolhida em `openspec/`, respeitando os agrupamentos (ex.: frontend vs. backend) e evitando bloqueios desnecessários entre integrantes que estejam trabalhando em especificações distintas em paralelo.
