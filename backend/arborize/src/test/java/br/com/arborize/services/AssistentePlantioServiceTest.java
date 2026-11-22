@@ -103,7 +103,6 @@ class AssistentePlantioServiceTest {
                 "objetivo", "SOMBRA",
                 "disponibilidade_rega", "SIM",
                 "piso_drenante", "SIM",
-                "substituicao_nim", "NAO",
                 "quantidade_mudas", "UMA"
         );
         List<AssistentePlantioAnswerRequest> answers = new ArrayList<>();

@@ -27,7 +27,7 @@ async function voltar() {
 async function enviar() {
   if (!(await store.enviarSolicitacao()) || !store.resultado) return
   feedback.showToast(`Solicitação enviada com sucesso. Protocolo ${store.resultado.protocolo}.`, 'success')
-  await router.push({ name: 'arborizacao-acompanhar' })
+  await router.push({ name: 'arborizacao-acompanhar', query: { protocolo: store.resultado.protocolo } })
 }
 </script>
 
