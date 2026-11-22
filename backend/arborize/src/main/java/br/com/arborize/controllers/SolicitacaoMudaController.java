@@ -1,6 +1,7 @@
 package br.com.arborize.controllers;
 
 import br.com.arborize.dtos.request.SolicitacaoMudaRequest;
+import br.com.arborize.dtos.request.AcompanharSolicitacaoMudaRequest;
 import br.com.arborize.dtos.response.ConversaoReciclagemResponse;
 import br.com.arborize.dtos.response.SolicitacaoMudaResponse;
 import br.com.arborize.services.SolicitacaoMudaService;
@@ -36,5 +37,10 @@ public class SolicitacaoMudaController {
         return ResponseEntity.created(URI.create("/api/solicitacoes-muda/" + response.id()))
                 .header(HttpHeaders.CONTENT_TYPE, "application/json")
                 .body(response);
+    }
+
+    @PostMapping("/acompanhar")
+    public ResponseEntity<SolicitacaoMudaResponse> acompanhar(@Valid @RequestBody AcompanharSolicitacaoMudaRequest request) {
+        return ResponseEntity.ok(service.acompanhar(request));
     }
 }
