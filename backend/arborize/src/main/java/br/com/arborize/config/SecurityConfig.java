@@ -1,6 +1,7 @@
 package br.com.arborize.config;
 
 import br.com.arborize.security.JwtAuthenticationFilter;
+import br.com.arborize.security.IfceBolsistaAccessFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -43,6 +44,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/assistente-plantio/**").permitAll()
                         .requestMatchers("/api/materials/admin", "/api/materials/admin/**")
                         .hasAnyRole("AMMA", "ADMINISTRADOR_AMMA", "FUNCIONARIO_AMMA", "GESTOR_IFCE", "IFCE_GESTOR", "BOLSISTA_IFCE", "IFCE_BOLSISTA")
+                        .requestMatchers("/api/viveiro/movimentacoes", "/api/viveiro/movimentacoes/**")
+                        .hasAnyRole("AMMA", "ADMINISTRADOR_AMMA", "FUNCIONARIO_AMMA", "GESTOR_IFCE", "IFCE_GESTOR", "BOLSISTA_IFCE", "IFCE_BOLSISTA")
                         .requestMatchers("/api/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/login", "/usuarios/cadastro").permitAll()
                         .requestMatchers("/admin/usuarios", "/admin/usuarios/**").hasRole("ADMINISTRADOR_AMMA")
@@ -75,7 +78,8 @@ public class SecurityConfig {
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(new IfceBolsistaAccessFilter(), JwtAuthenticationFilter.class);
 
         return http.build();
     }

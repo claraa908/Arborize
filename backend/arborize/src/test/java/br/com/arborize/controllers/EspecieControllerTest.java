@@ -3,6 +3,8 @@ package br.com.arborize.controllers;
 import br.com.arborize.dtos.request.EspecieRequestDTO;
 import br.com.arborize.dtos.response.DocumentResponseDTO;
 import br.com.arborize.dtos.response.EspecieResponseDTO;
+import br.com.arborize.entities.Especie;
+import br.com.arborize.mappers.EspecieMapper;
 import br.com.arborize.services.EspecieService;
 import br.com.arborize.services.TokenService; // Importe o TokenService
 import org.junit.jupiter.api.Test;
@@ -17,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
@@ -101,5 +104,38 @@ class EspecieControllerTest {
                         .param("recomendadaCalcadas", "true"))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.nomePopular").value("Cajueiro Anão"));
+    }
+
+    @Test
+    void deveIgnorarQuantidadeLegadaNaAtualizacaoEManterEstoqueExistente() throws Exception {
+        Especie existente = new Especie();
+        existente.setMudasDisponiveis(42);
+        EspecieMapper mapper = new EspecieMapper();
+        EspecieResponseDTO response = new EspecieResponseDTO(
+                11L, "Ipê atualizado", null, null, "Nativa", "Médio", null,
+                null, true, 42, new ArrayList<>()
+        );
+
+        when(service.atualizarEspecie(eq(11L), any(EspecieRequestDTO.class))).thenAnswer(invocation -> {
+            EspecieRequestDTO request = invocation.getArgument(1);
+            mapper.updateEntity(request, existente);
+            return response;
+        });
+
+        mockMvc.perform(multipart("/especies/editar/11")
+                        .param("nomePopular", "Ipê atualizado")
+                        .param("nomeCientifico", "Handroanthus albus")
+                        .param("categoria", "Nativa")
+                        .param("porteArvore", "Médio")
+                        .param("recomendadaCalcadas", "true")
+                        .param("mudasDisponiveis", "999")
+                        .with(request -> {
+                            request.setMethod("PUT");
+                            return request;
+                        }))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.mudasDisponiveis").value(42));
+
+        org.junit.jupiter.api.Assertions.assertEquals(42, existente.getMudasDisponiveis());
     }
 }

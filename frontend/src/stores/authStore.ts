@@ -10,10 +10,11 @@ export const useAuthStore = defineStore('auth', () => {
   const role = ref<UserRole | null>(readAuthRole())
   const isAuthenticated = computed(() => Boolean(token.value && role.value))
   const isCitizen = computed(() => isAuthenticated.value && role.value === 'ROLE_CIDADAO')
+  const isIfceScholar = computed(() => isAuthenticated.value && (role.value === 'ROLE_BOLSISTA_IFCE' || role.value === 'ROLE_IFCE_BOLSISTA'))
   const isAmmaAdmin = computed(() => isAuthenticated.value && role.value === 'ROLE_ADMINISTRADOR_AMMA')
   const canAccessManagement = computed(() => isAuthenticated.value && USER_ROLES.some(value => value !== 'ROLE_CIDADAO' && value === role.value))
   const canManageIfceTeam = computed(() => isAuthenticated.value && role.value === 'ROLE_GESTOR_IFCE')
-  const dashboardRouteName = computed(() => isCitizen.value ? 'cidadao-dashboard' : canAccessManagement.value ? 'dashboard' : 'home')
+  const dashboardRouteName = computed(() => isIfceScholar.value ? 'viveiro' : isCitizen.value ? 'cidadao-dashboard' : canAccessManagement.value ? 'dashboard' : 'home')
   const profileRouteName = computed(() => isCitizen.value ? 'perfil' : 'perfil-institucional')
 
   async function login(credentials: LoginRequest) {
@@ -37,5 +38,5 @@ export const useAuthStore = defineStore('auth', () => {
     clearAuthSession()
   }
 
-  return { token, nome, role, isAuthenticated, isCitizen, isAmmaAdmin, canAccessManagement, canManageIfceTeam, dashboardRouteName, profileRouteName, login, updateName, logout }
+  return { token, nome, role, isAuthenticated, isCitizen, isIfceScholar, isAmmaAdmin, canAccessManagement, canManageIfceTeam, dashboardRouteName, profileRouteName, login, updateName, logout }
 })

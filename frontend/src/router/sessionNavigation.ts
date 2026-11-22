@@ -3,16 +3,36 @@ import type { RouteLocationResolved, RouteLocationRaw, Router } from 'vue-router
 interface SessionAccess {
   isAuthenticated: boolean
   isCitizen: boolean
+  isIfceScholar: boolean
   isAmmaAdmin: boolean
   canManageIfceTeam: boolean
   canAccessManagement: boolean
   dashboardRouteName: string
 }
 
+const IFCE_SCHOLAR_ALLOWED_ROUTE_NAMES = new Set([
+  'home',
+  'arborizacao',
+  'arborizacao-assistente',
+  'arborizacao-recomendacoes',
+  'solicitar-muda',
+  'arborizacao-conversao',
+  'arborizacao-acompanhar',
+  'biblioteca-catalogo',
+  'biblioteca-documento',
+  'viveiro',
+  'viveiro-cadastrar',
+  'viveiro-detalhes',
+  'viveiro-editar',
+])
+
 export function sessionNavigation(to: Pick<RouteLocationResolved, 'meta' | 'name' | 'fullPath'>, auth: SessionAccess) {
   const restricted = to.meta.requiresAuth || to.meta.requiresManagement || to.meta.requiresCitizen || to.meta.requiresAdmin || to.meta.requiresIfceTeam
   if (restricted && !auth.isAuthenticated) {
     return { name: 'home', query: { auth: 'required', redirect: to.fullPath } }
+  }
+  if (auth.isIfceScholar && (typeof to.name !== 'string' || !IFCE_SCHOLAR_ALLOWED_ROUTE_NAMES.has(to.name))) {
+    return { name: 'viveiro' }
   }
   if (to.name === 'perfil' && auth.canAccessManagement) return { name: 'perfil-institucional' }
   if (to.name === 'perfil-institucional' && auth.isCitizen) return { name: 'perfil' }
@@ -24,6 +44,8 @@ export function sessionNavigation(to: Pick<RouteLocationResolved, 'meta' | 'name
 }
 
 export function postLoginTarget(router: Router, auth: SessionAccess, redirect: unknown): RouteLocationRaw {
+  if (auth.isIfceScholar) return { name: auth.dashboardRouteName }
+
   if (typeof redirect === 'string' && redirect.startsWith('/') && !redirect.startsWith('//') && !redirect.includes('\\')) {
     const target = router.resolve(redirect)
     const profileAlias = (target.name === 'perfil' && auth.canAccessManagement) || (target.name === 'perfil-institucional' && auth.isCitizen)

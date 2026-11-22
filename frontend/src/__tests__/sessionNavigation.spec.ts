@@ -3,6 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { createPinia, setActivePinia } from 'pinia'
 import { createSSRApp, nextTick } from 'vue'
 import { renderToString } from 'vue/server-renderer'
+import { mount } from '@vue/test-utils'
 import { createMemoryHistory } from 'vue-router'
 import { createAppRouter } from '@/router'
 import { postLoginTarget, sessionNavigation } from '@/router/sessionNavigation'
@@ -13,6 +14,7 @@ import { saveAuthSession } from '@/services/authStorage'
 import { autenticarUsuario } from '@/services/authService'
 import TopBar from '@/components/layout/TopBar.vue'
 import AppHeader from '@/components/layout/AppHeader.vue'
+import AppSidebar from '@/components/layout/AppSidebar.vue'
 import CidadaoDashboardView from '@/views/public/CidadaoDashboardView.vue'
 import { ElementoTeste, encontrar, renderer } from './mapaTestHost'
 
@@ -65,13 +67,14 @@ describe('navegação real por sessão', () => {
   })
 
   it.each(USER_ROLES)('direciona o login de %s, restaura sessão e mantém restrições específicas', async (role) => {
+    const isIfceScholar = role === 'ROLE_BOLSISTA_IFCE' || role === 'ROLE_IFCE_BOLSISTA'
     const { auth, router } = await session()
     vi.mocked(autenticarUsuario).mockResolvedValue({ token: 'test-only-token', nome: 'Pessoa Teste', role, tipo: 'Bearer' })
     await auth.login({ login: 'pessoa@example.invalid', senha: 'test-only' })
     await router.push(postLoginTarget(router, auth, undefined))
-    expect(router.currentRoute.value.name).toBe(role === 'ROLE_CIDADAO' ? 'cidadao-dashboard' : 'dashboard')
+    expect(router.currentRoute.value.name).toBe(role === 'ROLE_CIDADAO' ? 'cidadao-dashboard' : isIfceScholar ? 'viveiro' : 'dashboard')
     expect(router.currentRoute.value.matched[0]?.path).toBe(role === 'ROLE_CIDADAO' ? '/' : '/sistema')
-    if (role !== 'ROLE_CIDADAO') {
+    if (role !== 'ROLE_CIDADAO' && !isIfceScholar) {
       for (const path of ['/sistema/inventario', '/sistema/viveiro', '/sistema/biblioteca', '/sistema/solicitacoes', '/sistema/laudos', '/sistema/eventos']) {
         const target = router.resolve(path)
         expect(target.matched.length).toBeGreaterThan(0)
@@ -83,9 +86,51 @@ describe('navegação real por sessão', () => {
     expect(restored.role).toBe(role)
     expect(restored.dashboardRouteName).toBe(auth.dashboardRouteName)
     await router.push('/gestao')
-    expect(router.currentRoute.value.name).toBe(role === 'ROLE_ADMINISTRADOR_AMMA' ? 'gestao' : 'home')
+    expect(router.currentRoute.value.name).toBe(isIfceScholar ? 'viveiro' : role === 'ROLE_ADMINISTRADOR_AMMA' ? 'gestao' : 'home')
     await router.push('/ifce/equipe')
-    expect(router.currentRoute.value.name).toBe(role === 'ROLE_GESTOR_IFCE' ? 'ifce-equipe' : 'home')
+    expect(router.currentRoute.value.name).toBe(isIfceScholar ? 'viveiro' : role === 'ROLE_GESTOR_IFCE' ? 'ifce-equipe' : 'home')
+  })
+
+  it.each(['ROLE_BOLSISTA_IFCE', 'ROLE_IFCE_BOLSISTA'] as const)('limita navegação de %s ao Viveiro', async (role) => {
+    const { router, auth } = await session(role, '/sistema/inventario')
+    expect(auth.isIfceScholar).toBe(true)
+    expect(router.currentRoute.value.name).toBe('viveiro')
+    expect(postLoginTarget(router, auth, '/sistema/inventario')).toEqual({ name: 'viveiro' })
+
+    expect(postLoginTarget(router, auth, '/biblioteca')).toEqual({ name: 'viveiro' })
+    expect(postLoginTarget(router, auth, '/')).toEqual({ name: 'viveiro' })
+
+    for (const path of ['/dashboard', '/sistema', '/sistema/perfil', '/sistema/inventario', '/gestao', '/ifce/equipe', '/arborizacao/invalida']) {
+      await router.push(path)
+      expect(router.currentRoute.value.name).toBe('viveiro')
+    }
+
+    await router.push('/')
+    expect(router.currentRoute.value.name).toBe('home')
+
+    for (const [path, name] of [
+      ['/biblioteca', 'biblioteca-catalogo'],
+      ['/biblioteca/12', 'biblioteca-documento'],
+      ['/arborizacao', 'arborizacao-assistente'],
+      ['/arborizacao/assistente', 'arborizacao-assistente'],
+      ['/arborizacao/recomendacoes', 'arborizacao-recomendacoes'],
+      ['/arborizacao/solicitar-muda', 'solicitar-muda'],
+      ['/arborizacao/conversao', 'arborizacao-conversao'],
+      ['/arborizacao/acompanhar', 'arborizacao-acompanhar'],
+    ]) {
+      await router.push(path)
+      expect(router.currentRoute.value.name).toBe(name)
+    }
+
+    for (const [path, name] of [
+      ['/sistema/viveiro', 'viveiro'],
+      ['/sistema/viveiro/cadastrar-especie', 'viveiro-cadastrar'],
+      ['/sistema/viveiro/12', 'viveiro-detalhes'],
+      ['/sistema/viveiro/12/editar', 'viveiro-editar'],
+    ]) {
+      await router.push(path)
+      expect(router.currentRoute.value.name).toBe(name)
+    }
   })
 
   it('impede URLs administrativas para cidadão e mantém o perfil público na URL direta', async () => {
@@ -194,5 +239,44 @@ describe('componentes reais de navegação', () => {
     await vi.waitFor(() => expect(router.currentRoute.value.name).toBe('home'))
     expect(auth.isAuthenticated).toBe(false)
     app.unmount()
+  })
+
+  it.each(['ROLE_BOLSISTA_IFCE', 'ROLE_IFCE_BOLSISTA'] as const)('mostra somente Viveiro no menu móvel de %s', async (role) => {
+    const { router, pinia } = await session(role, '/sistema/viveiro')
+    const originalWidth = window.innerWidth
+    Object.defineProperty(window, 'innerWidth', { configurable: true, value: 375 })
+    const wrapper = mount(AppSidebar, { global: { plugins: [pinia, router] } })
+
+    try {
+      await nextTick()
+      const openMenu = wrapper.get('[aria-label="Abrir menu de navegação"]')
+      expect(openMenu.attributes('aria-expanded')).toBe('false')
+      await openMenu.trigger('click')
+      await nextTick()
+
+      const navigation = wrapper.findAll('nav')
+      expect(navigation).toHaveLength(2)
+      expect(navigation[1]!.text()).toContain('Viveiro')
+      expect(navigation[1]!.text()).not.toContain('Dashboard e Relatórios')
+      expect(navigation[1]!.text()).not.toContain('Biblioteca Digital')
+      expect(navigation[1]!.text()).not.toContain('Inventário')
+      expect(navigation[1]!.text()).not.toContain('Solicitações')
+      expect(navigation[1]!.text()).not.toContain('Laudos')
+      expect(navigation[1]!.text()).not.toContain('Eventos')
+      expect(wrapper.find('[aria-label="Fechar menu de navegação"]').exists()).toBe(true)
+    } finally {
+      wrapper.unmount()
+      Object.defineProperty(window, 'innerWidth', { configurable: true, value: originalWidth })
+    }
+  })
+
+  it.each(['ROLE_BOLSISTA_IFCE', 'ROLE_IFCE_BOLSISTA'] as const)('mostra atalho público e saída, mantendo perfil oculto no cabeçalho de %s', async (role) => {
+    const { router, pinia } = await session(role, '/sistema/viveiro')
+    const html = await renderToString(createSSRApp(AppHeader).use(pinia).use(router))
+
+    expect(html).toContain('Visitar página pública')
+    expect(html).toContain('href="/"')
+    expect(html).not.toContain('aria-label="Meu perfil"')
+    expect(html).toContain('title="Sair"')
   })
 })

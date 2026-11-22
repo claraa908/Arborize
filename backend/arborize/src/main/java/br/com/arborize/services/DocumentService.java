@@ -73,4 +73,17 @@ public class DocumentService {
             throw new RuntimeException("Erro ao baixar arquivo do MinIO: " + e.getMessage(), e);
         }
     }
+
+    public void deleteStoredObject(String filePath) {
+        try {
+            minioClient.removeObject(
+                    RemoveObjectArgs.builder()
+                            .bucket(bucketName)
+                            .object(filePath)
+                            .build()
+            );
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao remover arquivo do MinIO.", e);
+        }
+    }
 }

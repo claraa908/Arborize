@@ -4,7 +4,32 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="470c54c1-7902-4928-9281-ae11c9f04f04" name="Changes" comment="" />
+    <list default="true" id="470c54c1-7902-4928-9281-ae11c9f04f04" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/arborize/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/arborize/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/arborize/src/main/java/br/com/arborize/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/arborize/src/main/java/br/com/arborize/config/SecurityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/arborize/src/main/java/br/com/arborize/dtos/request/EspecieRequestDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/arborize/src/main/java/br/com/arborize/dtos/request/EspecieRequestDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/arborize/src/main/java/br/com/arborize/mappers/EspecieMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/arborize/src/main/java/br/com/arborize/mappers/EspecieMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/arborize/src/main/java/br/com/arborize/repositories/DocumentRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/arborize/src/main/java/br/com/arborize/repositories/DocumentRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/arborize/src/main/java/br/com/arborize/repositories/EspecieRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/arborize/src/main/java/br/com/arborize/repositories/EspecieRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/arborize/src/main/java/br/com/arborize/services/DocumentService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/arborize/src/main/java/br/com/arborize/services/DocumentService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/arborize/src/main/resources/application-local.properties" beforeDir="false" afterPath="$PROJECT_DIR$/backend/arborize/src/main/resources/application-local.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/arborize/src/main/resources/application-prod.properties" beforeDir="false" afterPath="$PROJECT_DIR$/backend/arborize/src/main/resources/application-prod.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/arborize/src/main/resources/application-test.properties" beforeDir="false" afterPath="$PROJECT_DIR$/backend/arborize/src/main/resources/application-test.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/arborize/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/backend/arborize/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/arborize/src/main/resources/db/manual/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/backend/arborize/src/main/resources/db/manual/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/arborize/src/test/java/br/com/arborize/ArborizeApplicationTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/arborize/src/test/java/br/com/arborize/ArborizeApplicationTests.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/arborize/src/test/java/br/com/arborize/config/SecurityAuthorizationTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/arborize/src/test/java/br/com/arborize/config/SecurityAuthorizationTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/arborize/src/test/java/br/com/arborize/controllers/EspecieControllerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/arborize/src/test/java/br/com/arborize/controllers/EspecieControllerTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/arborize/src/test/java/br/com/arborize/controllers/SolicitacaoMudaFlowIntegrationTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/arborize/src/test/java/br/com/arborize/controllers/SolicitacaoMudaFlowIntegrationTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/arborize/src/test/java/br/com/arborize/services/EspecieServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/arborize/src/test/java/br/com/arborize/services/EspecieServiceTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/__tests__/sessionNavigation.spec.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/__tests__/sessionNavigation.spec.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/services/especieService.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/services/especieService.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/views/auth/biblioteca/BibliotecaDetalhesView.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/views/auth/biblioteca/BibliotecaDetalhesView.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/views/auth/biblioteca/BibliotecaFormView.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/views/auth/biblioteca/BibliotecaFormView.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/views/auth/viveiro/ViveiroCadastroView.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/views/auth/viveiro/ViveiroCadastroView.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/views/auth/viveiro/ViveiroView.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/views/auth/viveiro/ViveiroView.vue" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -24,10 +49,76 @@
   <component name="KubernetesApiProvider">{
   &quot;isMigrated&quot;: true
 }</component>
+  <component name="McpProjectServerCommands">
+    <commands />
+    <urls />
+  </component>
+  <component name="NextEditCompletionFeaturesState">
+    <decayedCancelled>
+      <entry key="MS100" value="1.0318109861848022" />
+      <entry key="MS500" value="2.1713461569182995" />
+      <entry key="S2" value="4.458648520995553" />
+      <entry key="S5" value="6.413251497021934" />
+      <entry key="S10" value="7.5156745637492355" />
+      <entry key="S30" value="8.456371184885885" />
+      <entry key="S60" value="8.849264797745896" />
+      <entry key="M2" value="9.874574290639952" />
+      <entry key="M5" value="12.447646828404801" />
+      <entry key="M10" value="14.266468578646592" />
+      <entry key="M15" value="15.056825582688395" />
+      <entry key="M30" value="15.962342798929166" />
+      <entry key="H1" value="16.46349893427287" />
+      <entry key="H2" value="16.72717814304641" />
+      <entry key="H4" value="16.86242650832282" />
+      <entry key="D1" value="16.976907915062256" />
+      <entry key="W1" value="16.996697112341206" />
+    </decayedCancelled>
+    <decayedSelected>
+      <entry key="MS100" value="8.80865300657507E-15" />
+      <entry key="MS500" value="0.0015451900413778314" />
+      <entry key="S2" value="0.19826473556806704" />
+      <entry key="S5" value="0.5234777053765053" />
+      <entry key="S10" value="0.7235175916150935" />
+      <entry key="S30" value="0.8977381853957929" />
+      <entry key="S60" value="0.947490467179376" />
+      <entry key="M2" value="0.9733912200032295" />
+      <entry key="M5" value="0.9892702977351864" />
+      <entry key="M10" value="0.9946206803275242" />
+      <entry key="M15" value="0.9964105639426785" />
+      <entry key="M30" value="0.9982036685680324" />
+      <entry key="H1" value="0.9991014305705063" />
+      <entry key="H2" value="0.9995506143115046" />
+      <entry key="H4" value="0.9997752819066416" />
+      <entry key="D1" value="0.9999625434771376" />
+      <entry key="W1" value="0.9999946489822633" />
+    </decayedSelected>
+    <decayedShown>
+      <entry key="MS100" value="0.13252471228007676" />
+      <entry key="MS500" value="1.7761517419709498" />
+      <entry key="S2" value="4.458649152215289" />
+      <entry key="S5" value="6.795465902288041" />
+      <entry key="S10" value="8.148262437273834" />
+      <entry key="S30" value="9.317700258172197" />
+      <entry key="S60" value="9.77760546230467" />
+      <entry key="M2" value="10.837951608198454" />
+      <entry key="M5" value="13.43262175613679" />
+      <entry key="M10" value="15.258848139536896" />
+      <entry key="M15" value="16.05171554271258" />
+      <entry key="M30" value="16.95977110131636" />
+      <entry key="H1" value="17.46220853701202" />
+      <entry key="H2" value="17.726531756000572" />
+      <entry key="H4" value="17.862103011022104" />
+      <entry key="D1" value="17.97685395607509" />
+      <entry key="W1" value="17.996689402859396" />
+    </decayedShown>
+  </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 1
 }</component>
   <component name="ProjectId" id="3KZQFGCjT54lVf1dwzkSAY2n7Cm" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="1" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -42,7 +133,8 @@
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.git.unshallow": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "feat/dashboard",
+    "Spring Boot.ArborizeApplication.executor": "Run",
+    "git-widget-placeholder": "main",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "C:/Users/nixyh/Documents/backup/documentos/GitHub/Arborize",
@@ -85,7 +177,9 @@
       <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="DEBUG_JUST_MY_CODE" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="RUN_TOOL" value="" />
       <option name="SCRIPT_NAME" value="" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
@@ -113,7 +207,9 @@
       <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="DEBUG_JUST_MY_CODE" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="RUN_TOOL" value="" />
       <method v="2" />
     </configuration>
   </component>

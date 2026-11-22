@@ -56,7 +56,7 @@ class EspecieServiceTest {
     @Test
     void deveCriarEspecieComFoto() {
         MockMultipartFile fotoFalsa = new MockMultipartFile("foto", "ipe.png", "image/png", "conteudo".getBytes());
-        EspecieRequestDTO requestDTO = new EspecieRequestDTO("Ipê", "Handroanthus", null, null, null, null, null, null, null, fotoFalsa);
+        EspecieRequestDTO requestDTO = new EspecieRequestDTO("Ipê", "Handroanthus", null, null, null, null, null, null, fotoFalsa);
 
         Especie especieMapeada = new Especie();
         especieMapeada.setDocuments(new ArrayList<>());
@@ -80,7 +80,7 @@ class EspecieServiceTest {
     void deveCriarEspecieSemFotoSemInvocarArmazenamentoDeArquivos() {
         EspecieRequestDTO request = new EspecieRequestDTO(
                 "Juazeiro", "Ziziphus joazeiro", null, "Nativa", "Médio", null,
-                null, null, 0, null
+                null, null, null
         );
         Especie especie = new Especie();
         EspecieResponseDTO response = new EspecieResponseDTO(
@@ -142,14 +142,15 @@ class EspecieServiceTest {
         MockMultipartFile novaFoto = new MockMultipartFile("foto", "nova.png", "image/png", new byte[]{7});
         EspecieRequestDTO request = new EspecieRequestDTO(
                 "Ipê atualizado", "Handroanthus albus", null, "Nativa", "Médio", null,
-                "20", "true", 12, novaFoto
+                "20", "true", novaFoto
         );
         DocumentEntities imagemAntiga = new DocumentEntities();
         DocumentEntities imagemNova = new DocumentEntities();
         Especie existente = new Especie();
+        existente.setMudasDisponiveis(42);
         existente.setDocuments(new ArrayList<>(List.of(imagemAntiga)));
         EspecieResponseDTO response = new EspecieResponseDTO(
-                11L, "Ipê atualizado", null, null, null, null, null, null, true, 12, new ArrayList<>()
+                11L, "Ipê atualizado", null, null, null, null, null, null, true, 42, new ArrayList<>()
         );
         when(repository.findById(11L)).thenReturn(java.util.Optional.of(existente));
         when(documentService.uploadAndCreateDocument(novaFoto)).thenReturn(imagemNova);

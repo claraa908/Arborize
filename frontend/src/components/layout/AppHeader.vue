@@ -118,6 +118,7 @@ const handleLogout = async () => {
           <span class="material-symbols-outlined text-[24px]" aria-hidden="true">manage_accounts</span>
         </button>
         <button 
+          v-if="!auth.isIfceScholar"
           type="button"
           aria-label="Meu perfil"
           @click="navigateToProfile"

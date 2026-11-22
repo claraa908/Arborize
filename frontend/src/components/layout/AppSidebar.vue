@@ -29,7 +29,9 @@ const menuItems: MenuItem[] = [
   { name: 'Eventos', icon: 'event', routeName: 'eventos' }
 ]
 
-const visibleMenuItems = computed(() => auth.canManageIfceTeam
+const visibleMenuItems = computed(() => auth.isIfceScholar
+  ? menuItems.filter(item => item.routeName === 'viveiro')
+  : auth.canManageIfceTeam
   ? [...menuItems.slice(0, 1), { name: 'Equipe do Laboratório', icon: 'groups', routeName: 'ifce-equipe' }, ...menuItems.slice(1)]
   : menuItems)
 
@@ -162,7 +164,10 @@ const isActive = (routeName?: string) => {
 
   <button
     v-if="windowWidth < 768"
+    type="button"
     @click="isMobileOpen = true"
+    aria-label="Abrir menu de navegação"
+    :aria-expanded="isMobileOpen"
     class="fixed top-5 left-5 w-12 h-12 bg-amma-green text-white shadow-lg flex items-center justify-center z-40 efeito-zoom border-2 border-white"
     style="border-radius: 10px 30px 10px 30px;"
   >
@@ -183,7 +188,9 @@ const isActive = (routeName?: string) => {
       <div class="relative w-4/5 max-w-[280px] bg-amma-green h-full shadow-2xl flex flex-col rounded-r-box">
         <div class="p-6 flex items-center justify-between border-b border-white/10">
           <button
+            type="button"
             @click="isMobileOpen = false"
+            aria-label="Fechar menu de navegação"
             class="w-12 h-12 bg-amma-green-dark border-2 border-white text-white flex items-center justify-center shadow-lg efeito-zoom"
             style="border-radius: 30px 10px 30px 30px;"
           >

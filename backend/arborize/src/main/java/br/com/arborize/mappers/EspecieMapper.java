@@ -32,9 +32,7 @@ public class EspecieMapper {
         especie.setCategoria(dto.categoria());
         especie.setPorteArvore(dto.porteArvore());
         especie.setDescricaoCultivo(dto.descricaoCultivo());
-        if (dto.mudasDisponiveis() != null) {
-            especie.setMudasDisponiveis(dto.mudasDisponiveis());
-        } else if (especie.getMudasDisponiveis() == null) {
+        if (especie.getMudasDisponiveis() == null) {
             especie.setMudasDisponiveis(0);
         }
 

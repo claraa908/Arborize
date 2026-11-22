@@ -9,13 +9,16 @@ export const useViveiroStore = defineStore('viveiro', () => {
 
   const especies = ref<EspecieDTO[]>([]);
   const isLoading = ref(false);
+  const loadError = ref('');
 
   async function fetchEspecies() {
     isLoading.value = true;
+    loadError.value = '';
     try {
       const data = await especieService.getAll();
       especies.value = data;
     } catch (error) {
+      loadError.value = 'Erro ao carregar o catálogo de espécies do viveiro.';
       feedback.showToast('Erro ao carregar catálogo de espécies do viveiro.', 'error');
     } finally {
       isLoading.value = false;
@@ -80,6 +83,7 @@ export const useViveiroStore = defineStore('viveiro', () => {
   return {
     especies,
     isLoading,
+    loadError,
     fetchEspecies,
     createEspecie,
     updateEspecie,

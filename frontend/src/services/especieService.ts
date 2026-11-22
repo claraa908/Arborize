@@ -27,7 +27,6 @@ export const especieService = {
 
     const calcadaBoolean = payload.adequadoCalcada === 'Sim' ? 'true' : 'false';
     formData.append('recomendadaCalcadas', calcadaBoolean);
-    formData.append('mudasDisponiveis', payload.mudasDisponiveis.toString());
 
     if (payload.tempoGerminacaoDias) {
       formData.append('tempoGerminacaoDias', payload.tempoGerminacaoDias.toString());
@@ -63,7 +62,6 @@ export const especieService = {
 
     const calcadaBoolean = payload.adequadoCalcada === 'Sim' ? 'true' : 'false';
     formData.append('recomendadaCalcadas', calcadaBoolean);
-    formData.append('mudasDisponiveis', payload.mudasDisponiveis.toString());
 
     if (payload.tempoGerminacaoDias) {
       formData.append('tempoGerminacaoDias', payload.tempoGerminacaoDias.toString());
