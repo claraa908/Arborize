@@ -4,13 +4,14 @@ interface SessionAccess {
   isAuthenticated: boolean
   isCitizen: boolean
   isAmmaAdmin: boolean
+  canManageCompensacao: boolean
   canManageIfceTeam: boolean
   canAccessManagement: boolean
   dashboardRouteName: string
 }
 
 export function sessionNavigation(to: Pick<RouteLocationResolved, 'meta' | 'name' | 'fullPath'>, auth: SessionAccess) {
-  const restricted = to.meta.requiresAuth || to.meta.requiresManagement || to.meta.requiresCitizen || to.meta.requiresAdmin || to.meta.requiresIfceTeam
+  const restricted = to.meta.requiresAuth || to.meta.requiresManagement || to.meta.requiresCitizen || to.meta.requiresAdmin || to.meta.requiresIfceTeam || to.meta.requiresAmmaStaff
   if (restricted && !auth.isAuthenticated) {
     return { name: 'home', query: { auth: 'required', redirect: to.fullPath } }
   }
@@ -18,6 +19,7 @@ export function sessionNavigation(to: Pick<RouteLocationResolved, 'meta' | 'name
   if (to.name === 'perfil-institucional' && auth.isCitizen) return { name: 'perfil' }
   if (to.meta.requiresAdmin && !auth.isAmmaAdmin) return { name: 'home' }
   if (to.meta.requiresIfceTeam && !auth.canManageIfceTeam) return { name: 'home' }
+  if (to.meta.requiresAmmaStaff && !auth.canManageCompensacao) return { name: auth.dashboardRouteName }
   if (to.meta.requiresCitizen && !auth.isCitizen) return { name: auth.dashboardRouteName }
   if (to.meta.requiresManagement && !auth.canAccessManagement) return { name: auth.dashboardRouteName }
   return true

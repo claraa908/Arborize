@@ -183,6 +183,30 @@ const routes: RouteRecordRaw[] = [
           meta: { title: 'Laudos Técnicos' }
         },
         {
+          path: 'compensacao',
+          name: 'compensacao-lista',
+          component: () => import('@/views/auth/compensacao/CompensacaoListaView.vue'),
+          meta: { title: 'Compensação Ambiental', activeMenu: 'compensacao-lista', requiresAmmaStaff: true }
+        },
+        {
+          path: 'compensacao/novo',
+          name: 'compensacao-novo',
+          component: () => import('@/views/auth/compensacao/CompensacaoFormView.vue'),
+          meta: { title: 'Compensação Ambiental', activeMenu: 'compensacao-lista', requiresAmmaStaff: true }
+        },
+        {
+          path: 'compensacao/:id',
+          name: 'compensacao-detalhes',
+          component: () => import('@/views/auth/compensacao/CompensacaoDetalheView.vue'),
+          meta: { title: 'Compensação Ambiental', activeMenu: 'compensacao-lista', requiresAmmaStaff: true }
+        },
+        {
+          path: 'compensacao/:id/editar',
+          name: 'compensacao-editar',
+          component: () => import('@/views/auth/compensacao/CompensacaoFormView.vue'),
+          meta: { title: 'Compensação Ambiental', activeMenu: 'compensacao-lista', requiresAmmaStaff: true }
+        },
+        {
           path: 'eventos',
           name: 'eventos',
           component: () => import('@/views/auth/eventos/EventosView.vue'),
