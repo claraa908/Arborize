@@ -5,7 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="470c54c1-7902-4928-9281-ae11c9f04f04" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/.env.development" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/.env.development" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/.gitignore" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -28,23 +31,23 @@
 }</component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="1.4402530005831582" />
-      <entry key="MS500" value="3.487670066854533" />
-      <entry key="S2" value="6.110959135594861" />
-      <entry key="S5" value="8.36172920041043" />
-      <entry key="S10" value="10.064221528443843" />
-      <entry key="S30" value="11.82964249741522" />
-      <entry key="S60" value="12.386265949051152" />
-      <entry key="M2" value="12.685594192904114" />
-      <entry key="M5" value="12.872374497443184" />
-      <entry key="M10" value="12.93587211285371" />
-      <entry key="M15" value="12.957177699615558" />
-      <entry key="M30" value="12.978553575227844" />
-      <entry key="H1" value="12.989267952660713" />
-      <entry key="H2" value="12.994631765550118" />
-      <entry key="H4" value="12.997315329824543" />
-      <entry key="D1" value="12.999552478150381" />
-      <entry key="W1" value="12.999936066425601" />
+      <entry key="MS100" value="1.0023490974252098" />
+      <entry key="MS500" value="1.9661128131887629" />
+      <entry key="S2" value="5.433354824887903" />
+      <entry key="S5" value="8.354367761727083" />
+      <entry key="S10" value="10.438539769553827" />
+      <entry key="S30" value="12.57923392052799" />
+      <entry key="S60" value="13.254469193095648" />
+      <entry key="M2" value="13.617922808743979" />
+      <entry key="M5" value="13.844863308950318" />
+      <entry key="M10" value="13.92204127032709" />
+      <entry key="M15" value="13.947940304949622" />
+      <entry key="M30" value="13.973926433441068" />
+      <entry key="H1" value="13.986952265394052" />
+      <entry key="H2" value="13.993473392164523" />
+      <entry key="H4" value="13.996736010611219" />
+      <entry key="D1" value="13.999455906535529" />
+      <entry key="W1" value="13.999922270029609" />
     </decayedCancelled>
     <decayedSelected>
       <entry key="MS100" value="0.0" />
@@ -66,23 +69,23 @@
       <entry key="W1" value="0.0" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="1.3651473406513228" />
-      <entry key="MS500" value="3.4500374383545793" />
-      <entry key="S2" value="6.08889139487421" />
-      <entry key="S5" value="8.34048737882494" />
-      <entry key="S10" value="10.047524964898482" />
-      <entry key="S30" value="11.821823720825309" />
-      <entry key="S60" value="12.381992312615212" />
-      <entry key="M2" value="12.683358793168235" />
-      <entry key="M5" value="12.871455650627597" />
-      <entry key="M10" value="12.9354084864982" />
-      <entry key="M15" value="12.956867674733296" />
-      <entry key="M30" value="12.97839809078971" />
-      <entry key="H1" value="12.989190092127497" />
-      <entry key="H2" value="12.994592805665528" />
-      <entry key="H4" value="12.997295842472816" />
-      <entry key="D1" value="12.999549229228922" />
-      <entry key="W1" value="12.999935602268746" />
+      <entry key="MS100" value="0.0038576288512618246" />
+      <entry key="MS500" value="1.2326963577267112" />
+      <entry key="S2" value="5.142821310244722" />
+      <entry key="S5" value="8.215212142277592" />
+      <entry key="S10" value="10.36071229569367" />
+      <entry key="S30" value="12.550412760457544" />
+      <entry key="S60" value="13.239600474568228" />
+      <entry key="M2" value="13.610364827303284" />
+      <entry key="M5" value="13.841809198751088" />
+      <entry key="M10" value="13.920508954511535" />
+      <entry key="M15" value="13.946917583903286" />
+      <entry key="M30" value="13.973414482289488" />
+      <entry key="H1" value="13.986696141776694" />
+      <entry key="H2" value="13.993345293297281" />
+      <entry key="H4" value="13.99667195190693" />
+      <entry key="D1" value="13.999445228796711" />
+      <entry key="W1" value="13.999920744606797" />
     </decayedShown>
   </component>
   <component name="ProjectColorInfo">{
@@ -93,33 +96,33 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "JUnit.EducationalMaterialControllerTest.executor": "Run",
-    "JUnit.EducationalMaterialServiceTest.executor": "Run",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "fix/ajustes-es",
-    "ignore.virus.scanning.warn.message": "true",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/nixyh/Documents/backup/documentos/GitHub/Arborize",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "python.packages.toolwindow.project.migrated.to.right.top.v2": "true",
-    "settings.editor.selected.configurable": "advanced.settings",
-    "studio.ml.bot.history.legacyLocationsMigrated": "true",
-    "ts.external.directory.path": "C:\\Program Files\\JetBrains\\IntelliJ IDEA 2026.3\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;JUnit.EducationalMaterialControllerTest.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.EducationalMaterialServiceTest.executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;fix/ajustes-es&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/nixyh/Documents/backup/documentos/GitHub/Arborize&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;python.packages.toolwindow.project.migrated.to.right.top.v2&quot;: &quot;true&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;advanced.settings&quot;,
+    &quot;studio.ml.bot.history.legacyLocationsMigrated&quot;: &quot;true&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;C:\\Program Files\\JetBrains\\IntelliJ IDEA 2026.3\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\nixyh\Documents\backup\documentos\GitHub\Arborize" />
