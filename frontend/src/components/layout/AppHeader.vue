@@ -18,9 +18,6 @@ const roleLabel = computed(() => ({
   ROLE_CIDADAO: 'Cidadão',
   ROLE_ADMINISTRADOR_AMMA: 'Administrador da AMMA',
   ROLE_FUNCIONARIO_AMMA: 'Funcionário da AMMA',
-  ROLE_AMMA: 'Funcionário da AMMA',
-  ROLE_IFCE_GESTOR: 'Gestor do Laboratório IFCE',
-  ROLE_IFCE_BOLSISTA: 'Bolsista IFCE'
 }[auth.role ?? 'ROLE_CIDADAO']))
 
 const navigateToProfile = () => {
@@ -118,7 +115,6 @@ const handleLogout = async () => {
           <span class="material-symbols-outlined text-[24px]" aria-hidden="true">manage_accounts</span>
         </button>
         <button 
-          v-if="!auth.isIfceScholar"
           type="button"
           aria-label="Meu perfil"
           @click="navigateToProfile"

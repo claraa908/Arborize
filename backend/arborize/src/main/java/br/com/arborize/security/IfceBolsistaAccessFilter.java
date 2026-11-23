@@ -13,10 +13,7 @@ import java.util.Set;
 
 public final class IfceBolsistaAccessFilter extends OncePerRequestFilter {
 
-    private static final Set<String> ROLES_BOLSISTA = Set.of(
-            "ROLE_BOLSISTA_IFCE",
-            "ROLE_IFCE_BOLSISTA"
-    );
+    private static final Set<String> ROLES_BOLSISTA = Set.of("ROLE_BOLSISTA_IFCE");
 
     @Override
     protected void doFilterInternal(
@@ -56,6 +53,11 @@ public final class IfceBolsistaAccessFilter extends OncePerRequestFilter {
         }
 
         String method = request.getMethod();
+        if (("GET".equals(method) && "/usuarios/me".equals(path))
+                || ("PUT".equals(method)
+                && ("/usuarios/me".equals(path) || "/usuarios/me/senha".equals(path)))) {
+            return true;
+        }
         if ("GET".equals(method) && (
                 "/api/viveiro/movimentacoes".equals(path)
                         || "/api/viveiro/movimentacoes/resumo".equals(path)

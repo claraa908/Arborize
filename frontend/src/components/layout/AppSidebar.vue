@@ -29,10 +29,12 @@ const menuItems: MenuItem[] = [
   { name: 'Eventos', icon: 'event', routeName: 'eventos' }
 ]
 
+const ifceTeamMenuItem: MenuItem = { name: 'Equipe do Laboratório', icon: 'groups', routeName: 'ifce-equipe' }
+
 const visibleMenuItems = computed(() => auth.isIfceScholar
   ? menuItems.filter(item => item.routeName === 'viveiro')
   : auth.canManageIfceTeam
-  ? [...menuItems.slice(0, 1), { name: 'Equipe do Laboratório', icon: 'groups', routeName: 'ifce-equipe' }, ...menuItems.slice(1)]
+  ? [...menuItems.filter(item => item.routeName === 'viveiro'), ifceTeamMenuItem]
   : menuItems)
 
 const isExpanded = ref(true)

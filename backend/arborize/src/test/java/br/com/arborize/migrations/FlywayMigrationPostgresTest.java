@@ -36,7 +36,7 @@ class FlywayMigrationPostgresTest {
             DataSource limpo = porSchema(url, usuario, senha, schemaLimpo);
             Flyway flywayLimpo = flyway(limpo, schemaLimpo);
             flywayLimpo.migrate();
-            assertEquals("2", flywayLimpo.info().current().getVersion().getVersion());
+            assertEquals("3", flywayLimpo.info().current().getVersion().getVersion());
             assertEquals(0, contar(limpo, "movimentacoes_mudas"));
             verificarEstruturaMovimentacoes(limpo);
 
@@ -50,15 +50,29 @@ class FlywayMigrationPostgresTest {
                                 recomendada_calcadas, mudas_disponiveis)
                             VALUES ('Ipê migrado', 'Handroanthus test', 'Nativa', 'Médio', TRUE, 37)
                             """);
+                    statement.executeUpdate("""
+                            INSERT INTO usuarios (cpf, role, email, endereco, nome, senha, whatsapp)
+                            VALUES
+                                ('00000000001', 'AMMA', 'legado-amma@example.test', 'Centro', 'Pessoa AMMA', 'hash-1', '85900000001'),
+                                ('00000000002', 'IFCE_GESTOR', 'legado-gestor@example.test', 'Centro', 'Pessoa Gestora', 'hash-2', '85900000002'),
+                                ('00000000003', 'IFCE_BOLSISTA', 'legado-bolsista@example.test', 'Centro', 'Pessoa Bolsista', 'hash-3', '85900000003')
+                            """);
                 }
             }
 
             Flyway flywayExistente = flyway(existente, schemaExistente);
             flywayExistente.baseline();
             flywayExistente.migrate();
-            assertEquals("2", flywayExistente.info().current().getVersion().getVersion());
+            assertEquals("3", flywayExistente.info().current().getVersion().getVersion());
             assertEquals(37, consultarSaldo(existente));
             assertEquals(0, contar(existente, "movimentacoes_mudas"));
+            verificarUsuarioMigrado(existente, "legado-amma@example.test", "FUNCIONARIO_AMMA", "00000000001", "Pessoa AMMA", "hash-1");
+            verificarUsuarioMigrado(existente, "legado-gestor@example.test", "GESTOR_IFCE", "00000000002", "Pessoa Gestora", "hash-2");
+            verificarUsuarioMigrado(existente, "legado-bolsista@example.test", "BOLSISTA_IFCE", "00000000003", "Pessoa Bolsista", "hash-3");
+            assertSqlState(existente, """
+                    INSERT INTO usuarios (cpf, role, email, endereco, nome, senha, whatsapp)
+                    VALUES ('00000000004', 'IFCE_BOLSISTA', 'role-invalida@example.test', 'Centro', 'Role inválida', 'hash', '85900000004')
+                    """, "23514");
         } finally {
             removerSchema(base, schemaLimpo);
             removerSchema(base, schemaExistente);
@@ -106,6 +120,29 @@ class FlywayMigrationPostgresTest {
             assertNotNull(result);
             result.next();
             return result.getInt(1);
+        }
+    }
+
+    private void verificarUsuarioMigrado(
+            DataSource dataSource,
+            String email,
+            String role,
+            String cpf,
+            String nome,
+            String senha
+    ) throws Exception {
+        try (Connection connection = dataSource.getConnection();
+             var statement = connection.prepareStatement(
+                     "SELECT role, cpf, nome, senha FROM usuarios WHERE email = ?")) {
+            statement.setString(1, email);
+            try (var result = statement.executeQuery()) {
+                org.junit.jupiter.api.Assertions.assertTrue(result.next());
+                assertEquals(role, result.getString("role"));
+                assertEquals(cpf, result.getString("cpf"));
+                assertEquals(nome, result.getString("nome"));
+                assertEquals(senha, result.getString("senha"));
+                org.junit.jupiter.api.Assertions.assertFalse(result.next());
+            }
         }
     }
 

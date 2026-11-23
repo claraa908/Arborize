@@ -44,18 +44,13 @@ const roleLabel = computed(
       ROLE_CIDADAO: 'Cidadão',
       ROLE_ADMINISTRADOR_AMMA: 'Administrador da AMMA',
       ROLE_FUNCIONARIO_AMMA: 'Funcionário da AMMA',
-      ROLE_AMMA: 'Funcionário da AMMA',
-      ROLE_IFCE_GESTOR: 'Gestor do Laboratório IFCE',
-      ROLE_IFCE_BOLSISTA: 'Bolsista IFCE',
     })[auth.role ?? 'ROLE_FUNCIONARIO_AMMA'],
 )
 
 const institutionLabel = computed(() => {
   if (
     auth.role === 'ROLE_GESTOR_IFCE' ||
-    auth.role === 'ROLE_IFCE_GESTOR' ||
-    auth.role === 'ROLE_BOLSISTA_IFCE' ||
-    auth.role === 'ROLE_IFCE_BOLSISTA'
+    auth.role === 'ROLE_BOLSISTA_IFCE'
   ) {
     return 'IFCE - Instituto Federal de Educação, Ciência e Tecnologia do Ceará'
   }

@@ -102,16 +102,15 @@ class IfceBolsistaServiceTest {
     }
 
     @Test
-    void listaOsAliasesDePapelBolsistaMapeadosParaRespostaPublica() {
+    void listaBolsistasPeloPapelCanonico() {
         Usuario bolsista = new Usuario();
         bolsista.setId(12L);
         bolsista.setNome("Bolsista de teste");
         bolsista.setEmail("bolsista@example.com");
         bolsista.setWhatsapp("85999990000");
-        bolsista.setRole(UsuarioRole.IFCE_BOLSISTA);
-        when(repository.findByRoleInOrderByNomeAsc(List.of(
-                UsuarioRole.BOLSISTA_IFCE, UsuarioRole.IFCE_BOLSISTA
-        ))).thenReturn(List.of(bolsista));
+        bolsista.setRole(UsuarioRole.BOLSISTA_IFCE);
+        when(repository.findByRoleInOrderByNomeAsc(List.of(UsuarioRole.BOLSISTA_IFCE)))
+                .thenReturn(List.of(bolsista));
 
         var result = service.listarBolsistas();
 
@@ -119,8 +118,6 @@ class IfceBolsistaServiceTest {
         assertEquals("Bolsista de teste", result.get(0).nome());
         assertEquals("bolsista@example.com", result.get(0).email());
         assertEquals("85999990000", result.get(0).whatsapp());
-        verify(repository).findByRoleInOrderByNomeAsc(List.of(
-                UsuarioRole.BOLSISTA_IFCE, UsuarioRole.IFCE_BOLSISTA
-        ));
+        verify(repository).findByRoleInOrderByNomeAsc(List.of(UsuarioRole.BOLSISTA_IFCE));
     }
 }

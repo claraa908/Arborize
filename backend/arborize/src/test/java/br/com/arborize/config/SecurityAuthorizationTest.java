@@ -39,6 +39,30 @@ class SecurityAuthorizationTest {
     private SecurityProbeController securityProbeController;
 
     @Test
+    void APIsDeArborizacaoExigemAutenticacaoEContinuamDisponiveisAosPerfisAutenticados() throws Exception {
+        mockMvc.perform(post("/api/assistente-plantio/recomendar"))
+                .andExpect(status().isUnauthorized());
+        mockMvc.perform(get("/api/solicitacoes-muda/conversao"))
+                .andExpect(status().isUnauthorized());
+        mockMvc.perform(post("/api/solicitacoes-muda"))
+                .andExpect(status().isUnauthorized());
+
+        for (var usuario : List.<String[]>of(
+                new String[]{"jwt-cidadao", "ROLE_CIDADAO"},
+                new String[]{"jwt-admin", "ROLE_ADMINISTRADOR_AMMA"},
+                new String[]{"jwt-funcionario", "ROLE_FUNCIONARIO_AMMA"},
+                new String[]{"jwt-gestor", "ROLE_GESTOR_IFCE"},
+                new String[]{"jwt-bolsista", "ROLE_BOLSISTA_IFCE"})) {
+            requestAs(HttpMethod.POST, usuario[0], usuario[1], "/api/assistente-plantio/recomendar")
+                    .andExpect(status().isOk());
+            requestAs(HttpMethod.GET, usuario[0], usuario[1], "/api/solicitacoes-muda/conversao")
+                    .andExpect(status().isOk());
+            requestAs(HttpMethod.POST, usuario[0], usuario[1], "/api/solicitacoes-muda")
+                    .andExpect(status().isOk());
+        }
+    }
+
+    @Test
     void materiaisAdministrativosNaoFicamPublicosPelaRegraGenericaApi() throws Exception {
         mockMvc.perform(get("/api/materials/admin"))
                 .andExpect(status().isUnauthorized());
@@ -82,11 +106,21 @@ class SecurityAuthorizationTest {
     }
 
     @Test
+    void authoritiesLegadasNaoAutenticamRecursosProtegidos() throws Exception {
+        for (String authority : List.of("ROLE_AMMA", "ROLE_IFCE_GESTOR", "ROLE_IFCE_BOLSISTA")) {
+            String jwt = "jwt-legado-" + authority;
+            when(tokenService.validarEObterUsuarioId(jwt)).thenReturn(9L);
+            when(tokenService.validarEObterRole(jwt))
+                    .thenThrow(new IllegalArgumentException("Role invÃ¡lida no token."));
+
+            mockMvc.perform(get("/usuarios/me").header("Authorization", "Bearer " + jwt))
+                    .andExpect(status().isUnauthorized());
+        }
+    }
+
+    @Test
     void bolsistasAcessamSomenteApisDoViveiro() throws Exception {
-        for (var bolsista : List.of(
-                new String[]{"jwt-bolsista", "ROLE_BOLSISTA_IFCE"},
-                new String[]{"jwt-ifce-bolsista", "ROLE_IFCE_BOLSISTA"}
-        )) {
+        for (var bolsista : List.<String[]>of(new String[]{"jwt-bolsista", "ROLE_BOLSISTA_IFCE"})) {
             requestAs(HttpMethod.GET, bolsista[0], bolsista[1], "/especies")
                     .andExpect(status().isOk())
                     .andExpect(content().string("viveiro"));
@@ -128,6 +162,13 @@ class SecurityAuthorizationTest {
                     .andExpect(status().isOk());
             requestAs(HttpMethod.PUT, bolsista[0], bolsista[1], "/api/viveiro/movimentacoes/12")
                     .andExpect(status().isOk());
+            requestAs(bolsista[0], bolsista[1], "/usuarios/me")
+                    .andExpect(status().isOk())
+                    .andExpect(content().string("perfil"));
+            requestAs(HttpMethod.PUT, bolsista[0], bolsista[1], "/usuarios/me")
+                    .andExpect(status().isOk());
+            requestAs(HttpMethod.PUT, bolsista[0], bolsista[1], "/usuarios/me/senha")
+                    .andExpect(status().isOk());
 
             securityProbeController.publicProbeCalls.set(0);
             requestAs(bolsista[0], bolsista[1], "/api/publico/probe")
@@ -145,11 +186,81 @@ class SecurityAuthorizationTest {
                     .andExpect(status().isForbidden());
             requestAs(HttpMethod.DELETE, bolsista[0], bolsista[1], "/api/viveiro/movimentacoes/12")
                     .andExpect(status().isForbidden());
-            requestAs(bolsista[0], bolsista[1], "/usuarios/me")
+            requestAs(HttpMethod.DELETE, bolsista[0], bolsista[1], "/usuarios/me")
+                    .andExpect(status().isForbidden());
+            requestAs(bolsista[0], bolsista[1], "/usuarios/me/senha")
                     .andExpect(status().isForbidden());
             requestAs(HttpMethod.POST, bolsista[0], bolsista[1], "/auth/login")
                     .andExpect(status().isNotFound());
         }
+    }
+
+    @Test
+    void gestorIfceAcessaSomenteViveiroEquipeEPerfilProprio() throws Exception {
+        String jwt = "jwt-gestor-allowlist";
+        String role = "ROLE_GESTOR_IFCE";
+
+        requestAs(HttpMethod.GET, jwt, role, "/especies")
+                .andExpect(status().isOk())
+                .andExpect(content().string("viveiro"));
+        requestAs(HttpMethod.POST, jwt, role, "/especies").andExpect(status().isOk());
+        requestAs(HttpMethod.PUT, jwt, role, "/especies/editar/12").andExpect(status().isOk());
+        requestAs(HttpMethod.DELETE, jwt, role, "/especies/12").andExpect(status().isOk());
+
+        requestAs(jwt, role, "/api/viveiro/movimentacoes")
+                .andExpect(status().isOk())
+                .andExpect(content().string("movimentacoes"));
+        requestAs(jwt, role, "/api/viveiro/movimentacoes/resumo").andExpect(status().isOk());
+        requestAs(jwt, role, "/api/viveiro/movimentacoes/12").andExpect(status().isOk());
+        requestAs(jwt, role, "/api/viveiro/movimentacoes/12/comprovante").andExpect(status().isOk());
+        requestAs(HttpMethod.POST, jwt, role, "/api/viveiro/movimentacoes").andExpect(status().isOk());
+        requestAs(HttpMethod.PUT, jwt, role, "/api/viveiro/movimentacoes/12").andExpect(status().isOk());
+
+        requestAs(jwt, role, "/ifce/bolsistas").andExpect(status().isOk());
+        requestAs(HttpMethod.POST, jwt, role, "/ifce/bolsistas").andExpect(status().isOk());
+        requestAs(jwt, role, "/eventos").andExpect(status().isOk());
+        requestAs(jwt, role, "/eventos/12").andExpect(status().isOk());
+        requestAs(jwt, role, "/api/materials")
+                .andExpect(status().isOk())
+                .andExpect(content().string("catalogo-publico"));
+        requestAs(jwt, role, "/api/materials/12")
+                .andExpect(status().isOk())
+                .andExpect(content().string("material-publico"));
+        requestAs(jwt, role, "/api/materials/12/cover").andExpect(status().isOk());
+        requestAs(jwt, role, "/api/materials/12/download").andExpect(status().isOk());
+        requestAs(jwt, role, "/api/solicitacoes-muda/conversao").andExpect(status().isOk());
+        requestAs(HttpMethod.POST, jwt, role, "/api/solicitacoes-muda").andExpect(status().isOk());
+        requestAs(HttpMethod.POST, jwt, role, "/api/assistente-plantio/recomendar").andExpect(status().isOk());
+        requestAs(jwt, role, "/usuarios/me")
+                .andExpect(status().isOk())
+                .andExpect(content().string("perfil"));
+        requestAs(HttpMethod.PUT, jwt, role, "/usuarios/me").andExpect(status().isOk());
+        requestAs(HttpMethod.PUT, jwt, role, "/usuarios/me/senha").andExpect(status().isOk());
+
+        when(tokenService.validarEObterUsuarioId(jwt)).thenReturn(9L);
+        when(tokenService.validarEObterRole(jwt)).thenReturn(role);
+        mockMvc.perform(request(HttpMethod.OPTIONS, "/api/publico/probe")
+                        .header("Origin", "http://localhost:5173")
+                        .header("Access-Control-Request-Method", "GET")
+                        .header("Access-Control-Request-Headers", "authorization")
+                        .header("Authorization", "Bearer " + jwt))
+                .andExpect(status().isOk());
+        requestAs(HttpMethod.POST, jwt, role, "/auth/login").andExpect(status().isNotFound());
+
+        securityProbeController.publicProbeCalls.set(0);
+        requestAs(jwt, role, "/api/publico/probe").andExpect(status().isForbidden());
+        org.junit.jupiter.api.Assertions.assertEquals(0, securityProbeController.publicProbeCalls.get());
+        requestAs(jwt, role, "/api/arvores").andExpect(status().isForbidden());
+        requestAs(jwt, role, "/api/bairros").andExpect(status().isForbidden());
+        requestAs(jwt, role, "/api/dashboard/overview").andExpect(status().isForbidden());
+        requestAs(jwt, role, "/api/materials/admin").andExpect(status().isForbidden());
+        requestAs(jwt, role, "/admin/usuarios").andExpect(status().isForbidden());
+        requestAs(HttpMethod.PUT, jwt, role, "/ifce/bolsistas").andExpect(status().isForbidden());
+        requestAs(jwt, role, "/ifce/bolsistas/12").andExpect(status().isForbidden());
+        requestAs(HttpMethod.DELETE, jwt, role, "/api/viveiro/movimentacoes/12")
+                .andExpect(status().isForbidden());
+        requestAs(HttpMethod.DELETE, jwt, role, "/usuarios/me").andExpect(status().isForbidden());
+        requestAs(jwt, role, "/usuarios/12").andExpect(status().isForbidden());
     }
 
     @Test
@@ -178,13 +289,10 @@ class SecurityAuthorizationTest {
         requestAs("jwt-cidadao", "ROLE_CIDADAO", "/api/viveiro/movimentacoes")
                 .andExpect(status().isForbidden());
         for (String role : List.of(
-                "ROLE_AMMA",
                 "ROLE_ADMINISTRADOR_AMMA",
                 "ROLE_FUNCIONARIO_AMMA",
                 "ROLE_GESTOR_IFCE",
-                "ROLE_IFCE_GESTOR",
-                "ROLE_BOLSISTA_IFCE",
-                "ROLE_IFCE_BOLSISTA")) {
+                "ROLE_BOLSISTA_IFCE")) {
             requestAs("jwt-" + role.toLowerCase(), role, "/api/viveiro/movimentacoes")
                     .andExpect(status().isOk());
         }
@@ -228,6 +336,12 @@ class SecurityAuthorizationTest {
 
         @GetMapping("/api/materials/{id}/download")
         public String publicMaterialDownload() { return "download"; }
+
+        @GetMapping("/eventos")
+        public String publicEvents() { return "eventos"; }
+
+        @GetMapping("/eventos/{id}")
+        public String publicEvent() { return "evento"; }
 
         @GetMapping("/api/solicitacoes-muda/conversao")
         public String calculateConversion() { return "conversao"; }
@@ -274,11 +388,26 @@ class SecurityAuthorizationTest {
         @org.springframework.web.bind.annotation.DeleteMapping("/api/viveiro/movimentacoes/{id}")
         public String deleteMovement() { return "excluido"; }
 
+        @GetMapping("/usuarios/me")
+        public String ownProfile() { return "perfil"; }
+
+        @org.springframework.web.bind.annotation.PutMapping("/usuarios/me")
+        public String updateOwnProfile() { return "perfil-atualizado"; }
+
+        @org.springframework.web.bind.annotation.PutMapping("/usuarios/me/senha")
+        public String updateOwnPassword() { return "senha-atualizada"; }
+
+        @org.springframework.web.bind.annotation.DeleteMapping("/usuarios/me")
+        public String deleteOwnProfile() { return "excluido"; }
+
         @GetMapping("/admin/usuarios")
         public String adminUsers() { return "ok"; }
 
         @GetMapping("/ifce/bolsistas")
         public String ifceTeam() { return "ok"; }
+
+        @PostMapping("/ifce/bolsistas")
+        public String createIfceScholar() { return "criado"; }
 
         @GetMapping("/especies")
         public String species() { return "viveiro"; }

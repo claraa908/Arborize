@@ -10,6 +10,7 @@ defineProps<{
 const emit = defineEmits<{
   (e: 'close'): void
   (e: 'login-success'): void
+  (e: 'open-register'): void
 }>()
 
 const auth = useAuthStore()
@@ -26,7 +27,6 @@ const handleSubmit = async () => {
   try {
     await auth.login({ login: login.value.trim(), senha: password.value })
     password.value = ''
-    emit('close')
     emit('login-success')
   } catch (error) {
     errorMessage.value = error instanceof AxiosError && error.response?.status === 401
@@ -125,6 +125,17 @@ const handleSubmit = async () => {
             <span class="leading-none pt-[2px]">{{ isSubmitting ? 'Entrando...' : 'Entrar' }}</span>
           </button>
         </form>
+
+        <p class="mt-5 text-sm text-grey-text">
+          Ainda não possui uma conta?
+          <button
+            type="button"
+            @click="emit('open-register')"
+            class="font-bold text-amma-green hover:text-amma-green-dark hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amma-green rounded-sm"
+          >
+            Cadastre-se
+          </button>
+        </p>
       </section>
     </div>
   </Transition>

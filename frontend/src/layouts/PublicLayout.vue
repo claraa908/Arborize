@@ -26,7 +26,20 @@ const openRegister = () => {
 }
 
 const handleLoginSuccess = () => {
+  isLoginModalOpen.value = false
   void router.replace(postLoginTarget(router, auth, route.query.redirect))
+}
+
+const closeAuthModals = () => {
+  isLoginModalOpen.value = false
+  isRegisterModalOpen.value = false
+
+  if (route.query.auth !== 'required') return
+
+  const query = { ...route.query }
+  delete query.auth
+  delete query.redirect
+  void router.replace({ name: 'home', query })
 }
 
 watch(() => route.query.auth, (authRequired) => {
@@ -53,13 +66,14 @@ watch(() => route.query.auth, (authRequired) => {
 
     <LoginModal 
       :isOpen="isLoginModalOpen" 
-      @close="isLoginModalOpen = false"
+      @close="closeAuthModals"
       @login-success="handleLoginSuccess"
+      @open-register="openRegister"
     />
 
     <RegisterModal 
       :isOpen="isRegisterModalOpen" 
-      @close="isRegisterModalOpen = false"
+      @close="closeAuthModals"
       @open-login="openLogin"
     />
   </div>

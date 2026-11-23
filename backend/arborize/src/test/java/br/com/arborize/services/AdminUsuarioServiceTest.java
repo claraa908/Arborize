@@ -123,13 +123,13 @@ class AdminUsuarioServiceTest {
         usuario.setEmail("gestor@example.com");
         usuario.setRole(UsuarioRole.GESTOR_IFCE);
         when(repository.findByRoleInOrderByNomeAsc(List.of(
-                UsuarioRole.FUNCIONARIO_AMMA, UsuarioRole.GESTOR_IFCE, UsuarioRole.IFCE_GESTOR
+                UsuarioRole.FUNCIONARIO_AMMA, UsuarioRole.GESTOR_IFCE
         ))).thenReturn(List.of(usuario));
 
         var result = service.listarUsuariosInstitucionais();
 
         verify(repository).findByRoleInOrderByNomeAsc(List.of(
-                UsuarioRole.FUNCIONARIO_AMMA, UsuarioRole.GESTOR_IFCE, UsuarioRole.IFCE_GESTOR
+                UsuarioRole.FUNCIONARIO_AMMA, UsuarioRole.GESTOR_IFCE
         ));
         assertEquals(1, result.size());
         assertEquals("Gestor de teste", result.get(0).nome());

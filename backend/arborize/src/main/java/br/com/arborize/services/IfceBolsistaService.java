@@ -16,10 +16,7 @@ import java.util.Locale;
 @Service
 public class IfceBolsistaService {
 
-    private static final List<UsuarioRole> ROLES_BOLSISTAS = List.of(
-            UsuarioRole.BOLSISTA_IFCE,
-            UsuarioRole.IFCE_BOLSISTA
-    );
+    private static final List<UsuarioRole> ROLES_BOLSISTAS = List.of(UsuarioRole.BOLSISTA_IFCE);
 
     private final UsuarioRepository repository;
     private final PasswordEncoder passwordEncoder;

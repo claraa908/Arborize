@@ -45,27 +45,32 @@ const routes: RouteRecordRaw[] = [
         {
           path: 'arborizacao/assistente',
           name: 'arborizacao-assistente',
-          component: () => import('@/views/public/arborizacao/AssistentePlantioView.vue')
+          component: () => import('@/views/public/arborizacao/AssistentePlantioView.vue'),
+          meta: { requiresAuth: true }
         },
         {
           path: 'arborizacao/recomendacoes',
           name: 'arborizacao-recomendacoes',
-          component: () => import('@/views/public/arborizacao/RecomendacoesView.vue')
+          component: () => import('@/views/public/arborizacao/RecomendacoesView.vue'),
+          meta: { requiresAuth: true }
         },
         {
           path: 'arborizacao/solicitar-muda',
           name: 'solicitar-muda',
-          component: () => import('@/views/public/arborizacao/SolicitarMudaView.vue')
+          component: () => import('@/views/public/arborizacao/SolicitarMudaView.vue'),
+          meta: { requiresAuth: true }
         },
         {
           path: 'arborizacao/conversao',
           name: 'arborizacao-conversao',
-          component: () => import('@/views/public/arborizacao/ConversaoMudaView.vue')
+          component: () => import('@/views/public/arborizacao/ConversaoMudaView.vue'),
+          meta: { requiresAuth: true }
         },
         {
           path: 'arborizacao/acompanhar',
           name: 'arborizacao-acompanhar',
-          component: () => import('@/views/public/arborizacao/AcompanharSolicitacaoView.vue')
+          component: () => import('@/views/public/arborizacao/AcompanharSolicitacaoView.vue'),
+          meta: { requiresAuth: true }
         },
         {
           path: 'dashboard',

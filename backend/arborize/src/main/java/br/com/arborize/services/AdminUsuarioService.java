@@ -19,8 +19,7 @@ public class AdminUsuarioService {
 
     private static final List<UsuarioRole> PERFIS_INSTITUCIONAIS = List.of(
             UsuarioRole.FUNCIONARIO_AMMA,
-            UsuarioRole.GESTOR_IFCE,
-            UsuarioRole.IFCE_GESTOR
+            UsuarioRole.GESTOR_IFCE
     );
 
     private final UsuarioRepository repository;

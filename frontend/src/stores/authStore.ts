@@ -5,16 +5,17 @@ import { clearAuthSession, readAuthName, readAuthRole, readAuthToken, saveAuthSe
 import { USER_ROLES, type UserRole } from '@/types/auth'
 
 export const useAuthStore = defineStore('auth', () => {
-  const token = ref(readAuthToken())
-  const nome = ref(readAuthName() ?? '')
-  const role = ref<UserRole | null>(readAuthRole())
+  const initialRole = readAuthRole()
+  const token = ref(initialRole ? readAuthToken() : null)
+  const nome = ref(initialRole ? readAuthName() ?? '' : '')
+  const role = ref<UserRole | null>(initialRole)
   const isAuthenticated = computed(() => Boolean(token.value && role.value))
   const isCitizen = computed(() => isAuthenticated.value && role.value === 'ROLE_CIDADAO')
-  const isIfceScholar = computed(() => isAuthenticated.value && (role.value === 'ROLE_BOLSISTA_IFCE' || role.value === 'ROLE_IFCE_BOLSISTA'))
+  const isIfceScholar = computed(() => isAuthenticated.value && role.value === 'ROLE_BOLSISTA_IFCE')
   const isAmmaAdmin = computed(() => isAuthenticated.value && role.value === 'ROLE_ADMINISTRADOR_AMMA')
   const canAccessManagement = computed(() => isAuthenticated.value && USER_ROLES.some(value => value !== 'ROLE_CIDADAO' && value === role.value))
   const canManageIfceTeam = computed(() => isAuthenticated.value && role.value === 'ROLE_GESTOR_IFCE')
-  const dashboardRouteName = computed(() => isIfceScholar.value ? 'viveiro' : isCitizen.value ? 'cidadao-dashboard' : canAccessManagement.value ? 'dashboard' : 'home')
+  const dashboardRouteName = computed(() => isIfceScholar.value ? 'viveiro' : canManageIfceTeam.value ? 'ifce-equipe' : isCitizen.value ? 'cidadao-dashboard' : canAccessManagement.value ? 'dashboard' : 'home')
   const profileRouteName = computed(() => isCitizen.value ? 'perfil' : 'perfil-institucional')
 
   async function login(credentials: LoginRequest) {

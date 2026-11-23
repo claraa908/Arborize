@@ -53,7 +53,7 @@ const navigateToProfile = () => {
 
 const navigateToManagement = () => {
   isMobileMenuOpen.value = false
-  void router.push({ name: 'dashboard' })
+  void router.push({ name: auth.dashboardRouteName })
 }
 
 const handleLogout = () => {

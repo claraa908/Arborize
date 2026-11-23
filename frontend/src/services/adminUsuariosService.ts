@@ -6,7 +6,7 @@ export interface InstitutionalUser {
   id: number
   nome: string
   email: string
-  role: InstitutionalRole | 'IFCE_GESTOR'
+  role: InstitutionalRole
   dataCadastro: string
   status: 'ATIVO' | 'INATIVO'
 }

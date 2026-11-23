@@ -10,6 +10,7 @@ import org.springframework.core.env.StandardEnvironment;
 import org.springframework.mock.env.MockEnvironment;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -62,15 +63,17 @@ class TokenServiceTest {
     }
 
     @Test
-    void rejeitaPapelQueNaoExisteNoDominio() {
-        String token = JWT.create()
-                .withIssuer("arborize-api")
-                .withSubject("42")
-                .withClaim("role", "ROLE_ROOT")
-                .withExpiresAt(Date.from(Instant.now().plusSeconds(60)))
-                .sign(Algorithm.HMAC256(SECRET));
+    void rejeitaAuthoritiesDosPapeisRemovidos() {
+        for (String authority : List.of("ROLE_AMMA", "ROLE_IFCE_GESTOR", "ROLE_IFCE_BOLSISTA")) {
+            String token = JWT.create()
+                    .withIssuer("arborize-api")
+                    .withSubject("42")
+                    .withClaim("role", authority)
+                    .withExpiresAt(Date.from(Instant.now().plusSeconds(60)))
+                    .sign(Algorithm.HMAC256(SECRET));
 
-        assertThrows(IllegalArgumentException.class, () -> service.validarEObterRole(token));
+            assertThrows(IllegalArgumentException.class, () -> service.validarEObterRole(token));
+        }
     }
 
     @Test

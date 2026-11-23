@@ -31,7 +31,6 @@ const hasValidCpf = computed(() => cpf.value.replace(/\D/g, '').length === 11)
 const roleLabels: Record<InstitutionalUser['role'], string> = {
   FUNCIONARIO_AMMA: 'Funcionário da AMMA',
   GESTOR_IFCE: 'Gestor do IFCE',
-  IFCE_GESTOR: 'Gestor do IFCE',
 }
 
 const getErrorMessage = (error: unknown, fallback: string) => {

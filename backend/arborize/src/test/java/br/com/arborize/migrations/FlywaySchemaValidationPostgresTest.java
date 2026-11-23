@@ -82,7 +82,7 @@ class FlywaySchemaValidationPostgresTest {
 
     @Test
     void flywayAplicaAsMigrationsAntesDeHibernateValidarOModelo() {
-        assertEquals("2", flyway.info().current().getVersion().getVersion());
+        assertEquals("3", flyway.info().current().getVersion().getVersion());
     }
 
     @Test

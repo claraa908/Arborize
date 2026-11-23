@@ -2,6 +2,7 @@ package br.com.arborize.config;
 
 import br.com.arborize.security.JwtAuthenticationFilter;
 import br.com.arborize.security.IfceBolsistaAccessFilter;
+import br.com.arborize.security.IfceGestorAccessFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -39,13 +40,13 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/solicitacoes-muda").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/solicitacoes-muda/conversao").permitAll()
-                        .requestMatchers("/api/assistente-plantio/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/solicitacoes-muda").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/solicitacoes-muda/conversao").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/assistente-plantio/recomendar").authenticated()
                         .requestMatchers("/api/materials/admin", "/api/materials/admin/**")
-                        .hasAnyRole("AMMA", "ADMINISTRADOR_AMMA", "FUNCIONARIO_AMMA", "GESTOR_IFCE", "IFCE_GESTOR", "BOLSISTA_IFCE", "IFCE_BOLSISTA")
+                        .hasAnyRole("ADMINISTRADOR_AMMA", "FUNCIONARIO_AMMA", "GESTOR_IFCE", "BOLSISTA_IFCE")
                         .requestMatchers("/api/viveiro/movimentacoes", "/api/viveiro/movimentacoes/**")
-                        .hasAnyRole("AMMA", "ADMINISTRADOR_AMMA", "FUNCIONARIO_AMMA", "GESTOR_IFCE", "IFCE_GESTOR", "BOLSISTA_IFCE", "IFCE_BOLSISTA")
+                        .hasAnyRole("ADMINISTRADOR_AMMA", "FUNCIONARIO_AMMA", "GESTOR_IFCE", "BOLSISTA_IFCE")
                         .requestMatchers("/api/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/login", "/usuarios/cadastro").permitAll()
                         .requestMatchers("/admin/usuarios", "/admin/usuarios/**").hasRole("ADMINISTRADOR_AMMA")
@@ -56,19 +57,19 @@ public class SecurityConfig {
                                 "/eventos", "/eventos/**",
                                 "/especies", "/especies/**",
                                 "/api/materials", "/api/materials/**"
-                        ).hasAnyRole("AMMA", "ADMINISTRADOR_AMMA", "FUNCIONARIO_AMMA", "GESTOR_IFCE", "IFCE_GESTOR", "BOLSISTA_IFCE", "IFCE_BOLSISTA")
+                        ).hasAnyRole("ADMINISTRADOR_AMMA", "FUNCIONARIO_AMMA", "GESTOR_IFCE", "BOLSISTA_IFCE")
                         .requestMatchers(
                                 HttpMethod.PUT,
                                 "/eventos", "/eventos/**",
                                 "/especies", "/especies/**",
                                 "/api/materials", "/api/materials/**"
-                        ).hasAnyRole("AMMA", "ADMINISTRADOR_AMMA", "FUNCIONARIO_AMMA", "GESTOR_IFCE", "IFCE_GESTOR", "BOLSISTA_IFCE", "IFCE_BOLSISTA")
+                        ).hasAnyRole("ADMINISTRADOR_AMMA", "FUNCIONARIO_AMMA", "GESTOR_IFCE", "BOLSISTA_IFCE")
                         .requestMatchers(
                                 HttpMethod.DELETE,
                                 "/eventos", "/eventos/**",
                                 "/especies", "/especies/**",
                                 "/api/materials", "/api/materials/**"
-                        ).hasAnyRole("AMMA", "ADMINISTRADOR_AMMA", "FUNCIONARIO_AMMA", "GESTOR_IFCE", "IFCE_GESTOR", "BOLSISTA_IFCE", "IFCE_BOLSISTA")
+                        ).hasAnyRole("ADMINISTRADOR_AMMA", "FUNCIONARIO_AMMA", "GESTOR_IFCE", "BOLSISTA_IFCE")
                         .requestMatchers(
                                 HttpMethod.GET,
                                 "/especies", "/especies/**",
@@ -79,7 +80,8 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterAfter(new IfceBolsistaAccessFilter(), JwtAuthenticationFilter.class);
+                .addFilterAfter(new IfceBolsistaAccessFilter(), JwtAuthenticationFilter.class)
+                .addFilterAfter(new IfceGestorAccessFilter(), IfceBolsistaAccessFilter.class);
 
         return http.build();
     }
