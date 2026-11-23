@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router'
 import { useFeedbackStore } from '@/stores/feedbackStore'
 import { substituicaoBotanicaService } from '@/services/substituicaoBotanicaService'
 import { formatCpf, isValidCpf } from '@/utils/cpf'
+import { formatBrazilianPhone } from '@/utils/phone'
 
 const router = useRouter()
 const feedback = useFeedbackStore()
@@ -24,8 +25,19 @@ const enviando = ref(false)
 const erroEnvio = ref('')
 const previewUrl = ref<string | null>(null)
 const cpfTentado = ref(false)
+const telefoneTentado = ref(false)
 const fieldClass = 'mt-1 w-full min-w-0 rounded-btn border-2 border-amma-green-light bg-white px-4 py-3 text-sm font-medium text-grey-text outline-none transition-all focus:border-amma-green focus:bg-amma-green-lighter focus-visible:ring-2 focus-visible:ring-amma-green'
-const telefoneNumeros = computed(() => form.telefone.replace(/\D/g, '').length)
+const telefoneValido = computed(() => {
+  const digitos = form.telefone.replace(/\D/g, '')
+  return [10, 11].includes(digitos.length) && Number(digitos.slice(0, 2)) >= 11
+})
+const telefoneErro = computed(() => telefoneTentado.value && !telefoneValido.value)
+
+function atualizarTelefone(event: Event) {
+  const input = event.target as HTMLInputElement
+  form.telefone = formatBrazilianPhone(input.value)
+  input.value = form.telefone
+}
 
 function selecionarFoto(event: Event) {
   const input = event.target as HTMLInputElement
@@ -65,11 +77,12 @@ function errosDaResposta(error: unknown): Record<string, string> {
 async function enviar() {
   erroEnvio.value = ''
   cpfTentado.value = true
+  telefoneTentado.value = true
   if (!isValidCpf(form.cpf)) {
     feedback.showToast('Informe um CPF válido.', 'error')
     return
   }
-  if (telefoneNumeros.value < 10 || telefoneNumeros.value > 11) {
+  if (!telefoneValido.value) {
     feedback.showToast('Informe um telefone com DDD.', 'error')
     return
   }
@@ -135,7 +148,24 @@ onBeforeUnmount(() => {
         <div class="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2">
           <div class="min-w-0 sm:col-span-2"><label for="nim-name" class="text-sm font-semibold text-grey-text">Nome completo *</label><input id="nim-name" v-model.trim="form.nomeSolicitante" required maxlength="180" autocomplete="name" :class="fieldClass" /></div>
           <div class="min-w-0"><label for="nim-cpf" class="text-sm font-semibold text-grey-text">CPF *</label><input id="nim-cpf" :value="form.cpf" required inputmode="numeric" autocomplete="off" maxlength="14" :class="fieldClass" :aria-invalid="cpfTentado && !isValidCpf(form.cpf)" :aria-describedby="cpfTentado && !isValidCpf(form.cpf) ? 'nim-cpf-help nim-cpf-error' : 'nim-cpf-help'" placeholder="000.000.000-00" @input="form.cpf = formatCpf(($event.target as HTMLInputElement).value)" /><p id="nim-cpf-help" class="mt-1 text-xs text-grey-text">Usado para proteger a consulta do protocolo.</p><p v-if="cpfTentado && !isValidCpf(form.cpf)" id="nim-cpf-error" class="mt-1 text-sm text-feedback-danger" role="alert">Informe um CPF válido.</p></div>
-          <div class="min-w-0"><label for="nim-phone" class="text-sm font-semibold text-grey-text">Telefone com DDD *</label><input id="nim-phone" v-model="form.telefone" required inputmode="tel" autocomplete="tel" maxlength="15" :class="fieldClass" /></div>
+          <div class="min-w-0">
+            <label for="nim-phone" class="text-sm font-semibold text-grey-text">Telefone com DDD *</label>
+            <input
+              id="nim-phone"
+              :value="form.telefone"
+              type="tel"
+              required
+              autocomplete="tel-national"
+              :class="fieldClass"
+              :aria-invalid="telefoneErro"
+              :aria-describedby="telefoneErro ? 'nim-phone-error' : undefined"
+              @input="atualizarTelefone"
+              @blur="telefoneTentado = true"
+            />
+            <p v-if="telefoneErro" id="nim-phone-error" class="mt-1 text-sm text-feedback-danger" role="alert">
+              Informe um telefone com DDD.
+            </p>
+          </div>
         </div>
       </fieldset>
 
