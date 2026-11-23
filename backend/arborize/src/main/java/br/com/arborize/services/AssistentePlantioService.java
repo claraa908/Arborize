@@ -28,7 +28,6 @@ public class AssistentePlantioService {
             "objetivo", Set.of("SOMBRA", "FRUTAS", "POLINIZADORES", "RESTAURACAO"),
             "disponibilidade_rega", Set.of("SIM", "NAO"),
             "piso_drenante", Set.of("SIM", "NAO"),
-            "substituicao_nim", Set.of("SIM", "NAO"),
             "quantidade_mudas", Set.of("UMA", "DUAS", "TRES")
     );
     private static final Set<String> ALLOWED_CATEGORIES = Set.of("NATIVA DA CAATINGA", "RECOMENDADA", "RECOMENDADAS");
@@ -71,7 +70,7 @@ public class AssistentePlantioService {
         Set<String> seen = new java.util.HashSet<>();
 
         if (answers == null) {
-            errors.put("respostas", "Informe as 10 respostas do questionário.");
+            errors.put("respostas", "Informe as 9 respostas do questionário.");
             throw new AssistentePlantioValidationException(errors);
         }
 
@@ -105,7 +104,7 @@ public class AssistentePlantioService {
             }
         }
         if (answers.size() != ALLOWED_ANSWERS.size()) {
-            errors.putIfAbsent("respostas", "Envie uma resposta única para cada uma das 10 perguntas.");
+            errors.putIfAbsent("respostas", "Envie uma resposta única para cada uma das 9 perguntas.");
         }
         if (!errors.isEmpty()) {
             throw new AssistentePlantioValidationException(errors);

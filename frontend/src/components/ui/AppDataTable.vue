@@ -67,12 +67,12 @@ function chave(item: T, index: number): string | number {
 </script>
 
 <template>
-  <div class="flex flex-col gap-6 w-full">
+  <div class="flex min-w-0 w-full flex-col gap-6">
     <div
       v-if="showSearch || showSummary || allowViewToggle || buttonLabel || $slots['header-actions']"
-      class="flex flex-col lg:flex-row justify-between items-stretch lg:items-center gap-4"
+      class="flex flex-wrap items-center justify-between gap-3"
     >
-      <div v-if="showSearch" class="relative w-full lg:w-96">
+      <div v-if="showSearch" class="relative w-full min-w-0 sm:min-w-60 sm:flex-1 lg:max-w-96">
         <span
           class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-grey-text/60"
           >search</span
@@ -85,8 +85,6 @@ function chave(item: T, index: number): string | number {
           class="w-full bg-white focus:bg-amma-green-lighter border-2 border-amma-green-light focus:border-amma-green rounded-btn py-2.5 pl-10 pr-4 text-grey-text outline-none transition-all text-sm font-medium"
         />
       </div>
-      <div v-else></div>
-
       <div
         class="flex items-center flex-wrap justify-between lg:justify-end gap-3 w-full lg:w-auto"
       >
@@ -138,6 +136,7 @@ function chave(item: T, index: number): string | number {
                 ? 'bg-amma-green text-white shadow-xs'
                 : 'text-grey-text hover:text-amma-green',
             ]"
+            aria-label="Visualização em grade"
             title="Visualização em Grade"
           >
             <span class="material-symbols-outlined text-[18px]">grid_view</span>
@@ -152,6 +151,7 @@ function chave(item: T, index: number): string | number {
                 ? 'bg-amma-green text-white shadow-xs'
                 : 'text-grey-text hover:text-amma-green',
             ]"
+            aria-label="Visualização em tabela"
             title="Visualização em Tabela"
           >
             <span class="material-symbols-outlined text-[18px]">table_rows</span>
@@ -174,12 +174,12 @@ function chave(item: T, index: number): string | number {
       </div>
     </div>
 
-    <div v-if="currentView === 'grid'" class="flex flex-col gap-6">
-      <div v-if="items.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+    <div v-if="currentView === 'grid'" class="flex min-w-0 flex-col gap-6">
+      <div v-if="items.length > 0" class="grid min-w-0 grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
         <div
           v-for="(item, index) in items"
           :key="chave(item, index)"
-          class="bg-white rounded-box border border-amma-green-light p-5 shadow-xs flex flex-col justify-between hover:shadow-md transition-shadow"
+          class="flex min-w-0 flex-col justify-between rounded-box border border-amma-green-light bg-white p-5 shadow-xs transition-shadow hover:shadow-md"
         >
           <slot name="card" :item="item">
             <div class="flex flex-col gap-2">

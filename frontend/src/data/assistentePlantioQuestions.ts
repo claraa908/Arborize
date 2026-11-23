@@ -79,15 +79,6 @@ export const assistentePlantioQuestions: QuizQuestion[] = [
     ]
   },
   {
-    id: 'substituicao_nim',
-    prompt: 'O plantio é para substituir uma árvore de Nim Indiano suprimida?',
-    helpText: 'Nim Indiano é uma espécie exótica invasora.',
-    options: [
-      { label: 'Sim', description: 'A muda substituirá um Nim Indiano removido.', value: 'SIM' },
-      { label: 'Não', description: 'O plantio não substitui um Nim Indiano.', value: 'NAO' }
-    ]
-  },
-  {
     id: 'quantidade_mudas',
     prompt: 'Quantas mudas você deseja solicitar?',
     helpText: 'Escolha a quantidade desejada para este local.',

@@ -3,6 +3,7 @@ import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { assistentePlantioQuestions } from '@/data/assistentePlantioQuestions'
 import { useAssistentePlantioStore } from '@/stores/assistentePlantioStore'
+import { RouterLink } from 'vue-router'
 
 const router = useRouter()
 const route = useRoute()
@@ -12,6 +13,7 @@ const showValidation = ref(false)
 const handoffMessage = ref<string | null>(null)
 const question = computed(() => store.currentQuestion)
 const stepNumber = computed(() => store.currentIndex + 1)
+const totalQuestions = assistentePlantioQuestions.length
 const isLastQuestion = computed(() => store.currentIndex === assistentePlantioQuestions.length - 1)
 
 onMounted(() => {
@@ -57,6 +59,12 @@ function handleContinue() {
       <p class="mt-2 max-w-3xl text-sm leading-6 text-grey-text">
         Responda algumas perguntas rápidas sobre o local do plantio. Com base nas informações fornecidas, o Arborize indicará espécies adequadas para a sua solicitação.
       </p>
+      <RouterLink :to="{ name: 'arborizacao' }" class="mt-4 inline-flex min-h-11 items-center gap-2 rounded-btn border-2 border-amma-green bg-white px-4 py-2 text-sm font-bold text-amma-green hover:bg-amma-green-lighter focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amma-green">
+        <span class="material-symbols-outlined" aria-hidden="true">arrow_back</span> Voltar para Arborização
+      </RouterLink>
+      <RouterLink :to="{ name: 'arborizacao-acompanhar' }" class="ml-2 mt-4 inline-flex min-h-11 items-center rounded-btn px-3 py-2 text-sm font-semibold text-amma-green-dark underline decoration-amma-green-light underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amma-green">
+        Acompanhar pedido de muda
+      </RouterLink>
     </header>
 
     <p v-if="handoffMessage" class="mb-4 rounded-btn border border-feedback-info-border bg-feedback-info-bg p-3 text-sm text-feedback-info" role="status">
@@ -64,13 +72,13 @@ function handleContinue() {
     </p>
 
     <div class="rounded-box bg-white p-5 shadow-sm md:p-8">
-      <div class="mb-7" role="progressbar" :aria-valuenow="stepNumber" aria-valuemin="1" aria-valuemax="10" :aria-label="`Pergunta ${stepNumber} de 10`">
+      <div class="mb-7" role="progressbar" :aria-valuenow="stepNumber" aria-valuemin="1" :aria-valuemax="totalQuestions" :aria-label="`Pergunta ${stepNumber} de ${totalQuestions}`">
         <div class="mb-2 flex items-center justify-between text-xs font-bold uppercase tracking-wider text-grey-text">
-          <span>Pergunta {{ stepNumber }} de 10</span>
-          <span>{{ stepNumber }} de 10 etapas previstas</span>
+          <span>Pergunta {{ stepNumber }} de {{ totalQuestions }}</span>
+          <span>{{ stepNumber }} de {{ totalQuestions }} etapas previstas</span>
         </div>
-        <div class="grid grid-cols-10 gap-1.5" aria-hidden="true">
-          <span v-for="step in 10" :key="step" class="h-2 rounded-full" :class="step <= stepNumber ? 'bg-amma-green' : 'bg-amma-green-light'"></span>
+        <div class="grid grid-cols-9 gap-1.5" aria-hidden="true">
+          <span v-for="step in totalQuestions" :key="step" class="h-2 rounded-full" :class="step <= stepNumber ? 'bg-amma-green' : 'bg-amma-green-light'"></span>
         </div>
       </div>
 
