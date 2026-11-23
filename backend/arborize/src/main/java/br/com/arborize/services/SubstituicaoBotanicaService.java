@@ -73,7 +73,9 @@ public class SubstituicaoBotanicaService {
         String cpf = digitsOnly(request.getCpf());
         String telefone = digitsOnly(request.getTelefone());
         if (!cpfValido(cpf)) throw invalid("cpf", "Informe um CPF válido.");
-        if (telefone.length() < 10 || telefone.length() > 11) throw invalid("telefone", "Informe um telefone com DDD.");
+        if (telefone.length() < 10 || telefone.length() > 11 || Integer.parseInt(telefone.substring(0, 2)) < 11) {
+            throw invalid("telefone", "Informe um telefone com DDD.");
+        }
         if (normalizeText(request.getNomeSolicitante()).split("\\s+").length < 2) throw invalid("nomeSolicitante", "Informe seu nome completo.");
         MultipartFile foto = request.getFoto();
         String fotoObjeto = null;
