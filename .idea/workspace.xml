@@ -4,29 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="470c54c1-7902-4928-9281-ae11c9f04f04" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/arborize/src/main/java/br/com/arborize/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/arborize/src/main/java/br/com/arborize/config/SecurityConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/arborize/src/main/java/br/com/arborize/enums/UsuarioRole.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/arborize/src/main/java/br/com/arborize/enums/UsuarioRole.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/arborize/src/main/java/br/com/arborize/security/IfceBolsistaAccessFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/arborize/src/main/java/br/com/arborize/security/IfceBolsistaAccessFilter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/arborize/src/main/java/br/com/arborize/services/AdminUsuarioService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/arborize/src/main/java/br/com/arborize/services/AdminUsuarioService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/arborize/src/main/java/br/com/arborize/services/IfceBolsistaService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/arborize/src/main/java/br/com/arborize/services/IfceBolsistaService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/arborize/src/test/java/br/com/arborize/config/SecurityAuthorizationTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/arborize/src/test/java/br/com/arborize/config/SecurityAuthorizationTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/arborize/src/test/java/br/com/arborize/migrations/FlywayMigrationPostgresTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/arborize/src/test/java/br/com/arborize/migrations/FlywayMigrationPostgresTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/arborize/src/test/java/br/com/arborize/migrations/FlywaySchemaValidationPostgresTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/arborize/src/test/java/br/com/arborize/migrations/FlywaySchemaValidationPostgresTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/arborize/src/test/java/br/com/arborize/services/AdminUsuarioServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/arborize/src/test/java/br/com/arborize/services/AdminUsuarioServiceTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/arborize/src/test/java/br/com/arborize/services/AutenticacaoServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/arborize/src/test/java/br/com/arborize/services/AutenticacaoServiceTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/arborize/src/test/java/br/com/arborize/services/IfceBolsistaServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/arborize/src/test/java/br/com/arborize/services/IfceBolsistaServiceTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/arborize/src/test/java/br/com/arborize/services/TokenServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/arborize/src/test/java/br/com/arborize/services/TokenServiceTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/__tests__/authStorage.spec.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/__tests__/authStorage.spec.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/__tests__/sessionNavigation.spec.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/__tests__/sessionNavigation.spec.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/views/auth/GestaoView.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/views/auth/GestaoView.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/views/auth/PerfilInstitucionalView.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/views/auth/PerfilInstitucionalView.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/openspec/changes/restringir-acesso-bolsista-ifce/design.md" beforeDir="false" afterPath="$PROJECT_DIR$/openspec/changes/restringir-acesso-bolsista-ifce/design.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/openspec/changes/restringir-acesso-bolsista-ifce/proposal.md" beforeDir="false" afterPath="$PROJECT_DIR$/openspec/changes/restringir-acesso-bolsista-ifce/proposal.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/openspec/changes/restringir-acesso-bolsista-ifce/specs/role-based-access/spec.md" beforeDir="false" afterPath="$PROJECT_DIR$/openspec/changes/restringir-acesso-bolsista-ifce/specs/role-based-access/spec.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/openspec/changes/restringir-acesso-bolsista-ifce/tasks.md" beforeDir="false" afterPath="$PROJECT_DIR$/openspec/changes/restringir-acesso-bolsista-ifce/tasks.md" afterDir="false" />
-    </list>
+    <list default="true" id="470c54c1-7902-4928-9281-ae11c9f04f04" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
