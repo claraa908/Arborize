@@ -78,8 +78,7 @@ useInventarioNavegacao()
   <div ref="pagina" class="flex w-full flex-col">
     <AppBreadcrumb
       :items="[
-        { label: 'Início', routeName: 'dashboard', icon: 'home' },
-        { label: 'Inventário', routeName: 'inventario' },
+        { label: 'Inventário', icon: 'pin_drop', routeName: 'inventario' },
         { label: 'Ficha técnica' },
       ]"
     />

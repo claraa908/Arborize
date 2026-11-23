@@ -9,17 +9,7 @@ const route = useRoute()
 const editando = computed(() => route.name === 'inventario-editar')
 const identificador = computed(() => String(route.params.id ?? ''))
 const breadcrumbItems = computed<BreadcrumbItem[]>(() => [
-  { label: 'Início', routeName: 'dashboard', icon: 'home' },
-  { label: 'Inventário', routeName: 'inventario' },
-  ...(editando.value
-    ? [
-        {
-          label: `Árvore ${identificador.value}`,
-          routeName: 'inventario-detalhes',
-          params: { id: identificador.value },
-        },
-      ]
-    : []),
+  { label: 'Inventário', icon: 'pin_drop', routeName: 'inventario' },
   { label: editando.value ? 'Editar árvore' : 'Nova árvore' },
 ])
 
@@ -30,12 +20,15 @@ useInventarioNavegacao()
   <div ref="pagina" class="flex w-full flex-col">
     <AppBreadcrumb :items="breadcrumbItems" />
     <div class="flex flex-col gap-4 px-4 py-4 md:px-6">
-      <header class="flex items-start gap-3">
-        <span
+      <header class="flex items-center gap-3">
+        <div
           aria-hidden="true"
-          class="material-symbols-outlined flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-amma-green-lighter text-amma-green"
-          >{{ editando ? 'edit_square' : 'add' }}</span
+          class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-amma-green-lighter text-amma-green"
         >
+          <span class="material-symbols-outlined text-[24px]">{{
+            editando ? 'edit_square' : 'add'
+          }}</span>
+        </div>
         <div>
           <h1 class="text-2xl font-bold text-amma-green-dark">
             {{ editando ? 'Editar árvore' : 'Nova árvore' }}
