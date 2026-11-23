@@ -3,7 +3,7 @@
 ## 1. Database foundation
 
 - [ ] 1.1 Inventory all current JPA mappings and PostgreSQL schema assumptions; create a non-destructive Flyway baseline and verify it represents existing tables and relationships without deleting existing records.
-- [ ] 1.2 Add the required Flyway runtime configuration and a versioned migration for substitution requests, public timeline events, laudo metadata, constraints, indexes, and object references; verify migration on an empty database and on a database initialized by the current Hibernate update workflow.
+- [ ] 1.2 Add the required Flyway runtime configuration and complete the versioned migrations for substitution requests, public timeline events, laudo metadata, constraints, indexes, and object references; preserve the existing V4 and add missing objects in a later version, then verify on an empty database and on a database initialized by the current Hibernate update workflow.
 - [ ] 1.3 Switch supported profiles from `ddl-auto=update` to `ddl-auto=validate` after migrations are in place; verify application startup against the migrated schema.
 
 ## 2. Substitution API and storage

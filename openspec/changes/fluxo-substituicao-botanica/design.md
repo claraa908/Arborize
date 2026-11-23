@@ -44,7 +44,7 @@ See `proposal.md` for motivation and `specs/substituicao-botanica/spec.md` for o
 
    *Alternative considered:* add substitution requests to `SolicitacoesView.vue`. Rejected by the requested scope and because that view represents ordinary seedling requests.
 
-7. **Establish Flyway-managed schema before enabling validation.** The repository currently has no Flyway dependency or versioned schema migrations and both profiles use `ddl-auto=update`, despite the project rule requiring Flyway and `ddl-auto=validate`. Add a baseline migration that represents the existing PostgreSQL schema without dropping data, then a versioned migration for substitution request, event, laudo, and object metadata tables and constraints. Switch JPA schema handling to `validate` only after the existing schema is represented and migration startup has a documented baseline path for databases already initialized by `update`.
+7. **Keep the schema managed by Flyway and Hibernate validation.** The backend now has Flyway, the V1 baseline, V2 movement tables, V3 role consolidation, and V4 substitution requests and timeline events; supported profiles use `ddl-auto=validate`. V4 does not create laudo metadata or constrain the substitution enum values. Keep applied migrations immutable and add a later migration for the missing laudo table and status constraints. Retain the non-destructive baseline path for databases previously initialized by Hibernate `update`.
 
    *Alternative considered:* leave `ddl-auto=update` and add only entity classes. Rejected because it would bypass the required migration process and would not establish a repeatable schema for new environments.
 
@@ -62,10 +62,11 @@ See `proposal.md` for motivation and `specs/substituicao-botanica/spec.md` for o
 
 ## Migration Plan
 
-1. Inventory current entity/table mappings and local schema state; create and verify a non-destructive Flyway baseline for the schema already managed by Hibernate.
-2. Add the substitution tables and indexes in a later Flyway migration, then set `ddl-auto=validate` for supported profiles.
-3. Deploy the API and frontend together so the new nine-answer quiz contract and the updated backend validator remain in sync.
-4. Roll back code without dropping request or document data. Any schema rollback must be an explicit forward migration or restore operation; do not delete citizen-submitted requests or MinIO objects automatically.
+1. Preserve V1 as the non-destructive Flyway baseline for the schema already managed by Hibernate and verify it against empty and existing databases.
+2. Keep V4 for substitution requests and timeline events; add the missing laudo metadata and status constraints in V5.
+3. Keep `ddl-auto=validate` for supported profiles and verify application startup against the migrated schema.
+4. Deploy the API and frontend together so the new nine-answer quiz contract and the updated backend validator remain in sync.
+5. Roll back code without dropping request or document data. Any schema rollback must be an explicit forward migration or restore operation; do not delete citizen-submitted requests or MinIO objects automatically.
 
 ## Open Questions
 

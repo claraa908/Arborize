@@ -4,7 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="470c54c1-7902-4928-9281-ae11c9f04f04" name="Changes" comment="" />
+    <list default="true" id="470c54c1-7902-4928-9281-ae11c9f04f04" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/arborize/src/test/java/br/com/arborize/migrations/FlywayMigrationPostgresTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/arborize/src/test/java/br/com/arborize/migrations/FlywayMigrationPostgresTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/arborize/src/test/java/br/com/arborize/migrations/FlywaySchemaValidationPostgresTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/arborize/src/test/java/br/com/arborize/migrations/FlywaySchemaValidationPostgresTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/openspec/changes/fluxo-substituicao-botanica/design.md" beforeDir="false" afterPath="$PROJECT_DIR$/openspec/changes/fluxo-substituicao-botanica/design.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/openspec/changes/fluxo-substituicao-botanica/tasks.md" beforeDir="false" afterPath="$PROJECT_DIR$/openspec/changes/fluxo-substituicao-botanica/tasks.md" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -23,18 +29,18 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
-  "lastFilter": {
-    "state": "OPEN",
-    "assignee": "alana102"
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;alana102&quot;
   }
-}]]></component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/claraa908/Arborize",
-    "accountId": "d55d97d5-747e-4ee9-9ab8-72e6aeb30f46"
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/claraa908/Arborize&quot;,
+    &quot;accountId&quot;: &quot;d55d97d5-747e-4ee9-9ab8-72e6aeb30f46&quot;
   }
-}]]></component>
+}</component>
   <component name="KubernetesApiPersistence">{}</component>
   <component name="KubernetesApiProvider">{
   &quot;isMigrated&quot;: true
@@ -45,61 +51,61 @@
   </component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="1.0103515565347987" />
-      <entry key="MS500" value="1.8983171716057807" />
-      <entry key="S2" value="3.6569525662739593" />
-      <entry key="S5" value="4.385065418638357" />
-      <entry key="S10" value="4.67765768864384" />
-      <entry key="S30" value="4.8890438748369505" />
-      <entry key="S60" value="4.944069963892112" />
-      <entry key="M2" value="4.9719209573148735" />
-      <entry key="M5" value="4.988743571042584" />
-      <entry key="M10" value="4.996214467736268" />
-      <entry key="M15" value="5.020699521708633" />
-      <entry key="M30" value="5.648909743974903" />
-      <entry key="H1" value="9.133758831795543" />
-      <entry key="H2" value="15.701879104406897" />
-      <entry key="H4" value="22.291759025610904" />
-      <entry key="D1" value="30.835313673366308" />
-      <entry key="W1" value="32.67990928543068" />
+      <entry key="MS100" value="1.040400452846789" />
+      <entry key="MS500" value="2.504103479556052" />
+      <entry key="S2" value="6.101804453017067" />
+      <entry key="S5" value="9.195252402314305" />
+      <entry key="S10" value="11.137372006456934" />
+      <entry key="S30" value="12.914736590144923" />
+      <entry key="S60" value="13.438745382002429" />
+      <entry key="M2" value="13.71549432389466" />
+      <entry key="M5" value="14.549330966312441" />
+      <entry key="M10" value="20.141688565445058" />
+      <entry key="M15" value="27.11865162342715" />
+      <entry key="M30" value="42.27678186310008" />
+      <entry key="H1" value="57.62761890123807" />
+      <entry key="H2" value="72.1494640817795" />
+      <entry key="H4" value="84.01436355969956" />
+      <entry key="D1" value="98.4148865111024" />
+      <entry key="W1" value="101.4706570389656" />
     </decayedCancelled>
     <decayedSelected>
-      <entry key="MS100" value="0.0" />
-      <entry key="MS500" value="0.0" />
-      <entry key="S2" value="0.0" />
-      <entry key="S5" value="0.0" />
-      <entry key="S10" value="2.4551261088721425E-167" />
-      <entry key="S30" value="4.557743765902991E-56" />
-      <entry key="S60" value="3.014482044070023E-28" />
-      <entry key="M2" value="2.454435212186496E-14" />
-      <entry key="M5" value="5.452249515435011E-6" />
-      <entry key="M10" value="0.0033280195372913453" />
-      <entry key="M15" value="0.029202216538742318" />
-      <entry key="M30" value="0.29795908754788325" />
-      <entry key="H1" value="1.1173818739225576" />
-      <entry key="H2" value="2.3081928893994594" />
-      <entry key="H4" value="3.377139380910403" />
-      <entry key="D1" value="4.67966479043322" />
-      <entry key="W1" value="4.952832019618545" />
+      <entry key="MS100" value="3.8721561666656595E-12" />
+      <entry key="MS500" value="0.005219039368711327" />
+      <entry key="S2" value="0.2687804292720638" />
+      <entry key="S5" value="0.591233532069449" />
+      <entry key="S10" value="0.7689171165148093" />
+      <entry key="S30" value="0.9161357755433611" />
+      <entry key="S60" value="0.957149818762626" />
+      <entry key="M2" value="0.9783441584917594" />
+      <entry key="M5" value="1.0015929345998265" />
+      <entry key="M10" value="1.1394844148166283" />
+      <entry key="M15" value="1.347567704620231" />
+      <entry key="M30" value="1.9525097930472608" />
+      <entry key="H1" value="3.005630610728831" />
+      <entry key="H2" value="4.454407728383495" />
+      <entry key="H4" value="5.814473661660184" />
+      <entry key="D1" value="7.557656644655659" />
+      <entry key="W1" value="7.9345437554223235" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="0.062017526576084725" />
-      <entry key="MS500" value="1.4163096729304065" />
-      <entry key="S2" value="3.4939511760122435" />
-      <entry key="S5" value="4.314853327684059" />
-      <entry key="S10" value="4.641624054939021" />
-      <entry key="S30" value="4.876816840630454" />
-      <entry key="S60" value="4.9379288315031795" />
-      <entry key="M2" value="4.968843438246688" />
-      <entry key="M5" value="4.987516325484359" />
-      <entry key="M10" value="4.9989212285990305" />
-      <entry key="M15" value="5.049463400354821" />
-      <entry key="M30" value="5.946523053193074" />
-      <entry key="H1" value="10.250771795497648" />
-      <entry key="H2" value="18.009743517316178" />
-      <entry key="H4" value="25.668669133820767" />
-      <entry key="D1" value="35.51492699321427" />
-      <entry key="W1" value="37.632733554113464" />
+      <entry key="MS100" value="0.1947656556990733" />
+      <entry key="MS500" value="2.180837410776341" />
+      <entry key="S2" value="6.181409691730138" />
+      <entry key="S5" value="9.65496805175317" />
+      <entry key="S10" value="11.82401875114856" />
+      <entry key="S30" value="13.798718774434194" />
+      <entry key="S60" value="14.379146796657638" />
+      <entry key="M2" value="14.685289239747286" />
+      <entry key="M5" value="15.547316888360127" />
+      <entry key="M10" value="21.278719378659023" />
+      <entry key="M15" value="28.464017409437496" />
+      <entry key="M30" value="44.22751704632954" />
+      <entry key="H1" value="60.63194509797347" />
+      <entry key="H2" value="76.60299062369839" />
+      <entry key="H4" value="89.82829858585663" />
+      <entry key="D1" value="105.97243334335005" />
+      <entry key="W1" value="109.40518449925344" />
     </decayedShown>
   </component>
   <component name="ProjectColorInfo">{
@@ -127,7 +133,7 @@
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "Spring Boot.ArborizeApplication.executor": "Run",
     "codeWithMe.voiceChat.enabledByDefault": "false",
-    "git-widget-placeholder": "feat/funcionalidades-bolsista-ifce",
+    "git-widget-placeholder": "integration",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "C:/Users/nixyh/Documents/backup/documentos/GitHub/Arborize",

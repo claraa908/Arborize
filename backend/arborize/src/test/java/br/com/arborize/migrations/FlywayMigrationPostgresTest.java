@@ -36,9 +36,10 @@ class FlywayMigrationPostgresTest {
             DataSource limpo = porSchema(url, usuario, senha, schemaLimpo);
             Flyway flywayLimpo = flyway(limpo, schemaLimpo);
             flywayLimpo.migrate();
-            assertEquals("3", flywayLimpo.info().current().getVersion().getVersion());
+            assertEquals("5", flywayLimpo.info().current().getVersion().getVersion());
             assertEquals(0, contar(limpo, "movimentacoes_mudas"));
             verificarEstruturaMovimentacoes(limpo);
+            verificarEstruturaSubstituicao(limpo);
 
             DataSource existente = porSchema(url, usuario, senha, schemaExistente);
             try (Connection connection = existente.getConnection()) {
@@ -63,9 +64,10 @@ class FlywayMigrationPostgresTest {
             Flyway flywayExistente = flyway(existente, schemaExistente);
             flywayExistente.baseline();
             flywayExistente.migrate();
-            assertEquals("3", flywayExistente.info().current().getVersion().getVersion());
+            assertEquals("5", flywayExistente.info().current().getVersion().getVersion());
             assertEquals(37, consultarSaldo(existente));
             assertEquals(0, contar(existente, "movimentacoes_mudas"));
+            verificarEstruturaSubstituicao(existente);
             verificarUsuarioMigrado(existente, "legado-amma@example.test", "FUNCIONARIO_AMMA", "00000000001", "Pessoa AMMA", "hash-1");
             verificarUsuarioMigrado(existente, "legado-gestor@example.test", "GESTOR_IFCE", "00000000002", "Pessoa Gestora", "hash-2");
             verificarUsuarioMigrado(existente, "legado-bolsista@example.test", "BOLSISTA_IFCE", "00000000003", "Pessoa Bolsista", "hash-3");
@@ -191,6 +193,65 @@ class FlywayMigrationPostgresTest {
                 INSERT INTO movimentacoes_mudas (tipo, quantidade, data, especie_id)
                 VALUES ('ENTRADA_GERMINACAO', 1, CURRENT_DATE, 999999)
                 """, "23503");
+    }
+
+    private void verificarEstruturaSubstituicao(DataSource dataSource) throws Exception {
+        assertEquals(0, contar(dataSource, "solicitacoes_substituicao"));
+        assertEquals(0, contar(dataSource, "eventos_solicitacao_substituicao"));
+        assertEquals(0, contar(dataSource, "laudos_supressao"));
+        verificarColunas(dataSource, "solicitacoes_substituicao", Set.of(
+                "id", "protocolo", "nome_solicitante", "cpf", "telefone", "logradouro",
+                "numero_endereco", "bairro", "complemento", "ponto_referencia", "descricao_arvore",
+                "status", "foto_objeto", "foto_nome_original", "foto_content_type", "foto_tamanho_bytes",
+                "criada_em", "atualizada_em"));
+        verificarColunas(dataSource, "eventos_solicitacao_substituicao", Set.of(
+                "id", "solicitacao_id", "status", "descricao", "publico", "responsavel_id", "criado_em"));
+        verificarColunas(dataSource, "laudos_supressao", Set.of(
+                "id", "solicitacao_id", "especie_reposicao_id", "parecer", "tipo_justificativa",
+                "justificativa", "data_vistoria", "pdf_objeto", "pdf_nome_original", "pdf_content_type",
+                "pdf_tamanho_bytes", "emitido_por_id", "criado_em"));
+
+        assertSqlState(dataSource, """
+                INSERT INTO solicitacoes_substituicao (
+                    protocolo, nome_solicitante, cpf, telefone, logradouro, numero_endereco,
+                    bairro, ponto_referencia, descricao_arvore, status, criada_em, atualizada_em
+                ) VALUES (
+                    'TESTE-STATUS', 'Pessoa Teste', '00000000000', '85900000000', 'Rua Teste',
+                    '10', 'Centro', 'Praça', 'Nim em frente à residência', 'STATUS_INVALIDO',
+                    CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
+                )
+                """, "23514");
+        assertSqlState(dataSource, """
+                INSERT INTO eventos_solicitacao_substituicao (
+                    solicitacao_id, status, descricao, publico, criado_em
+                ) VALUES (999999, 'RECEBIDA', 'Evento de teste', TRUE, CURRENT_TIMESTAMP)
+                """, "23503");
+        assertSqlState(dataSource, """
+                INSERT INTO laudos_supressao (
+                    solicitacao_id, especie_reposicao_id, parecer, tipo_justificativa, justificativa,
+                    data_vistoria, pdf_objeto, pdf_nome_original, pdf_content_type, pdf_tamanho_bytes,
+                    emitido_por_id, criado_em
+                ) VALUES (
+                    999999, 999999, 'Favorável', 'RISCO_BIOLOGICO', 'Justificativa de teste',
+                    CURRENT_DATE, 'laudos/teste.pdf', 'teste.pdf', 'application/pdf', 1,
+                    999999, CURRENT_TIMESTAMP
+                )
+                """, "23503");
+    }
+
+    private void verificarColunas(DataSource dataSource, String tabela, Set<String> esperadas) throws Exception {
+        Set<String> colunas = new java.util.HashSet<>();
+        try (Connection connection = dataSource.getConnection();
+             var statement = connection.prepareStatement("""
+                     SELECT column_name FROM information_schema.columns
+                     WHERE table_schema = current_schema() AND table_name = ?
+                     """)) {
+            statement.setString(1, tabela);
+            try (var result = statement.executeQuery()) {
+                while (result.next()) colunas.add(result.getString(1));
+            }
+        }
+        assertEquals(esperadas, colunas, "Colunas inesperadas na tabela " + tabela);
     }
 
     private void assertSqlState(DataSource dataSource, String sql, String expectedSqlState) throws Exception {
