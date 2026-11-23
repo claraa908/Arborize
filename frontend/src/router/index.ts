@@ -3,8 +3,6 @@ import { sessionNavigation } from './sessionNavigation'
 import PublicLayout from '@/layouts/PublicLayout.vue'
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue'
 import HomeView from '@/views/public/HomeView.vue'
-import { useAssistentePlantioStore } from '@/stores/assistentePlantioStore'
-import { useSolicitacaoMudaStore } from '@/stores/solicitacaoMudaStore'
 import { useAuthStore } from '@/stores/authStore'
 
 const routes: RouteRecordRaw[] = [
@@ -30,17 +28,17 @@ const routes: RouteRecordRaw[] = [
         {
           path: 'arborizacao',
           name: 'arborizacao',
-          redirect: () => {
-            const quizStore = useAssistentePlantioStore()
-            const requestStore = useSolicitacaoMudaStore()
-
-            if (requestStore.resultado) return { name: 'arborizacao-acompanhar' }
-            if (requestStore.form.especieId > 0) {
-              return { name: 'solicitar-muda', query: { especieId: requestStore.form.especieId } }
-            }
-            if (quizStore.recomendacoes !== null) return { name: 'arborizacao-recomendacoes' }
-            return { name: 'arborizacao-assistente' }
-          }
+          component: () => import('@/views/public/arborizacao/ArborizacaoInicioView.vue')
+        },
+        {
+          path: 'arborizacao/substituicao-nim',
+          name: 'arborizacao-substituicao-nim',
+          component: () => import('@/views/public/arborizacao/SolicitarSubstituicaoView.vue')
+        },
+        {
+          path: 'arborizacao/substituicao-nim/acompanhar',
+          name: 'arborizacao-substituicao-acompanhar',
+          component: () => import('@/views/public/arborizacao/AcompanharSubstituicaoView.vue')
         },
         {
           path: 'arborizacao/assistente',

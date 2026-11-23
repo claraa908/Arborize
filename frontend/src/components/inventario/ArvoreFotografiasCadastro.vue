@@ -119,7 +119,7 @@ onBeforeUnmount(() => {
       <label
         v-if="quantidadeExistente + modelValue.length < LIMITE_FOTOGRAFIAS_ARVORE"
         for="arvore-fotografias-cadastro-seletor"
-        class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-btn border border-amma-green px-4 py-2 text-sm font-bold text-amma-green-dark transition-colors hover:bg-amma-green-lighter focus-within:outline-2 focus-within:outline-amma-green"
+        class="relative inline-flex cursor-pointer items-center justify-center gap-2 overflow-clip rounded-btn border border-amma-green px-4 py-2 text-sm font-bold text-amma-green-dark transition-colors hover:bg-amma-green-lighter focus-within:outline-2 focus-within:outline-amma-green"
         :class="{ 'pointer-events-none opacity-60': desativado }"
       >
         <span aria-hidden="true" class="material-symbols-outlined text-[18px]"
@@ -129,7 +129,7 @@ onBeforeUnmount(() => {
         <input
           id="arvore-fotografias-cadastro-seletor"
           ref="seletor"
-          class="sr-only"
+          class="sr-only left-0 top-0"
           type="file"
           accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp"
           multiple

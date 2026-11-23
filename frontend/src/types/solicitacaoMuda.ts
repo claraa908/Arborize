@@ -28,6 +28,11 @@ export interface SolicitacaoMudaResponse {
   criadaEm: string
 }
 
+export interface AcompanharSolicitacaoMudaPayload {
+  protocolo: string
+  cpf: string
+}
+
 export interface ProblemDetailResponse {
   type?: string
   title?: string

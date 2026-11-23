@@ -3,7 +3,6 @@ import { computed, onMounted, useTemplateRef } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
 import { useInventarioNavegacao } from '@/components/inventario/useInventarioNavegacao'
 import { useInventarioConsulta } from '@/components/inventario/useInventarioConsulta'
-import AppBreadcrumb from '@/components/ui/AppBreadcrumb.vue'
 import AppDataTable, { type TableColumn } from '@/components/ui/AppDataTable.vue'
 import InventarioEstado from '@/components/inventario/InventarioEstado.vue'
 import InventarioMapa from '@/components/inventario/InventarioMapa.vue'
@@ -62,10 +61,6 @@ onMounted(() => {
 
 <template>
   <div ref="pagina" class="flex w-full flex-col">
-    <AppBreadcrumb
-      :items="[{ label: 'Início', routeName: 'dashboard', icon: 'home' }, { label: 'Inventário' }]"
-      :show-back="false"
-    />
     <div class="flex min-w-0 flex-col gap-8 px-6 py-8 md:px-10">
       <header class="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
         <div>

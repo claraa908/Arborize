@@ -96,7 +96,7 @@ describe('assistente de plantio', () => {
     await flushPromises()
 
     const sentAnswers = vi.mocked(buscarRecomendacoes).mock.calls[0][0]
-    expect(sentAnswers).toHaveLength(10)
+    expect(sentAnswers).toHaveLength(9)
     expect(sentAnswers.at(-1)).toEqual({ perguntaId: 'quantidade_mudas', valor: 'UMA' })
     expect(store.recomendacoes).toEqual([especie])
     expect(routerPush).toHaveBeenCalledExactlyOnceWith({ name: 'arborizacao-recomendacoes' })

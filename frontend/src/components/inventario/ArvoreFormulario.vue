@@ -482,7 +482,7 @@ onMounted(() => {
 
     <aside
       aria-label="Dados da árvore"
-      class="flex min-w-0 flex-col bg-white xl:h-full xl:min-h-0 xl:overflow-hidden xl:border-l xl:border-amma-green-light xl:shadow-[-8px_0_20px_rgba(77,110,31,0.08)]"
+      class="flex min-w-0 flex-col bg-white xl:h-full xl:min-h-0 xl:overflow-clip xl:border-l xl:border-amma-green-light xl:shadow-[-8px_0_20px_rgba(77,110,31,0.08)]"
     >
       <div class="min-h-0 flex-none space-y-4 p-4 xl:flex-1 xl:overflow-y-auto">
         <div class="flex flex-wrap items-center justify-between gap-2">
