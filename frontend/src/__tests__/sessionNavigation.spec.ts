@@ -15,7 +15,6 @@ import { autenticarUsuario } from '@/services/authService'
 import TopBar from '@/components/layout/TopBar.vue'
 import AppHeader from '@/components/layout/AppHeader.vue'
 import AppSidebar from '@/components/layout/AppSidebar.vue'
-import CidadaoDashboardView from '@/views/public/CidadaoDashboardView.vue'
 import ArborizacaoInicioView from '@/views/public/arborizacao/ArborizacaoInicioView.vue'
 import { ElementoTeste, encontrar, renderer } from './mapaTestHost'
 
@@ -72,7 +71,7 @@ describe('navegação real por sessão', () => {
     expect(router.currentRoute.value.name).toBe('arborizacao-substituicao-nim')
     await router.push('/arborizacao/substituicao-nim/acompanhar')
     expect(router.currentRoute.value.name).toBe('arborizacao-substituicao-acompanhar')
-    for (const path of ['/dashboard', '/perfil', '/sistema', '/sistema/perfil', '/gestao', '/ifce/equipe']) {
+    for (const path of ['/perfil', '/sistema', '/sistema/perfil', '/gestao', '/ifce/equipe']) {
       await router.push(path)
       expect(router.currentRoute.value.name).toBe('home')
       expect(router.currentRoute.value.query).toEqual({ auth: 'required', redirect: path })
@@ -102,7 +101,7 @@ describe('navegação real por sessão', () => {
     vi.mocked(autenticarUsuario).mockResolvedValue({ token: 'test-only-token', nome: 'Pessoa Teste', role, tipo: 'Bearer' })
     await auth.login({ login: 'pessoa@example.invalid', senha: 'test-only' })
     await router.push(postLoginTarget(router, auth, undefined))
-    expect(router.currentRoute.value.name).toBe(role === 'ROLE_CIDADAO' ? 'cidadao-dashboard' : isIfceScholar ? 'viveiro' : isIfceManager ? 'ifce-equipe' : 'dashboard')
+    expect(router.currentRoute.value.name).toBe(role === 'ROLE_CIDADAO' ? 'perfil' : isIfceScholar ? 'viveiro' : isIfceManager ? 'ifce-equipe' : 'dashboard')
     expect(router.currentRoute.value.matched[0]?.path).toBe(role === 'ROLE_CIDADAO' ? '/' : isIfceManager ? '/ifce' : '/sistema')
     for (const [path, name] of [
       ['/eventos', 'eventos-publico'],
@@ -124,7 +123,7 @@ describe('navegação real por sessão', () => {
     expect(restored.isAuthenticated).toBe(true)
     expect(restored.role).toBe(role)
     expect(restored.dashboardRouteName).toBe(auth.dashboardRouteName)
-    expect(postLoginTarget(router, auth, '/sistema/inventario')).toEqual(isIfceManager ? { name: 'ifce-equipe' } : role === 'ROLE_CIDADAO' ? { name: 'cidadao-dashboard' } : isIfceScholar ? { name: 'viveiro' } : '/sistema/inventario')
+    expect(postLoginTarget(router, auth, '/sistema/inventario')).toEqual(isIfceManager ? { name: 'ifce-equipe' } : role === 'ROLE_CIDADAO' ? { name: 'perfil' } : isIfceScholar ? { name: 'viveiro' } : '/sistema/inventario')
     await router.push('/gestao')
     expect(router.currentRoute.value.name).toBe(isIfceScholar ? 'viveiro' : role === 'ROLE_ADMINISTRADOR_AMMA' ? 'gestao' : isIfceManager ? 'ifce-equipe' : 'home')
     await router.push('/ifce/equipe')
@@ -217,25 +216,23 @@ describe('navegação real por sessão', () => {
     expect(router.currentRoute.value.name).toBe('perfil')
     for (const path of ['/sistema', '/sistema/inventario', '/sistema/viveiro', '/sistema/biblioteca']) {
       await router.push(path)
-      expect(router.currentRoute.value.name).toBe('cidadao-dashboard')
+      expect(router.currentRoute.value.name).toBe('perfil')
     }
     await router.push('/sistema/perfil')
     expect(router.currentRoute.value.name).toBe('perfil')
   })
 
-  it('mantém institucional no layout administrativo do perfil e evita dashboard do cidadão', async () => {
+  it('mantém institucional no layout administrativo do perfil', async () => {
     const { router } = await session('ROLE_FUNCIONARIO_AMMA', '/perfil')
     expect(router.currentRoute.value.name).toBe('perfil-institucional')
     expect(router.currentRoute.value.matched[0]?.path).toBe('/sistema')
-    await router.push('/dashboard')
-    expect(router.currentRoute.value.name).toBe('dashboard')
   })
 
   it('aceita somente destinos existentes e permitidos depois do login', async () => {
     const { router, auth } = await session('ROLE_CIDADAO')
     expect(postLoginTarget(router, auth, '/perfil')).toBe('/perfil')
     for (const target of ['/sistema', '/gestao', '//external.invalid', 'https://external.invalid', '/missing', '/\\external.invalid']) {
-      expect(postLoginTarget(router, auth, target)).toEqual({ name: 'cidadao-dashboard' })
+      expect(postLoginTarget(router, auth, target)).toEqual({ name: 'perfil' })
     }
   })
 
@@ -284,7 +281,7 @@ describe('componentes reais de navegação', () => {
     expect(html).toContain('Biblioteca Digital')
     expect(html).toContain('Arborização')
     if (role === 'ROLE_CIDADAO') {
-      expect(html).toContain('aria-label="Dashboard"')
+      expect(html).not.toContain('aria-label="Dashboard"')
       expect(html).toContain('Meu perfil')
       expect(html).not.toContain('Voltar ao painel')
     } else {
@@ -292,17 +289,6 @@ describe('componentes reais de navegação', () => {
       expect(html).not.toContain('Meu perfil')
       expect(html).not.toContain('aria-label="Dashboard"')
     }
-  })
-
-  it('dashboard do cidadão usa o nome da sessão e links reais, sem indicadores fictícios', async () => {
-    const { router, pinia } = await session('ROLE_CIDADAO', '/dashboard')
-    const html = await renderToString(createSSRApp(CidadaoDashboardView).use(pinia).use(router))
-    expect(html).toContain('Pessoa Teste')
-    expect(html).toContain('href="/perfil"')
-    expect(html).toContain('href="/arborizacao"')
-    expect(html).toContain('href="/biblioteca"')
-    expect(html).not.toContain('Mudas coletadas')
-    expect(html).not.toContain('Solicitações de substituição')
   })
 
   it.each(['ROLE_CIDADAO', 'ROLE_ADMINISTRADOR_AMMA'] as const)('logout pela navbar limpa e encerra a sessão %s', async (role) => {

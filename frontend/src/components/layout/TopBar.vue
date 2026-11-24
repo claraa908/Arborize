@@ -97,24 +97,14 @@ const handleLogout = () => {
     <div class="flex shrink-0 items-center gap-2 text-sm font-bold">
       <template v-if="auth.isAuthenticated">
         <button
-          v-if="auth.isCitizen"
-          type="button"
-          @click="navigateTo('cidadao-dashboard')"
-          class="inline-flex min-h-11 min-w-11 items-center justify-center gap-2 rounded-btn border-2 border-amma-green px-2.5 py-2.5 text-amma-green hover:bg-amma-green-lighter focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amma-green lg:px-4"
-          aria-label="Dashboard"
-        >
-          <span class="material-symbols-outlined text-[20px]" aria-hidden="true">dashboard</span>
-          <span class="hidden lg:inline">Dashboard</span>
-        </button>
-        <button
           type="button"
           v-if="auth.isCitizen"
           @click="navigateToProfile"
           :class="[
-            'inline-flex items-center gap-2 border-2 px-2.5 py-2.5 transition-colors efeito-zoom cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amma-green lg:px-5',
+            'inline-flex items-center gap-2 border-2 px-2.5 py-2.5 rounded-btn transition-colors efeito-zoom cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amma-green lg:px-5',
             route.name === 'perfil'
-              ? 'border-transparent bg-amma-green-light text-amma-green-dark rounded-full'
-              : 'border-amma-green text-amma-green hover:bg-amma-green-lighter rounded-btn'
+              ? 'border-transparent bg-amma-green-light text-amma-green-dark font-bold'
+              : 'border-amma-green text-amma-green hover:bg-amma-green-lighter'
           ]"
           aria-label="Meu perfil"
         >
@@ -195,10 +185,6 @@ const handleLogout = () => {
           {{ link.label }}
         </button>
         <div v-if="auth.isAuthenticated" class="mt-2 flex flex-col gap-2 border-t border-amma-green-light pt-4">
-          <button v-if="auth.isCitizen" type="button" class="flex min-h-11 items-center gap-3 rounded-btn px-4 py-2 text-left font-semibold text-amma-green-dark hover:bg-amma-green-lighter focus-visible:outline focus-visible:outline-2 focus-visible:outline-amma-green" @click="navigateTo('cidadao-dashboard')">
-            <span class="material-symbols-outlined" aria-hidden="true">dashboard</span>
-            Dashboard
-          </button>
           <button v-if="auth.isCitizen" type="button" class="flex min-h-11 items-center gap-3 rounded-btn px-4 py-2 text-left font-semibold text-amma-green-dark hover:bg-amma-green-lighter focus-visible:outline focus-visible:outline-2 focus-visible:outline-amma-green" @click="navigateToProfile">
             <span class="material-symbols-outlined" aria-hidden="true">person</span>
             Meu Perfil

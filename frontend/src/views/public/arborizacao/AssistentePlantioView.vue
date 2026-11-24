@@ -3,11 +3,18 @@ import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { assistentePlantioQuestions } from '@/data/assistentePlantioQuestions'
 import { useAssistentePlantioStore } from '@/stores/assistentePlantioStore'
+import { useAuthStore } from '@/stores/authStore'
 import { RouterLink } from 'vue-router'
 
 const router = useRouter()
 const route = useRoute()
 const store = useAssistentePlantioStore()
+const auth = useAuthStore()
+const acompanharMudaDestino = computed(() =>
+  auth.canAccessManagement
+    ? { name: 'arborizacao-acompanhar' }
+    : { name: 'perfil', query: { filtro: 'MUDAS' } },
+)
 const questionHeading = ref<HTMLElement | null>(null)
 const showValidation = ref(false)
 const handoffMessage = ref<string | null>(null)
@@ -62,7 +69,7 @@ function handleContinue() {
       <RouterLink :to="{ name: 'arborizacao' }" class="mt-4 inline-flex min-h-11 items-center gap-2 rounded-btn border-2 border-amma-green bg-white px-4 py-2 text-sm font-bold text-amma-green hover:bg-amma-green-lighter focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amma-green">
         <span class="material-symbols-outlined" aria-hidden="true">arrow_back</span> Voltar para Arborização
       </RouterLink>
-      <RouterLink :to="{ name: 'arborizacao-acompanhar' }" class="ml-2 mt-4 inline-flex min-h-11 items-center rounded-btn px-3 py-2 text-sm font-semibold text-amma-green-dark underline decoration-amma-green-light underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amma-green">
+      <RouterLink :to="acompanharMudaDestino" class="ml-2 mt-4 inline-flex min-h-11 items-center rounded-btn px-3 py-2 text-sm font-semibold text-amma-green-dark underline decoration-amma-green-light underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amma-green">
         Acompanhar pedido de muda
       </RouterLink>
     </header>

@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/authStore'
 import { useFeedbackStore } from '@/stores/feedbackStore'
 import { substituicaoBotanicaService } from '@/services/substituicaoBotanicaService'
 import { formatCpf, isValidCpf } from '@/utils/cpf'
 import { formatBrazilianPhone } from '@/utils/phone'
 
 const router = useRouter()
+const auth = useAuthStore()
 const feedback = useFeedbackStore()
 const form = reactive({
   nomeSolicitante: '',
@@ -93,6 +95,10 @@ async function enviar() {
   try {
     const resultado = await substituicaoBotanicaService.criar(dados)
     feedback.showToast('Requerimento enviado. Guarde o protocolo para acompanhar a análise da AMMA.', 'success', 6500)
+    if (auth.isCitizen) {
+      await router.push({ name: 'perfil', query: { filtro: 'SUBSTITUICOES', protocolo: resultado.protocolo } })
+      return
+    }
     await router.push({ name: 'arborizacao-substituicao-acompanhar', query: { protocolo: resultado.protocolo } })
   } catch (error) {
     const errors = errosDaResposta(error)

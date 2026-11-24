@@ -2,12 +2,14 @@
 import { computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useFeedbackStore } from '@/stores/feedbackStore'
+import { useAuthStore } from '@/stores/authStore'
 import { useAssistentePlantioStore } from '@/stores/assistentePlantioStore'
 import { useSolicitacaoMudaStore } from '@/stores/solicitacaoMudaStore'
 
 const route = useRoute()
 const router = useRouter()
 const feedback = useFeedbackStore()
+const auth = useAuthStore()
 const quizStore = useAssistentePlantioStore()
 const store = useSolicitacaoMudaStore()
 const speciesName = computed(() => store.resultado?.especie.nomePopular ?? quizStore.especieSelecionada?.nomePopular ?? 'espécie selecionada')
@@ -27,6 +29,10 @@ async function voltar() {
 async function enviar() {
   if (!(await store.enviarSolicitacao()) || !store.resultado) return
   feedback.showToast(`Solicitação enviada com sucesso. Protocolo ${store.resultado.protocolo}.`, 'success')
+  if (auth.isCitizen) {
+    await router.push({ name: 'perfil', query: { filtro: 'MUDAS', protocolo: store.resultado.protocolo } })
+    return
+  }
   await router.push({ name: 'arborizacao-acompanhar', query: { protocolo: store.resultado.protocolo } })
 }
 </script>
