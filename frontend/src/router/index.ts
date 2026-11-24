@@ -18,6 +18,16 @@ const routes: RouteRecordRaw[] = [
           component: HomeView
         },
         {
+          path: 'eventos',
+          name: 'eventos-publico',
+          component: () => import('@/views/public/eventos/EventosPublicoView.vue')
+        },
+        {
+          path: 'eventos/:id',
+          name: 'eventos-publico-detalhes',
+          component: () => import('@/views/public/eventos/EventoPublicoDetalhesView.vue')
+        },
+        {
           path: 'biblioteca',
           name: 'biblioteca-catalogo',
           component: () => import('@/views/public/biblioteca/CatalogoView.vue')
