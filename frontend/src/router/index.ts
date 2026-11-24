@@ -87,12 +87,6 @@ const routes: RouteRecordRaw[] = [
           meta: { requiresAuth: true }
         },
         {
-          path: 'dashboard',
-          name: 'cidadao-dashboard',
-          component: () => import('@/views/public/CidadaoDashboardView.vue'),
-          meta: { requiresAuth: true, requiresCitizen: true, title: 'Dashboard' }
-        },
-        {
           path: 'perfil',
           name: 'perfil',
           component: () => import('@/views/public/PerfilView.vue'),

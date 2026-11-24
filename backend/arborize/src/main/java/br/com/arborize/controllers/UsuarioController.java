@@ -3,7 +3,9 @@ package br.com.arborize.controllers;
 import br.com.arborize.dtos.request.UsuarioCadastroRequestDTO;
 import br.com.arborize.dtos.request.UsuarioPerfilRequestDTO;
 import br.com.arborize.dtos.request.AlterarSenhaRequestDTO;
+import br.com.arborize.dtos.response.CidadaoAcompanhamentosResponseDTO;
 import br.com.arborize.dtos.response.UsuarioResponseDTO;
+import br.com.arborize.services.CidadaoAcompanhamentoService;
 import br.com.arborize.services.UsuarioService;
 import br.com.arborize.services.UsuarioService.UsuarioDuplicadoException;
 import br.com.arborize.services.UsuarioService.SenhaAtualIncorretaException;
@@ -26,9 +28,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class UsuarioController {
 
     private final UsuarioService service;
+    private final CidadaoAcompanhamentoService acompanhamentoService;
 
-    public UsuarioController(UsuarioService service) {
+    public UsuarioController(UsuarioService service, CidadaoAcompanhamentoService acompanhamentoService) {
         this.service = service;
+        this.acompanhamentoService = acompanhamentoService;
     }
 
     @PostMapping("/cadastro")
@@ -39,6 +43,13 @@ public class UsuarioController {
     @GetMapping("/me")
     public ResponseEntity<UsuarioResponseDTO> buscarMeuPerfil(@AuthenticationPrincipal Long usuarioId) {
         return ResponseEntity.ok(service.buscarPerfil(usuarioId));
+    }
+
+    @GetMapping("/me/acompanhamentos")
+    public ResponseEntity<CidadaoAcompanhamentosResponseDTO> buscarMeusAcompanhamentos(
+            @AuthenticationPrincipal Long usuarioId
+    ) {
+        return ResponseEntity.ok(acompanhamentoService.listarDoUsuario(usuarioId));
     }
 
     @PutMapping("/me")

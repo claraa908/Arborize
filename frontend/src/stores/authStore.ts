@@ -15,7 +15,7 @@ export const useAuthStore = defineStore('auth', () => {
   const canManageCompensacao = computed(() => isAuthenticated.value && (role.value === 'ROLE_ADMINISTRADOR_AMMA' || role.value === 'ROLE_FUNCIONARIO_AMMA'))
   const canAccessManagement = computed(() => isAuthenticated.value && USER_ROLES.some(value => value !== 'ROLE_CIDADAO' && value === role.value))
   const canManageIfceTeam = computed(() => isAuthenticated.value && role.value === 'ROLE_GESTOR_IFCE')
-  const dashboardRouteName = computed(() => isIfceScholar.value ? 'viveiro' : isCitizen.value ? 'cidadao-dashboard' : canAccessManagement.value ? 'dashboard' : 'home')
+  const dashboardRouteName = computed(() => isIfceScholar.value ? 'viveiro' : isCitizen.value ? 'perfil' : canAccessManagement.value ? 'dashboard' : 'home')
   const profileRouteName = computed(() => isCitizen.value ? 'perfil' : 'perfil-institucional')
 
   async function login(credentials: LoginRequest) {

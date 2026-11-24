@@ -10,12 +10,16 @@ import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface SolicitacaoMudaRepository extends JpaRepository<SolicitacaoMuda, Long> {
     @Override
     @EntityGraph(attributePaths = "especie")
     Page<SolicitacaoMuda> findAll(Pageable pageable);
+
+    @EntityGraph(attributePaths = "especie")
+    List<SolicitacaoMuda> findByCpfOrderByCriadaEmDesc(String cpf);
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select s from SolicitacaoMuda s where s.id = :id")

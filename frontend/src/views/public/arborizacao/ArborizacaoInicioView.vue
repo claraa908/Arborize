@@ -1,5 +1,21 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import { RouterLink } from 'vue-router'
+import { useAuthStore } from '@/stores/authStore'
+
+const auth = useAuthStore()
+
+const acompanharSubstituicaoDestino = computed(() =>
+  auth.canAccessManagement
+    ? { name: 'arborizacao-substituicao-acompanhar' }
+    : { name: 'perfil', query: { filtro: 'SUBSTITUICOES' } },
+)
+
+const acompanharMudaDestino = computed(() =>
+  auth.canAccessManagement
+    ? { name: 'arborizacao-acompanhar' }
+    : { name: 'perfil', query: { filtro: 'MUDAS' } },
+)
 </script>
 
 <template>
@@ -21,7 +37,7 @@ import { RouterLink } from 'vue-router'
           <span class="material-symbols-outlined" aria-hidden="true">description</span>
           Fazer requerimento
         </RouterLink>
-        <RouterLink :to="{ name: 'arborizacao-substituicao-acompanhar' }" class="mt-3 inline-flex min-h-11 items-center self-start rounded-btn px-2 text-sm font-semibold text-amma-green-dark underline decoration-amma-green-light underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amma-green">
+        <RouterLink :to="acompanharSubstituicaoDestino" class="mt-3 inline-flex min-h-11 items-center self-start rounded-btn px-2 text-sm font-semibold text-amma-green-dark underline decoration-amma-green-light underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amma-green">
           Acompanhar requerimento
         </RouterLink>
       </article>
@@ -34,7 +50,7 @@ import { RouterLink } from 'vue-router'
           <span class="material-symbols-outlined" aria-hidden="true">eco</span>
           Começar assistente
         </RouterLink>
-        <RouterLink :to="{ name: 'arborizacao-acompanhar' }" class="mt-3 inline-flex min-h-11 items-center self-start rounded-btn px-2 text-sm font-semibold text-amma-green-dark underline decoration-amma-green-light underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amma-green">
+        <RouterLink :to="acompanharMudaDestino" class="mt-3 inline-flex min-h-11 items-center self-start rounded-btn px-2 text-sm font-semibold text-amma-green-dark underline decoration-amma-green-light underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amma-green">
           Acompanhar pedido de muda
         </RouterLink>
       </article>
