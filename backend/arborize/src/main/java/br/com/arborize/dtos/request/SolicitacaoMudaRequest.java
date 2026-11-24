@@ -21,6 +21,13 @@ public record SolicitacaoMudaRequest(
         @Pattern(regexp = "^\\s*\\S+(?:\\s+\\S+)+\\s*$", message = "Informe seu nome completo.")
         String nomeSolicitante,
         @NotBlank @Pattern(regexp = "\\d{11}") @CpfValido String cpf,
-        @NotBlank @Pattern(regexp = "\\d{10,11}", message = "Informe um telefone com DDD.") String telefone
+        @NotBlank @Pattern(regexp = "\\d{10,11}", message = "Informe um telefone com DDD.") String telefone,
+        @Pattern(regexp = "CALCADA|QUINTAL") String localPlantio
 ) {
+    public SolicitacaoMudaRequest(Long especieId, Integer quantidadeMudas, String logradouro, String numeroEndereco,
+                                  String bairro, String complemento, String pontoReferencia, String nomeSolicitante,
+                                  String cpf, String telefone) {
+        this(especieId, quantidadeMudas, logradouro, numeroEndereco, bairro, complemento, pontoReferencia,
+                nomeSolicitante, cpf, telefone, null);
+    }
 }

@@ -24,6 +24,8 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 public class SolicitacaoMuda {
+    public enum LocalPlantio { CALCADA, QUINTAL }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -68,4 +70,14 @@ public class SolicitacaoMuda {
 
     @Column(name = "criada_em", nullable = false)
     private LocalDateTime criadaEm;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "local_plantio", length = 20)
+    private LocalPlantio localPlantio;
+
+    @Column(name = "quantidade_recebida")
+    private Integer quantidadeRecebida;
+
+    @Column(name = "motivo_rejeicao", length = 255)
+    private String motivoRejeicao;
 }

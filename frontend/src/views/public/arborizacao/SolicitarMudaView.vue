@@ -131,6 +131,8 @@ function validateForm() {
 async function continuar() {
   if (!selectedSpecies.value || !validateForm()) return
   store.form.especieId = speciesId.value
+  const local = quizStore.especieSelecionada?.id === speciesId.value ? quizStore.respostas.local_plantio : undefined
+  store.form.localPlantio = local === 'CALCADA' || local === 'QUINTAL' ? local : undefined
   if (await store.calcularConversao()) {
     await router.push({ name: 'arborizacao-conversao', query: { especieId: speciesId.value } })
   }
