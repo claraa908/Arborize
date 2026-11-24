@@ -20,3 +20,9 @@
 - [x] 3.1 Executar os testes unitários do frontend, `npm run type-check` e `npm run build`; confirmar que o bolsista chega ao Viveiro e não acessa páginas fora dele por URL direta.
 - [x] 3.2 Executar os testes Maven do backend e verificar o fluxo completo de resposta 403, autorização de `/especies/**` e comportamento inalterado dos demais perfis.
 - [x] 3.3 Verificar o perfil próprio de bolsista no frontend e a autorização dos endpoints de dados e senha no backend para `ROLE_BOLSISTA_IFCE`, preservando as permissões dos demais perfis.
+
+## 4. Navegação pública acessível ao bolsista
+
+- [x] 4.1 Permitir eventos públicos, seus detalhes e os formulários públicos de requerimento/acompanhamento de substituição botânica na allowlist de rotas do bolsista; cobrir cliques e URLs diretas.
+- [x] 4.2 Permitir somente GET `/eventos/**` e POST `/api/substituicoes-botanicas` e `/api/substituicoes-botanicas/acompanhar` ao bolsista; manter APIs administrativas de substituição bloqueadas e cobrir na suíte de segurança.
+- [x] 4.3 Verificar as mesmas páginas e APIs para cidadão, administrador, funcionário e gestor, garantindo que o reparo não altere o destino pós-login ou outras restrições dessas roles.

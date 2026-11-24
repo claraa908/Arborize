@@ -13,7 +13,11 @@ interface SessionAccess {
 
 const IFCE_SCHOLAR_ALLOWED_ROUTE_NAMES = new Set([
   'home',
+  'eventos-publico',
+  'eventos-publico-detalhes',
   'arborizacao',
+  'arborizacao-substituicao-nim',
+  'arborizacao-substituicao-acompanhar',
   'arborizacao-assistente',
   'arborizacao-recomendacoes',
   'solicitar-muda',
@@ -30,9 +34,13 @@ const IFCE_SCHOLAR_ALLOWED_ROUTE_NAMES = new Set([
 
 const IFCE_MANAGER_ALLOWED_ROUTE_NAMES = new Set([
   'home',
+  'eventos-publico',
+  'eventos-publico-detalhes',
   'biblioteca-catalogo',
   'biblioteca-documento',
   'arborizacao',
+  'arborizacao-substituicao-nim',
+  'arborizacao-substituicao-acompanhar',
   'arborizacao-assistente',
   'arborizacao-recomendacoes',
   'solicitar-muda',

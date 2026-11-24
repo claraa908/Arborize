@@ -15,3 +15,9 @@
 
 - [x] 3.1 Executar testes de navegação, suíte unitária, `npm run type-check` e `npm run build`; confirmar home e destino pós-login definidos.
 - [x] 3.2 Executar testes Maven e `openspec validate restringir-acesso-gestor-ifce --strict`; confirmar que as rotas/API permitidas funcionam e as demais permanecem bloqueadas.
+
+## 4. Compatibilidade de eventos e requerimentos públicos
+
+- [x] 4.1 Incluir eventos públicos, detalhes, requerimento e acompanhamento de substituição botânica na allowlist de páginas do gestor e cobrir navegação por clique e URL direta.
+- [x] 4.2 Permitir GET `/eventos/**` e POST `/api/substituicoes-botanicas` e `/api/substituicoes-botanicas/acompanhar`, mantendo endpoints `/gestao/**` fora da allowlist do gestor.
+- [x] 4.3 Testar as rotas e APIs para gestor, bolsista e demais roles canônicas; confirmar que só o gestor e o bolsista seguem as respectivas allowlists e que os outros perfis não são redirecionados.

@@ -16,6 +16,7 @@ import TopBar from '@/components/layout/TopBar.vue'
 import AppHeader from '@/components/layout/AppHeader.vue'
 import AppSidebar from '@/components/layout/AppSidebar.vue'
 import CidadaoDashboardView from '@/views/public/CidadaoDashboardView.vue'
+import ArborizacaoInicioView from '@/views/public/arborizacao/ArborizacaoInicioView.vue'
 import { ElementoTeste, encontrar, renderer } from './mapaTestHost'
 
 vi.mock('@/views/public/HomeView.vue', () => ({ default: { render: () => null } }))
@@ -63,6 +64,14 @@ describe('navegação real por sessão', () => {
     expect(router.currentRoute.value.name).toBe('home')
     await router.push('/biblioteca')
     expect(router.currentRoute.value.name).toBe('biblioteca-catalogo')
+    await router.push('/eventos')
+    expect(router.currentRoute.value.name).toBe('eventos-publico')
+    await router.push('/eventos/12')
+    expect(router.currentRoute.value.name).toBe('eventos-publico-detalhes')
+    await router.push('/arborizacao/substituicao-nim')
+    expect(router.currentRoute.value.name).toBe('arborizacao-substituicao-nim')
+    await router.push('/arborizacao/substituicao-nim/acompanhar')
+    expect(router.currentRoute.value.name).toBe('arborizacao-substituicao-acompanhar')
     for (const path of ['/dashboard', '/perfil', '/sistema', '/sistema/perfil', '/gestao', '/ifce/equipe']) {
       await router.push(path)
       expect(router.currentRoute.value.name).toBe('home')
@@ -95,6 +104,15 @@ describe('navegação real por sessão', () => {
     await router.push(postLoginTarget(router, auth, undefined))
     expect(router.currentRoute.value.name).toBe(role === 'ROLE_CIDADAO' ? 'cidadao-dashboard' : isIfceScholar ? 'viveiro' : isIfceManager ? 'ifce-equipe' : 'dashboard')
     expect(router.currentRoute.value.matched[0]?.path).toBe(role === 'ROLE_CIDADAO' ? '/' : isIfceManager ? '/ifce' : '/sistema')
+    for (const [path, name] of [
+      ['/eventos', 'eventos-publico'],
+      ['/eventos/12', 'eventos-publico-detalhes'],
+      ['/arborizacao/substituicao-nim', 'arborizacao-substituicao-nim'],
+      ['/arborizacao/substituicao-nim/acompanhar', 'arborizacao-substituicao-acompanhar'],
+    ]) {
+      await router.push(path)
+      expect(router.currentRoute.value.name).toBe(name)
+    }
     if (role === 'ROLE_FUNCIONARIO_AMMA' || role === 'ROLE_ADMINISTRADOR_AMMA') {
       for (const path of ['/sistema/inventario', '/sistema/viveiro', '/sistema/biblioteca', '/sistema/solicitacoes', '/sistema/laudos', '/sistema/eventos']) {
         const target = router.resolve(path)
@@ -450,5 +468,27 @@ describe('componentes reais de navegação', () => {
     await vi.waitFor(() => expect(router.currentRoute.value.name).toBe('perfil-institucional'))
     expect(encontrar(root, no => no.props.title === 'Sair')).toBeDefined()
     app.unmount()
+  })
+
+  it.each(USER_ROLES)('o link Eventos abre a página pública para %s', async (role) => {
+    const { router, pinia } = await session(role, '/')
+    const wrapper = mount(TopBar, { global: { plugins: [pinia, router] } })
+    const eventsLink = wrapper.findAll('nav button').find((button) => button.text().trim() === 'Eventos')
+
+    expect(eventsLink).toBeDefined()
+    await eventsLink!.trigger('click')
+    await vi.waitFor(() => expect(router.currentRoute.value.name).toBe('eventos-publico'))
+    wrapper.unmount()
+  })
+
+  it.each(USER_ROLES)('Fazer requerimento abre o fluxo público para %s', async (role) => {
+    const { router, pinia } = await session(role, '/arborizacao')
+    const wrapper = mount(ArborizacaoInicioView, { global: { plugins: [pinia, router] } })
+    const requestLink = wrapper.findAll('a').find((link) => link.text().includes('Fazer requerimento'))
+
+    expect(requestLink).toBeDefined()
+    await requestLink!.trigger('click')
+    await vi.waitFor(() => expect(router.currentRoute.value.name).toBe('arborizacao-substituicao-nim'))
+    wrapper.unmount()
   })
 })

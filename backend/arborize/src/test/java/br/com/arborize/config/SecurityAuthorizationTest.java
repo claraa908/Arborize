@@ -63,6 +63,10 @@ class SecurityAuthorizationTest {
                     .andExpect(status().isOk());
             requestAs(HttpMethod.POST, usuario[0], usuario[1], "/api/solicitacoes-muda")
                     .andExpect(status().isOk());
+            requestAs(usuario[0], usuario[1], "/eventos")
+                    .andExpect(status().isOk());
+            requestAs(HttpMethod.POST, usuario[0], usuario[1], "/api/substituicoes-botanicas")
+                    .andExpect(status().isOk());
         }
     }
 
@@ -147,6 +151,18 @@ class SecurityAuthorizationTest {
                     .andExpect(status().isOk());
             requestAs(HttpMethod.GET, bolsista[0], bolsista[1], "/api/materials/12/download")
                     .andExpect(status().isOk());
+            requestAs(bolsista[0], bolsista[1], "/eventos")
+                    .andExpect(status().isOk())
+                    .andExpect(content().string("eventos"));
+            requestAs(bolsista[0], bolsista[1], "/eventos/12")
+                    .andExpect(status().isOk())
+                    .andExpect(content().string("evento"));
+            requestAs(bolsista[0], bolsista[1], "/eventos/12/banner")
+                    .andExpect(status().isOk());
+            requestAs(HttpMethod.POST, bolsista[0], bolsista[1], "/api/substituicoes-botanicas")
+                    .andExpect(status().isOk());
+            requestAs(HttpMethod.POST, bolsista[0], bolsista[1], "/api/substituicoes-botanicas/acompanhar")
+                    .andExpect(status().isOk());
             requestAs(HttpMethod.POST, bolsista[0], bolsista[1], "/api/assistente-plantio/recomendar")
                     .andExpect(status().isOk());
             requestAs(HttpMethod.GET, bolsista[0], bolsista[1], "/api/solicitacoes-muda/conversao")
@@ -180,6 +196,12 @@ class SecurityAuthorizationTest {
             org.junit.jupiter.api.Assertions.assertEquals(0, securityProbeController.publicProbeCalls.get());
             requestAs(bolsista[0], bolsista[1], "/api/materials/admin")
                     .andExpect(status().isForbidden());
+            securityProbeController.substitutionManagementCalls.set(0);
+            requestAs(bolsista[0], bolsista[1], "/api/substituicoes-botanicas/gestao")
+                    .andExpect(status().isForbidden());
+            requestAs(HttpMethod.POST, bolsista[0], bolsista[1], "/api/substituicoes-botanicas/gestao/12/eventos")
+                    .andExpect(status().isForbidden());
+            org.junit.jupiter.api.Assertions.assertEquals(0, securityProbeController.substitutionManagementCalls.get());
             requestAs(HttpMethod.POST, bolsista[0], bolsista[1], "/api/materials")
                     .andExpect(status().isForbidden());
             requestAs(HttpMethod.PUT, bolsista[0], bolsista[1], "/api/materials/12")
@@ -224,6 +246,9 @@ class SecurityAuthorizationTest {
         requestAs(HttpMethod.POST, jwt, role, "/ifce/bolsistas").andExpect(status().isOk());
         requestAs(jwt, role, "/eventos").andExpect(status().isOk());
         requestAs(jwt, role, "/eventos/12").andExpect(status().isOk());
+        requestAs(jwt, role, "/eventos/12/banner").andExpect(status().isOk());
+        requestAs(HttpMethod.POST, jwt, role, "/api/substituicoes-botanicas").andExpect(status().isOk());
+        requestAs(HttpMethod.POST, jwt, role, "/api/substituicoes-botanicas/acompanhar").andExpect(status().isOk());
         requestAs(jwt, role, "/api/materials")
                 .andExpect(status().isOk())
                 .andExpect(content().string("catalogo-publico"));
@@ -258,6 +283,11 @@ class SecurityAuthorizationTest {
         requestAs(jwt, role, "/api/bairros").andExpect(status().isForbidden());
         requestAs(jwt, role, "/api/dashboard/overview").andExpect(status().isForbidden());
         requestAs(jwt, role, "/api/materials/admin").andExpect(status().isForbidden());
+        securityProbeController.substitutionManagementCalls.set(0);
+        requestAs(jwt, role, "/api/substituicoes-botanicas/gestao").andExpect(status().isForbidden());
+        requestAs(HttpMethod.POST, jwt, role, "/api/substituicoes-botanicas/gestao/12/eventos")
+                .andExpect(status().isForbidden());
+        org.junit.jupiter.api.Assertions.assertEquals(0, securityProbeController.substitutionManagementCalls.get());
         requestAs(jwt, role, "/admin/usuarios").andExpect(status().isForbidden());
         requestAs(HttpMethod.PUT, jwt, role, "/ifce/bolsistas").andExpect(status().isForbidden());
         requestAs(jwt, role, "/ifce/bolsistas/12").andExpect(status().isForbidden());
@@ -273,6 +303,9 @@ class SecurityAuthorizationTest {
         mockMvc.perform(get("/api/publico/probe"))
                 .andExpect(status().isOk())
                 .andExpect(content().string("publico"));
+        mockMvc.perform(get("/eventos"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("eventos"));
         requestAs("jwt-cidadao", "ROLE_CIDADAO", "/api/publico/probe")
                 .andExpect(status().isOk());
         requestAs("jwt-funcionario", "ROLE_FUNCIONARIO_AMMA", "/api/publico/probe")
@@ -319,6 +352,7 @@ class SecurityAuthorizationTest {
     @RestController
     public static class SecurityProbeController {
         private final AtomicInteger publicProbeCalls = new AtomicInteger();
+        private final AtomicInteger substitutionManagementCalls = new AtomicInteger();
 
         @GetMapping("/api/publico/probe")
         public String publicProbe() {
@@ -346,6 +380,27 @@ class SecurityAuthorizationTest {
 
         @GetMapping("/eventos/{id}")
         public String publicEvent() { return "evento"; }
+
+        @GetMapping("/eventos/{id}/banner")
+        public String publicEventBanner() { return "banner"; }
+
+        @PostMapping("/api/substituicoes-botanicas")
+        public String createSubstitutionRequest() { return "requerimento"; }
+
+        @PostMapping("/api/substituicoes-botanicas/acompanhar")
+        public String trackSubstitutionRequest() { return "acompanhamento"; }
+
+        @GetMapping("/api/substituicoes-botanicas/gestao")
+        public String manageSubstitutionRequests() {
+            substitutionManagementCalls.incrementAndGet();
+            return "gestao";
+        }
+
+        @PostMapping("/api/substituicoes-botanicas/gestao/12/eventos")
+        public String updateSubstitutionProgress() {
+            substitutionManagementCalls.incrementAndGet();
+            return "progresso";
+        }
 
         @GetMapping("/api/solicitacoes-muda/conversao")
         public String calculateConversion() { return "conversao"; }

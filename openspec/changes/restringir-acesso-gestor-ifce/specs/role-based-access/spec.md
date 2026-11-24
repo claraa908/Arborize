@@ -18,10 +18,10 @@ O sistema MUST direcionar `ROLE_GESTOR_IFCE` à tela Equipe do IFCE após o logi
 - **THEN** o sistema ignora esse destino e abre a tela Equipe do IFCE
 
 ### Requirement: Gestor acessa somente as páginas autorizadas
-Durante a sessão, `ROLE_GESTOR_IFCE` MUST acessar todo o site público disponível a visitantes, as páginas do Viveiro, Equipe do IFCE e o próprio perfil; qualquer outra rota MUST redirecionar à Equipe do IFCE. O escopo público inclui home, fluxo público de Arborização e Biblioteca Digital, mas não inclui dashboard nem perfil exclusivos do cidadão.
+Durante a sessão, `ROLE_GESTOR_IFCE` MUST acessar todo o site público disponível a visitantes, incluindo Eventos, o fluxo de requerimento e acompanhamento de substituição botânica, as páginas do Viveiro, Equipe do IFCE e o próprio perfil; qualquer outra rota MUST redirecionar à Equipe do IFCE. O escopo público inclui home, Arborização e Biblioteca Digital, mas não inclui dashboard nem perfil exclusivos do cidadão.
 
 #### Scenario: Gestor abre uma página pública ou institucional permitida
-- **WHEN** o gestor acessa as rotas públicas existentes de home, Arborização e Biblioteca Digital, `/sistema/viveiro` e suas subpáginas, `/ifce/equipe` ou `/sistema/perfil`
+- **WHEN** o gestor acessa as rotas públicas existentes de home, Eventos e seus detalhes, Arborização e seus fluxos de requerimento/acompanhamento, Biblioteca Digital, `/sistema/viveiro` e suas subpáginas, `/ifce/equipe` ou `/sistema/perfil`
 - **THEN** o sistema exibe a página correspondente
 
 #### Scenario: Gestor tenta abrir uma página privada de outro perfil ou administrativa
@@ -61,7 +61,7 @@ O gestor MUST consultar e editar apenas os dados da própria conta e a própria 
 O backend MUST permitir ao gestor APIs do site público disponíveis a visitantes, APIs do Viveiro, consulta/cadastro de bolsistas, perfil próprio, login e preflight CORS; APIs privadas ou administrativas fora da allowlist MUST responder HTTP 403.
 
 #### Scenario: Gestor usa APIs públicas e institucionais permitidas
-- **WHEN** o gestor usa GET `/api/materials` e seus detalhes públicos, GET `/eventos/**`, `/especies/**`, POST `/api/assistente-plantio/recomendar`, GET `/api/solicitacoes-muda/conversao`, POST `/api/solicitacoes-muda`, APIs de consulta/registro do Viveiro, GET/POST `/ifce/bolsistas`, GET/PUT `/usuarios/me` ou PUT `/usuarios/me/senha`
+- **WHEN** o gestor usa GET `/api/materials` e seus detalhes públicos, GET `/eventos/**`, POST `/api/substituicoes-botanicas` ou `/api/substituicoes-botanicas/acompanhar`, `/especies/**`, POST `/api/assistente-plantio/recomendar`, GET `/api/solicitacoes-muda/conversao`, POST `/api/solicitacoes-muda`, APIs de consulta/registro do Viveiro, GET/POST `/ifce/bolsistas`, GET/PUT `/usuarios/me` ou PUT `/usuarios/me/senha`
 - **THEN** a API processa a requisição conforme seu contrato atual
 
 #### Scenario: Gestor chama API fora da allowlist

@@ -22,7 +22,7 @@ Consulte `proposal.md` para a motivação e `specs/role-based-access/spec.md` pa
 
 ### Criar uma política própria para `ROLE_GESTOR_IFCE`
 
-Adicionar a verificação do gestor na guarda de rotas usando a role que já habilita a tela Equipe do IFCE. O destino pós-login e o redirecionamento de rotas não permitidas será `ifce-equipe`. A lista explícita aceita todas as rotas públicas existentes para visitantes (home, Arborização e Biblioteca Digital), páginas e subpáginas do Viveiro, `ifce-equipe` e `perfil-institucional`. Não aceita dashboards ou perfis exclusivos do cidadão, nem páginas administrativas da AMMA. O layout autenticado filtra o menu lateral a Viveiro e Equipe. O cabeçalho mantém home, atalho de equipe, perfil próprio e saída.
+Adicionar a verificação do gestor na guarda de rotas usando a role que já habilita a tela Equipe do IFCE. O destino pós-login e o redirecionamento de rotas não permitidas será `ifce-equipe`. A lista explícita aceita todas as rotas públicas existentes para visitantes (home, Eventos e detalhes públicos, Arborização e seus fluxos públicos, e Biblioteca Digital), páginas e subpáginas do Viveiro, `ifce-equipe` e `perfil-institucional`. Não aceita dashboards ou perfis exclusivos do cidadão, nem páginas administrativas da AMMA. O layout autenticado filtra o menu lateral a Viveiro e Equipe. O cabeçalho mantém home, atalho de equipe, perfil próprio e saída.
 
 Na área pública, a navegação do gestor mantém as mesmas opções acessíveis aos visitantes. O atalho “Voltar ao painel” abre Equipe do IFCE.
 
@@ -30,13 +30,13 @@ Contas legadas `ROLE_IFCE_GESTOR` são convertidas em `ROLE_GESTOR_IFCE` pela mu
 
 ### Aplicar a allowlist de API após o JWT
 
-Adicionar um filtro backend específico para gestor depois de `JwtAuthenticationFilter`. Ele responde 403 para operações fora dos métodos e caminhos autorizados, inclusive APIs atualmente marcadas como `permitAll`. A allowlist pública contempla GET de `/eventos/**`, `/api/materials` e detalhes públicos de materiais, POST `/api/assistente-plantio/recomendar`, GET `/api/solicitacoes-muda/conversao` e POST `/api/solicitacoes-muda`. Com ela, também são liberados `/especies/**`; GET/POST/PUT de `/api/viveiro/movimentacoes` e seus subrecursos existentes conforme o método contratado; GET e POST `/ifce/bolsistas`; GET/PUT `/usuarios/me`; PUT `/usuarios/me/senha`; POST `/auth/login`; e OPTIONS de preflight. APIs como dashboard, inventário e administração da Biblioteca permanecem bloqueadas.
+Adicionar um filtro backend específico para gestor depois de `JwtAuthenticationFilter`. Ele responde 403 para operações fora dos métodos e caminhos autorizados, inclusive APIs atualmente marcadas como `permitAll`. A allowlist pública contempla GET de `/eventos/**`, `/api/materials` e detalhes públicos de materiais, POST `/api/substituicoes-botanicas` e `/api/substituicoes-botanicas/acompanhar`, POST `/api/assistente-plantio/recomendar`, GET `/api/solicitacoes-muda/conversao` e POST `/api/solicitacoes-muda`. Com ela, também são liberados `/especies/**`; GET/POST/PUT de `/api/viveiro/movimentacoes` e seus subrecursos existentes conforme o método contratado; GET e POST `/ifce/bolsistas`; GET/PUT `/usuarios/me`; PUT `/usuarios/me/senha`; POST `/auth/login`; e OPTIONS de preflight. APIs como dashboard, inventário e administração da Biblioteca permanecem bloqueadas.
 
 Usar filtro próprio, em vez de ampliar `IfceBolsistaAccessFilter`, evita misturar regras de dois papéis distintos. A consulta e edição do perfil permanecem vinculadas à identidade resolvida do token; não são permitidas rotas de perfil por ID.
 
 ### Preservar o contrato atual da equipe e do Viveiro
 
-Reutilizar `GestaoIfceView`, `PerfilInstitucionalView` e as telas do Viveiro. A equipe consome GET `/ifce/bolsistas` para carregar a listagem e POST para cadastro. O Viveiro consome `/especies/**` e `/api/viveiro/movimentacoes/**`; não será criada rota adicional. As páginas públicas de Arborização e Biblioteca consomem as APIs públicas explicitamente incluídas na allowlist.
+Reutilizar `GestaoIfceView`, `PerfilInstitucionalView` e as telas do Viveiro. A equipe consome GET `/ifce/bolsistas` para carregar a listagem e POST para cadastro. O Viveiro consome `/especies/**` e `/api/viveiro/movimentacoes/**`; não será criada rota adicional. As páginas públicas de Eventos, Arborização e Biblioteca consomem as APIs públicas explicitamente incluídas na allowlist.
 
 ## Risks / Trade-offs
 

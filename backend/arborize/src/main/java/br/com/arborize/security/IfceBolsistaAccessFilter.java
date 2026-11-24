@@ -52,6 +52,11 @@ public final class IfceBolsistaAccessFilter extends OncePerRequestFilter {
             return true;
         }
 
+        if ("GET".equals(request.getMethod()) && (
+                "/eventos".equals(path) || path.matches("/eventos/\\d+(?:/banner)?"))) {
+            return true;
+        }
+
         String method = request.getMethod();
         if (("GET".equals(method) && "/usuarios/me".equals(path))
                 || ("PUT".equals(method)
@@ -77,10 +82,12 @@ public final class IfceBolsistaAccessFilter extends OncePerRequestFilter {
                     || "/api/solicitacoes-muda/conversao".equals(path);
         }
 
-        return ("POST".equals(method) && (
+        return "POST".equals(method) && (
                 "/api/assistente-plantio/recomendar".equals(path)
                         || "/api/solicitacoes-muda".equals(path)
-        ));
+                        || "/api/substituicoes-botanicas".equals(path)
+                        || "/api/substituicoes-botanicas/acompanhar".equals(path)
+        );
     }
 
     private String getRequestPath(HttpServletRequest request) {

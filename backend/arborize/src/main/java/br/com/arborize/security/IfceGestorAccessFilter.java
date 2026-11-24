@@ -82,6 +82,12 @@ public final class IfceGestorAccessFilter extends OncePerRequestFilter {
             return true;
         }
 
+        if ("POST".equals(method) && (
+                "/api/substituicoes-botanicas".equals(path)
+                        || "/api/substituicoes-botanicas/acompanhar".equals(path))) {
+            return true;
+        }
+
         return ("GET".equals(method) || "POST".equals(method))
                 && "/ifce/bolsistas".equals(path);
     }

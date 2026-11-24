@@ -6,7 +6,7 @@ O perfil `ROLE_GESTOR_IFCE` atualmente herda acesso a telas e APIs administrativ
 
 ## What Changes
 
-- Limitar `ROLE_GESTOR_IFCE` a todo o site público (home, Arborização e Biblioteca Digital), às páginas do Viveiro, à tela Equipe do Laboratório IFCE e ao próprio perfil.
+- Limitar `ROLE_GESTOR_IFCE` a todo o site público (Início, Eventos, Arborização, incluindo requerimento e acompanhamento de substituição botânica, e Biblioteca Digital), às páginas do Viveiro, à tela Equipe do Laboratório IFCE e ao próprio perfil.
 - Direcionar o gestor para Equipe do IFCE após o login e redirecionar para essa tela tentativas de abrir outras páginas não permitidas.
 - Exibir no menu lateral somente Viveiro e Equipe do Laboratório; manter no cabeçalho os atalhos para a home, perfil próprio e saída.
 - Restringir as APIs do gestor às operações do Viveiro, à consulta/cadastro de bolsistas e aos endpoints de leitura/edição do próprio perfil e senha.
