@@ -6,7 +6,7 @@ import AcompanharRequerimentoForm from '@/components/arborizacao/AcompanharReque
 import { useAssistentePlantioStore } from '@/stores/assistentePlantioStore'
 import { useSolicitacaoMudaStore } from '@/stores/solicitacaoMudaStore'
 import { solicitacaoMudaService } from '@/services/solicitacaoMudaService'
-import type { SolicitacaoMudaResponse } from '@/types/solicitacaoMuda'
+import { solicitacaoStatus, type SolicitacaoMudaResponse } from '@/types/solicitacaoMuda'
 import { isValidCpf } from '@/utils/cpf'
 
 const route = useRoute()
@@ -30,12 +30,27 @@ onMounted(() => {
   if (result.value) protocolo.value = result.value.protocolo
 })
 
-const timeline = [
-  { title: 'Solicitação enviada', description: 'Pedido registrado no Arborize.', state: 'concluída', icon: 'check_circle' },
-  { title: 'Aguardando recicláveis', description: 'Entregue os materiais no Eco Ponto.', state: 'em andamento', icon: 'hourglass_top' },
-  { title: 'Aprovação da AMMA', description: 'Será liberada após a conferência.', state: 'próxima etapa', icon: 'lock' },
-  { title: 'Retirada da muda', description: 'Apresente a autorização no ponto de retirada.', state: 'próxima etapa', icon: 'lock' }
-]
+const estadosEtapa = {
+  concluida: { label: 'concluída', icon: 'check_circle', color: 'text-feedback-success' },
+  atual: { label: 'em andamento', icon: 'hourglass_top', color: 'text-feedback-warning' },
+  futura: { label: 'próxima etapa', icon: 'lock', color: 'text-grey-text' },
+  rejeitada: { label: 'encerrada', icon: 'cancel', color: 'text-feedback-danger' }
+}
+const timeline = computed(() => {
+  const status = result.value?.status
+  const enviada = { title: 'Solicitação enviada', description: 'Pedido registrado no Arborize.', state: estadosEtapa.concluida }
+  if (status === 'REJEITADA') {
+    return [enviada, { title: 'Solicitação rejeitada', description: 'A solicitação foi encerrada.', state: estadosEtapa.rejeitada }]
+  }
+  const entregue = status === 'RETIRADA_CONCLUIDA'
+  const aprovada = status === 'APROVADA' || entregue
+  return [
+    enviada,
+    { title: 'Entrega de recicláveis', description: aprovada ? 'Garrafas PET conferidas pela AMMA.' : 'Entregue as garrafas PET na AMMA.', state: aprovada ? estadosEtapa.concluida : estadosEtapa.atual },
+    { title: 'Aprovação do pedido', description: aprovada ? 'A AMMA aprovou o pedido e liberou o documento de retirada.' : 'A AMMA aprova após conferir as garrafas PET.', state: aprovada ? estadosEtapa.concluida : estadosEtapa.futura },
+    { title: 'Retirada da muda', description: entregue ? 'Entrega da muda registrada.' : aprovada ? 'Pronta para retirada. Apresente no IFCE o documento emitido pela AMMA.' : 'Disponível após a aprovação.', state: entregue ? estadosEtapa.concluida : aprovada ? estadosEtapa.atual : estadosEtapa.futura }
+  ]
+})
 
 async function acompanhar() {
   erro.value = ''
@@ -127,13 +142,13 @@ async function voltarAoInicio() {
               <span class="sr-only" aria-live="polite">{{ protocolCopied ? 'Protocolo copiado para a área de transferência.' : '' }}</span>
             </div>
           </div>
-          <span class="max-w-full rounded-full border border-feedback-warning-border bg-feedback-warning-bg px-3 py-1 text-center text-sm font-bold text-feedback-warning">{{ result.status === 'PENDENTE_RECICLAVEIS' ? 'Pendente de recicláveis' : result.status }}</span>
+          <span class="max-w-full rounded-full border px-3 py-1 text-center text-sm font-bold" :class="solicitacaoStatus[result.status].badge">{{ solicitacaoStatus[result.status].label }}</span>
         </div>
         <ol class="mt-6 space-y-5">
-          <li v-for="(step, index) in timeline" :key="step.title" class="flex min-w-0 gap-3">
-            <span class="material-symbols-outlined mt-0.5 shrink-0" :class="index === 0 ? 'text-feedback-success' : index === 1 ? 'text-feedback-warning' : 'text-grey-text'" aria-hidden="true">{{ step.icon }}</span>
+          <li v-for="step in timeline" :key="step.title" class="flex min-w-0 gap-3">
+            <span class="material-symbols-outlined mt-0.5 shrink-0" :class="step.state.color" aria-hidden="true">{{ step.state.icon }}</span>
             <div class="min-w-0">
-              <p class="break-words font-bold text-amma-green-dark">{{ step.title }} <span class="text-xs font-semibold text-grey-text">— {{ step.state }}</span></p>
+              <p class="break-words font-bold text-amma-green-dark">{{ step.title }} <span class="text-xs font-semibold text-grey-text">— {{ step.state.label }}</span></p>
               <p class="mt-1 break-words text-sm text-grey-text">{{ step.description }}</p>
             </div>
           </li>

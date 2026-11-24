@@ -34,8 +34,9 @@ async function enviar() {
 <template>
   <section class="mx-auto max-w-5xl py-8 md:py-12" aria-labelledby="conversion-title">
     <header class="mb-7">
-      <p class="text-xs font-bold uppercase tracking-wider text-amma-green">Eco Ponto</p>
-      <h1 id="conversion-title" class="mt-2 text-2xl font-bold text-amma-green-dark">Conversão Eco Ponto</h1>
+      <p class="text-xs font-bold uppercase tracking-wider text-amma-green">Solicitação de muda</p>
+      <h1 id="conversion-title" class="mt-2 text-2xl font-bold text-amma-green-dark">Contrapartida em garrafas PET</h1>
+      <p class="mt-2 text-sm text-grey-text">Após enviar o pedido, entregue as garrafas PET na AMMA. Após a conferência, a AMMA emite o documento para retirada no IFCE.</p>
       <p class="mt-2 text-sm text-grey-text">Confira a contrapartida de recicláveis antes de enviar o pedido.</p>
     </header>
 

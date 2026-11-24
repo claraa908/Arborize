@@ -191,6 +191,18 @@ const routes: RouteRecordRaw[] = [
           meta: { title: 'Solicitações de Mudas' }
         },
         {
+          path: 'solicitacoes/:protocolo',
+          name: 'solicitacoes-detalhes',
+          component: () => import('@/views/auth/SolicitacoesView.vue'),
+          meta: { title: 'Detalhes da solicitação', activeMenu: 'solicitacoes' }
+        },
+        {
+          path: 'solicitacoes/:protocolo/recebimento',
+          name: 'solicitacoes-recebimento',
+          component: () => import('@/views/auth/SolicitacoesView.vue'),
+          meta: { title: 'Registrar recebimento', activeMenu: 'solicitacoes' }
+        },
+        {
           path: 'laudos',
           name: 'laudos',
           component: () => import('@/views/auth/LaudosView.vue'),

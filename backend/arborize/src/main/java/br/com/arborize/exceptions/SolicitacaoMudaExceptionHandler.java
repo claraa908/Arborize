@@ -1,6 +1,8 @@
 package br.com.arborize.exceptions;
 
 import br.com.arborize.controllers.SolicitacaoMudaController;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
@@ -8,6 +10,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -15,6 +18,7 @@ import java.net.URI;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+@Order(Ordered.HIGHEST_PRECEDENCE)
 @RestControllerAdvice(assignableTypes = SolicitacaoMudaController.class)
 public class SolicitacaoMudaExceptionHandler {
     @ExceptionHandler(SolicitacaoMudaException.class)
@@ -36,14 +40,10 @@ public class SolicitacaoMudaExceptionHandler {
         return problem(HttpStatus.BAD_REQUEST, "INVALID_REQUEST", "Revise os campos informados.", errors);
     }
 
-    @ExceptionHandler({HttpMessageNotReadableException.class, MissingServletRequestParameterException.class})
+    @ExceptionHandler({HttpMessageNotReadableException.class, MissingServletRequestParameterException.class,
+            MethodArgumentTypeMismatchException.class})
     public ResponseEntity<ProblemDetail> handleMalformedRequest(Exception exception) {
         return problem(HttpStatus.BAD_REQUEST, "INVALID_REQUEST", "Revise os campos informados.", Map.of("request", "Corpo ou parâmetro ausente/inválido."));
-    }
-
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ProblemDetail> handleUnexpected(Exception exception) {
-        return problem(HttpStatus.INTERNAL_SERVER_ERROR, "INTERNAL_ERROR", "Não foi possível processar a solicitação agora.", Map.of());
     }
 
     private ResponseEntity<ProblemDetail> problem(HttpStatus status, String code, String detail, Map<String, String> errors) {
@@ -60,6 +60,9 @@ public class SolicitacaoMudaExceptionHandler {
             case "cpf" -> "Informe um CPF válido.";
             case "telefone" -> "Informe um telefone com DDD.";
             case "nomeSolicitante" -> "Informe seu nome completo.";
+            case "localPlantio" -> "Selecione Calçada ou Quintal.";
+            case "quantidadeRecebida" -> "Informe uma quantidade inteira válida de garrafas PET.";
+            case "motivo" -> "Informe um motivo de até 255 caracteres.";
             default -> "Preencha este campo com um valor válido.";
         };
     }
