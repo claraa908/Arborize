@@ -4,6 +4,9 @@ import br.com.arborize.entities.Especie;
 import br.com.arborize.repositories.projections.SpeciesStockProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.Lock;
+import org.springframework.data.repository.query.Param;
+import jakarta.persistence.LockModeType;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -22,4 +25,8 @@ public interface EspecieRepository extends JpaRepository<Especie, Long> {
             order by sum(e.mudasDisponiveis) desc
             """)
     List<SpeciesStockProjection> findStockBySpecies();
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("select e from Especie e where e.id = :id")
+    java.util.Optional<Especie> findByIdForUpdate(@Param("id") Long id);
 }

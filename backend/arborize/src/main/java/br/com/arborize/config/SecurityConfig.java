@@ -1,6 +1,7 @@
 package br.com.arborize.config;
 
 import br.com.arborize.security.JwtAuthenticationFilter;
+import br.com.arborize.security.CompensacaoSecurityProblemHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -12,6 +13,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
+import jakarta.servlet.http.HttpServletRequest;
 
 @Configuration
 @EnableWebSecurity
@@ -19,9 +21,12 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final CompensacaoSecurityProblemHandler compensacaoSecurityProblemHandler;
 
-    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
+    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter,
+                          CompensacaoSecurityProblemHandler compensacaoSecurityProblemHandler) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+        this.compensacaoSecurityProblemHandler = compensacaoSecurityProblemHandler;
     }
 
     @Bean
@@ -34,7 +39,16 @@ public class SecurityConfig {
                 .logout(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .exceptionHandling(exceptions -> exceptions
-                        .authenticationEntryPoint((request, response, exception) -> response.sendError(401))
+                        .authenticationEntryPoint((request, response, exception) -> {
+                            if (isCompensacaoRoute(request)) {
+                                compensacaoSecurityProblemHandler.authenticationEntryPoint().commence(request, response, exception);
+                            } else response.sendError(401);
+                        })
+                        .accessDeniedHandler((request, response, exception) -> {
+                            if (isCompensacaoRoute(request)) {
+                                compensacaoSecurityProblemHandler.accessDeniedHandler().handle(request, response, exception);
+                            } else response.sendError(403);
+                        })
                 )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
@@ -43,6 +57,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/assistente-plantio/**").permitAll()
                         .requestMatchers("/api/materials/admin", "/api/materials/admin/**")
                         .hasAnyRole("AMMA", "ADMINISTRADOR_AMMA", "FUNCIONARIO_AMMA", "GESTOR_IFCE", "IFCE_GESTOR", "BOLSISTA_IFCE", "IFCE_BOLSISTA")
+                        .requestMatchers("/api/termos-compensacao", "/api/termos-compensacao/**")
+                        .hasAnyRole("FUNCIONARIO_AMMA", "ADMINISTRADOR_AMMA")
                         .requestMatchers("/api/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/login", "/usuarios/cadastro").permitAll()
                         .requestMatchers("/admin/usuarios", "/admin/usuarios/**").hasRole("ADMINISTRADOR_AMMA")
@@ -78,5 +94,10 @@ public class SecurityConfig {
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
+    }
+
+    private boolean isCompensacaoRoute(HttpServletRequest request) {
+        String path = request.getRequestURI().substring(request.getContextPath().length());
+        return path.equals("/api/termos-compensacao") || path.startsWith("/api/termos-compensacao/");
     }
 }

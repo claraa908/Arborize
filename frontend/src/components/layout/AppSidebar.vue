@@ -26,12 +26,16 @@ const menuItems: MenuItem[] = [
   { name: 'Viveiro', icon: 'psychiatry', routeName: 'viveiro' },
   { name: 'Solicitações', icon: 'content_paste', routeName: 'solicitacoes' },
   { name: 'Laudos', icon: 'description', routeName: 'laudos' },
+  { name: 'Compensação Ambiental', icon: 'balance', routeName: 'compensacao-lista' },
   { name: 'Eventos', icon: 'event', routeName: 'eventos' }
 ]
 
-const visibleMenuItems = computed(() => auth.canManageIfceTeam
-  ? [...menuItems.slice(0, 1), { name: 'Equipe do Laboratório', icon: 'groups', routeName: 'ifce-equipe' }, ...menuItems.slice(1)]
-  : menuItems)
+const visibleMenuItems = computed(() => {
+  const items = auth.canManageIfceTeam
+    ? [...menuItems.slice(0, 1), { name: 'Equipe do Laboratório', icon: 'groups', routeName: 'ifce-equipe' }, ...menuItems.slice(1)]
+    : [...menuItems]
+  return auth.canManageCompensacao ? items : items.filter((item) => item.routeName !== 'compensacao-lista')
+})
 
 const isExpanded = ref(true)
 const isMobileOpen = ref(false)

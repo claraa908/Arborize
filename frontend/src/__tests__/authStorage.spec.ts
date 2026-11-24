@@ -33,11 +33,22 @@ describe('authStorage', () => {
   })
 
   it('persists the token, user name, and role for a restored session', () => {
-    saveAuthSession('jwt-token', 'Ana Silva', 'ROLE_AMMA')
+    saveAuthSession('jwt-token', 'Ana Silva', 'ROLE_FUNCIONARIO_AMMA')
 
     expect(readAuthToken()).toBe('jwt-token')
     expect(readAuthName()).toBe('Ana Silva')
-    expect(readAuthRole()).toBe('ROLE_AMMA')
+    expect(readAuthRole()).toBe('ROLE_FUNCIONARIO_AMMA')
+  })
+
+  it.each(['ROLE_AMMA', 'ROLE_IFCE_GESTOR', 'ROLE_IFCE_BOLSISTA'])('clears sessions containing removed role %s', (role) => {
+    values.set(AUTH_TOKEN_KEY, 'legacy-token')
+    values.set(AUTH_NAME_KEY, 'Pessoa migrada')
+    values.set(AUTH_ROLE_KEY, role)
+
+    expect(readAuthRole()).toBeNull()
+    expect(readAuthToken()).toBeNull()
+    expect(readAuthName()).toBeNull()
+    expect([...values.keys()]).toEqual([])
   })
 
   it('clears all session fields on logout', () => {

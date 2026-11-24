@@ -6,11 +6,8 @@ public enum UsuarioRole {
     CIDADAO,
     ADMINISTRADOR_AMMA,
     FUNCIONARIO_AMMA,
-    AMMA,
     GESTOR_IFCE,
-    IFCE_GESTOR,
-    BOLSISTA_IFCE,
-    IFCE_BOLSISTA;
+    BOLSISTA_IFCE;
 
     public String getAuthority() {
         return "ROLE_" + name();

@@ -5,6 +5,7 @@ import { especieService } from '@/services/especieService'
 import { useAssistentePlantioStore } from '@/stores/assistentePlantioStore'
 import { useSolicitacaoMudaStore } from '@/stores/solicitacaoMudaStore'
 import type { SpeciesRecommendation } from '@/types/assistentePlantio'
+import { formatCpf, isValidCpf } from '@/utils/cpf'
 
 const route = useRoute()
 const router = useRouter()
@@ -82,11 +83,6 @@ function voltarAoQuiz() {
   void router.push({ name: 'arborizacao-assistente' })
 }
 
-function formatCpf(value: string) {
-  const digits = value.replace(/\D/g, '').slice(0, 11)
-  return digits.replace(/^(\d{3})(\d)/, '$1.$2').replace(/^(\d{3}\.\d{3})(\d)/, '$1.$2').replace(/(\d{3})(\d{1,2})$/, '$1-$2')
-}
-
 function formatPhone(value: string) {
   const digits = value.replace(/\D/g, '').slice(0, 11)
   if (digits.length <= 2) return digits ? `(${digits}` : ''
@@ -94,17 +90,6 @@ function formatPhone(value: string) {
   const phone = digits.slice(2)
   if (digits.length <= 10) return `(${area}) ${phone.slice(0, 4)}${phone.length > 4 ? `-${phone.slice(4)}` : ''}`
   return `(${area}) ${phone.slice(0, 5)}${phone.length > 5 ? `-${phone.slice(5)}` : ''}`
-}
-
-function isValidCpf(value: string) {
-  const digits = value.replace(/\D/g, '')
-  if (digits.length !== 11 || /^([0-9])\1{10}$/.test(digits)) return false
-  const calculate = (length: number) => {
-    const sum = digits.slice(0, length).split('').reduce((total, digit, index) => total + Number(digit) * (length + 1 - index), 0)
-    const remainder = (sum * 10) % 11
-    return remainder === 10 ? 0 : remainder
-  }
-  return calculate(9) === Number(digits[9]) && calculate(10) === Number(digits[10])
 }
 
 function validateForm() {

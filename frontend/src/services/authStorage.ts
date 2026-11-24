@@ -15,7 +15,9 @@ export function readAuthName() {
 export function readAuthRole(): UserRole | null {
   if (typeof localStorage === 'undefined') return null
   const role = localStorage.getItem(AUTH_ROLE_KEY)
-  return isUserRole(role) ? role : null
+  if (isUserRole(role)) return role
+  if (role !== null) clearAuthSession()
+  return null
 }
 
 export function saveAuthSession(token: string, name: string, role: UserRole) {

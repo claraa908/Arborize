@@ -50,8 +50,8 @@ const carregarDetalhes = async () => {
       status: data.status,
       dataCriacao: data.uploadDate ? new Date(data.uploadDate).toLocaleDateString('pt-BR') : '-',
       cadastradoPor: 'Romênia Barros',
-      nomeArquivo: firstDoc ? (firstDoc.originalFilename || firstDoc.fileName) : 'documento.pdf',
-      tamanhoArquivo: firstDoc ? `${(firstDoc.sizeBytes / 1024 / 1024).toFixed(1)} MB` : '2.0 MB',
+      nomeArquivo: firstDoc ? (firstDoc.originalFilename || firstDoc.fileName || 'documento.pdf') : 'documento.pdf',
+      tamanhoArquivo: firstDoc?.sizeBytes != null ? `${(firstDoc.sizeBytes / 1024 / 1024).toFixed(1)} MB` : firstDoc ? '—' : '2.0 MB',
       capaUrl: hasCover ? materialService.getCoverUrl(data.id) : ''
     }
 

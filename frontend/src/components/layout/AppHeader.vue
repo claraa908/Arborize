@@ -18,9 +18,6 @@ const roleLabel = computed(() => ({
   ROLE_CIDADAO: 'Cidadão',
   ROLE_ADMINISTRADOR_AMMA: 'Administrador da AMMA',
   ROLE_FUNCIONARIO_AMMA: 'Funcionário da AMMA',
-  ROLE_AMMA: 'Funcionário da AMMA',
-  ROLE_IFCE_GESTOR: 'Gestor do Laboratório IFCE',
-  ROLE_IFCE_BOLSISTA: 'Bolsista IFCE'
 }[auth.role ?? 'ROLE_CIDADAO']))
 
 const navigateToProfile = () => {

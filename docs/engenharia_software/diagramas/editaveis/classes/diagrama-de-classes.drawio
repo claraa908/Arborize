@@ -383,7 +383,7 @@
         <mxCell id="rolehead" value="«enumeration»&#10;UsuarioRole" style="rounded=0;fillColor=#dfeddd;strokeColor=#52675b;strokeWidth=2;fontStyle=1;fontSize=22;whiteSpace=wrap;html=0;fontFamily=Arial;fontColor=#263b34;" vertex="1" parent="role">
           <mxGeometry x="0" y="0" width="480" height="52" as="geometry" />
         </mxCell>
-        <mxCell id="roleattrs" value="CIDADAO&#10;ADMINISTRADOR_AMMA&#10;FUNCIONARIO_AMMA&#10;AMMA&#10;GESTOR_IFCE&#10;IFCE_GESTOR&#10;BOLSISTA_IFCE&#10;IFCE_BOLSISTA" style="text;html=0;align=left;verticalAlign=top;fontSize=21;fontColor=#263b34;spacing=0;shape=label;strokeColor=none;fontFamily=Arial;fontColor=#263b34;fillColor=none;" vertex="1" parent="role">
+        <mxCell id="roleattrs" value="CIDADAO&#10;ADMINISTRADOR_AMMA&#10;FUNCIONARIO_AMMA&#10;GESTOR_IFCE&#10;BOLSISTA_IFCE" style="text;html=0;align=left;verticalAlign=top;fontSize=21;fontColor=#263b34;spacing=0;shape=label;strokeColor=none;fontFamily=Arial;fontColor=#263b34;fillColor=none;" vertex="1" parent="role">
           <mxGeometry x="12" y="61" width="456" height="200" as="geometry" />
         </mxCell>
         <mxCell id="empresa" value="" style="group;fillColor=none;strokeColor=none;" vertex="1" parent="1">

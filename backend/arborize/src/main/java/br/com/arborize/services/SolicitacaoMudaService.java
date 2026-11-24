@@ -1,6 +1,7 @@
 package br.com.arborize.services;
 
 import br.com.arborize.dtos.request.SolicitacaoMudaRequest;
+import br.com.arborize.dtos.request.AcompanharSolicitacaoMudaRequest;
 import br.com.arborize.dtos.response.ConversaoReciclagemResponse;
 import br.com.arborize.dtos.response.SolicitacaoMudaResponse;
 import br.com.arborize.entities.Especie;
@@ -17,9 +18,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Map;
+import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 public class SolicitacaoMudaService {
+    private static final Pattern PROTOCOLO_PATTERN = Pattern.compile("SOL-\\d{4}-(\\d{4,})");
     private final EspecieRepository especieRepository;
     private final SolicitacaoMudaRepository solicitacaoRepository;
     private final SolicitacaoMudaMapper mapper;
@@ -74,6 +79,35 @@ public class SolicitacaoMudaService {
 
         SolicitacaoMuda saved = solicitacaoRepository.save(solicitacao);
         return mapper.toResponse(saved);
+    }
+
+    @Transactional(readOnly = true)
+    public SolicitacaoMudaResponse acompanhar(AcompanharSolicitacaoMudaRequest request) {
+        String protocolo = request.protocolo().trim().toUpperCase(Locale.ROOT);
+        Matcher matcher = PROTOCOLO_PATTERN.matcher(protocolo);
+        if (!matcher.matches()) throw solicitacaoNaoEncontrada();
+
+        long id;
+        try {
+            id = Long.parseLong(matcher.group(1));
+        } catch (NumberFormatException exception) {
+            throw solicitacaoNaoEncontrada();
+        }
+
+        SolicitacaoMuda solicitacao = solicitacaoRepository.findById(id)
+                .filter(item -> mapper.toResponse(item).protocolo().equals(protocolo))
+                .filter(item -> item.getCpf().equals(digitsOnly(request.cpf())))
+                .orElseThrow(this::solicitacaoNaoEncontrada);
+        return mapper.toResponse(solicitacao);
+    }
+
+    private SolicitacaoMudaException solicitacaoNaoEncontrada() {
+        return new SolicitacaoMudaException(
+                HttpStatus.NOT_FOUND,
+                "SOLICITACAO_NOT_FOUND",
+                "NÃ£o encontramos uma solicitaÃ§Ã£o com esses dados.",
+                Map.of()
+        );
     }
 
     private void validateQuantity(int quantity) {

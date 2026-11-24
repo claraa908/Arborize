@@ -3,6 +3,7 @@ package br.com.arborize.controllers;
 import br.com.arborize.dtos.response.*;
 import br.com.arborize.enums.*;
 import br.com.arborize.exceptions.EntradaInventarioInvalidaException;
+import br.com.arborize.exceptions.GlobalExceptionHandler;
 import br.com.arborize.services.ArvoreService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

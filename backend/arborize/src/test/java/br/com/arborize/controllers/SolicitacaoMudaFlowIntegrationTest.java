@@ -1,5 +1,6 @@
 package br.com.arborize.controllers;
 
+import br.com.arborize.migrations.PostgresTestSchema;
 import br.com.arborize.entities.Especie;
 import br.com.arborize.entities.SolicitacaoMuda;
 import br.com.arborize.repositories.EspecieRepository;
@@ -7,6 +8,7 @@ import br.com.arborize.repositories.SolicitacaoMudaRepository;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,9 @@ import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 
 import java.util.Map;
 
@@ -27,9 +32,21 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@EnabledIfEnvironmentVariable(named = "ARBORIZE_MIGRATION_TEST_URL", matches = ".+")
 class SolicitacaoMudaFlowIntegrationTest {
     private static final String TEST_CPF = "52998224725";
     private static final String TEST_PHONE = "85999999999";
+    private static String schema;
+
+    @DynamicPropertySource
+    static void configurePostgres(DynamicPropertyRegistry registry) throws Exception {
+        schema = PostgresTestSchema.configure(registry, "arborize_request_test_");
+    }
+
+    @AfterAll
+    static void removeSchema() throws Exception {
+        PostgresTestSchema.remove(schema);
+    }
 
     @Autowired
     private MockMvc mockMvc;

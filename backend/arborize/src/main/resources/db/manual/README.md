@@ -1,13 +1,14 @@
 # Transição territorial de árvores
 
-O script `bairros-referencia-quixada.sql` também é configurado como carga idempotente do
-perfil `local`: o Spring Boot o executa após a atualização do esquema JPA em cada inicialização
-de desenvolvimento. Isso atende bancos novos e esquemas locais existentes sem aplicar a carga
-em `prod`. A mesma carga continua podendo ser executada manualmente conforme o procedimento
-abaixo, após conferir destino e autorização.
+O esquema é gerenciado por Flyway e o Hibernate usa `ddl-auto=validate`. Os scripts desta pasta
+não são executados automaticamente pelo Spring Boot; suas alterações de dados continuam sendo
+procedimentos manuais controlados conforme este documento.
 
-`territorio-arvore-bairro-cep.sql` permanece um procedimento manual; não é carregado pelo Spring
-Boot. `ddl-auto=update` pode criar colunas da entidade, mas não executa backfill.
+`territorio-arvore-bairro-cep.sql` prepara colunas e dados territoriais em uma base legada antes
+de registrar o baseline Flyway, quando essas colunas ainda não existirem. Bancos novos já recebem
+as colunas pelo baseline `V1__baseline.sql`; não execute o script de alteração de esquema sobre
+eles. `bairros-referencia-quixada.sql` continua sendo uma carga manual idempotente, que deve ser
+revisada e aprovada antes de ser aplicada.
 
 `territorio-arvore-bairro-cep.sql` adiciona `bairro_nome`, `cep` e `localidade_rural` como
 colunas anuláveis. O backfill copia `bairros.nome` somente para árvores com `bairro_id` válido e

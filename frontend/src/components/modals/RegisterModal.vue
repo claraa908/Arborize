@@ -108,7 +108,6 @@ const handleSubmit = async () => {
     })
 
     feedback.showToast('Cadastro realizado com sucesso', 'success')
-    emit('close')
     emit('open-login')
   } catch (error) {
     const responseData = error instanceof AxiosError ? error.response?.data : undefined
@@ -121,7 +120,6 @@ const handleSubmit = async () => {
 }
 
 const switchToLogin = () => {
-  emit('close')
   emit('open-login')
 }
 </script>

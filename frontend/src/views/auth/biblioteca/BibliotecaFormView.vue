@@ -92,7 +92,7 @@ onMounted(async () => {
 
     const firstDoc = data.documents?.[0]
     if (firstDoc) {
-      fileName.value = firstDoc.originalFilename || firstDoc.fileName
+      fileName.value = firstDoc.originalFilename || firstDoc.fileName || 'documento.pdf'
     }
 
     const hasCover = (data.documents?.length ?? 0) > 1

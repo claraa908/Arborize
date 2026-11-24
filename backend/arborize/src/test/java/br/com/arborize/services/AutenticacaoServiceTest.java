@@ -52,8 +52,13 @@ class AutenticacaoServiceTest {
     }
 
     @Test
-    void loginMantemRoleAmmaLegada() {
-        verificarRoleDeLogin(UsuarioRole.AMMA, "ROLE_AMMA");
+    void loginRetornaRoleCanonicaDoGestorIfce() {
+        verificarRoleDeLogin(UsuarioRole.GESTOR_IFCE, "ROLE_GESTOR_IFCE");
+    }
+
+    @Test
+    void loginRetornaRoleCanonicaDoBolsistaIfce() {
+        verificarRoleDeLogin(UsuarioRole.BOLSISTA_IFCE, "ROLE_BOLSISTA_IFCE");
     }
 
     @Test
