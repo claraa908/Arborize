@@ -5,19 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="470c54c1-7902-4928-9281-ae11c9f04f04" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/arborize/src/test/java/br/com/arborize/migrations/FlywayMigrationPostgresTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/arborize/src/test/java/br/com/arborize/migrations/FlywayMigrationPostgresTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/arborize/src/test/java/br/com/arborize/migrations/FlywaySchemaValidationPostgresTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/arborize/src/test/java/br/com/arborize/migrations/FlywaySchemaValidationPostgresTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/openspec/changes/fluxo-substituicao-botanica/design.md" beforeDir="false" afterPath="$PROJECT_DIR$/openspec/changes/fluxo-substituicao-botanica/design.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/openspec/changes/fluxo-substituicao-botanica/tasks.md" beforeDir="false" afterPath="$PROJECT_DIR$/openspec/changes/fluxo-substituicao-botanica/tasks.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/.env.development" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/.env.development" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/.gitignore" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
-  </component>
-  <component name="EmbeddingIndexingInfo">
-    <option name="cachedIndexableFilesCount" value="235" />
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -29,124 +25,104 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GitHubPullRequestSearchHistory">{
-  &quot;lastFilter&quot;: {
-    &quot;state&quot;: &quot;OPEN&quot;,
-    &quot;assignee&quot;: &quot;alana102&quot;
-  }
-}</component>
-  <component name="GithubPullRequestsUISettings">{
-  &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/claraa908/Arborize&quot;,
-    &quot;accountId&quot;: &quot;d55d97d5-747e-4ee9-9ab8-72e6aeb30f46&quot;
-  }
-}</component>
   <component name="KubernetesApiPersistence">{}</component>
   <component name="KubernetesApiProvider">{
   &quot;isMigrated&quot;: true
 }</component>
-  <component name="McpProjectServerCommands">
-    <commands />
-    <urls />
-  </component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="1.040400452846789" />
-      <entry key="MS500" value="2.504103479556052" />
-      <entry key="S2" value="6.101804453017067" />
-      <entry key="S5" value="9.195252402314305" />
-      <entry key="S10" value="11.137372006456934" />
-      <entry key="S30" value="12.914736590144923" />
-      <entry key="S60" value="13.438745382002429" />
-      <entry key="M2" value="13.71549432389466" />
-      <entry key="M5" value="14.549330966312441" />
-      <entry key="M10" value="20.141688565445058" />
-      <entry key="M15" value="27.11865162342715" />
-      <entry key="M30" value="42.27678186310008" />
-      <entry key="H1" value="57.62761890123807" />
-      <entry key="H2" value="72.1494640817795" />
-      <entry key="H4" value="84.01436355969956" />
-      <entry key="D1" value="98.4148865111024" />
-      <entry key="W1" value="101.4706570389656" />
+      <entry key="MS100" value="1.0023490974252098" />
+      <entry key="MS500" value="1.9661128131887629" />
+      <entry key="S2" value="5.433354824887903" />
+      <entry key="S5" value="8.354367761727083" />
+      <entry key="S10" value="10.438539769553827" />
+      <entry key="S30" value="12.57923392052799" />
+      <entry key="S60" value="13.254469193095648" />
+      <entry key="M2" value="13.617922808743979" />
+      <entry key="M5" value="13.844863308950318" />
+      <entry key="M10" value="13.92204127032709" />
+      <entry key="M15" value="13.947940304949622" />
+      <entry key="M30" value="13.973926433441068" />
+      <entry key="H1" value="13.986952265394052" />
+      <entry key="H2" value="13.993473392164523" />
+      <entry key="H4" value="13.996736010611219" />
+      <entry key="D1" value="13.999455906535529" />
+      <entry key="W1" value="13.999922270029609" />
     </decayedCancelled>
     <decayedSelected>
-      <entry key="MS100" value="3.8721561666656595E-12" />
-      <entry key="MS500" value="0.005219039368711327" />
-      <entry key="S2" value="0.2687804292720638" />
-      <entry key="S5" value="0.591233532069449" />
-      <entry key="S10" value="0.7689171165148093" />
-      <entry key="S30" value="0.9161357755433611" />
-      <entry key="S60" value="0.957149818762626" />
-      <entry key="M2" value="0.9783441584917594" />
-      <entry key="M5" value="1.0015929345998265" />
-      <entry key="M10" value="1.1394844148166283" />
-      <entry key="M15" value="1.347567704620231" />
-      <entry key="M30" value="1.9525097930472608" />
-      <entry key="H1" value="3.005630610728831" />
-      <entry key="H2" value="4.454407728383495" />
-      <entry key="H4" value="5.814473661660184" />
-      <entry key="D1" value="7.557656644655659" />
-      <entry key="W1" value="7.9345437554223235" />
+      <entry key="MS100" value="0.0" />
+      <entry key="MS500" value="0.0" />
+      <entry key="S2" value="0.0" />
+      <entry key="S5" value="0.0" />
+      <entry key="S10" value="0.0" />
+      <entry key="S30" value="0.0" />
+      <entry key="S60" value="0.0" />
+      <entry key="M2" value="0.0" />
+      <entry key="M5" value="0.0" />
+      <entry key="M10" value="0.0" />
+      <entry key="M15" value="0.0" />
+      <entry key="M30" value="0.0" />
+      <entry key="H1" value="0.0" />
+      <entry key="H2" value="0.0" />
+      <entry key="H4" value="0.0" />
+      <entry key="D1" value="0.0" />
+      <entry key="W1" value="0.0" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="0.1947656556990733" />
-      <entry key="MS500" value="2.180837410776341" />
-      <entry key="S2" value="6.181409691730138" />
-      <entry key="S5" value="9.65496805175317" />
-      <entry key="S10" value="11.82401875114856" />
-      <entry key="S30" value="13.798718774434194" />
-      <entry key="S60" value="14.379146796657638" />
-      <entry key="M2" value="14.685289239747286" />
-      <entry key="M5" value="15.547316888360127" />
-      <entry key="M10" value="21.278719378659023" />
-      <entry key="M15" value="28.464017409437496" />
-      <entry key="M30" value="44.22751704632954" />
-      <entry key="H1" value="60.63194509797347" />
-      <entry key="H2" value="76.60299062369839" />
-      <entry key="H4" value="89.82829858585663" />
-      <entry key="D1" value="105.97243334335005" />
-      <entry key="W1" value="109.40518449925344" />
+      <entry key="MS100" value="0.0038576288512618246" />
+      <entry key="MS500" value="1.2326963577267112" />
+      <entry key="S2" value="5.142821310244722" />
+      <entry key="S5" value="8.215212142277592" />
+      <entry key="S10" value="10.36071229569367" />
+      <entry key="S30" value="12.550412760457544" />
+      <entry key="S60" value="13.239600474568228" />
+      <entry key="M2" value="13.610364827303284" />
+      <entry key="M5" value="13.841809198751088" />
+      <entry key="M10" value="13.920508954511535" />
+      <entry key="M15" value="13.946917583903286" />
+      <entry key="M30" value="13.973414482289488" />
+      <entry key="H1" value="13.986696141776694" />
+      <entry key="H2" value="13.993345293297281" />
+      <entry key="H4" value="13.99667195190693" />
+      <entry key="D1" value="13.999445228796711" />
+      <entry key="W1" value="13.999920744606797" />
     </decayedShown>
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 1
 }</component>
   <component name="ProjectId" id="3KZQFGCjT54lVf1dwzkSAY2n7Cm" />
-  <component name="ProjectLevelVcsManager">
-    <ConfirmationsSetting value="1" id="Add" />
-  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "JUnit.EducationalMaterialControllerTest.executor": "Run",
-    "JUnit.EducationalMaterialServiceTest.executor": "Run",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.MCP Project settings loaded": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "Spring Boot.ArborizeApplication.executor": "Run",
-    "codeWithMe.voiceChat.enabledByDefault": "false",
-    "git-widget-placeholder": "integration",
-    "ignore.virus.scanning.warn.message": "true",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/nixyh/Documents/backup/documentos/GitHub/Arborize",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "python.packages.toolwindow.project.migrated.to.right.top.v2": "true",
-    "settings.editor.selected.configurable": "preferences.pluginManager",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;JUnit.EducationalMaterialControllerTest.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.EducationalMaterialServiceTest.executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;fix/ajustes-es&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/nixyh/Documents/backup/documentos/GitHub/Arborize&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;python.packages.toolwindow.project.migrated.to.right.top.v2&quot;: &quot;true&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;advanced.settings&quot;,
+    &quot;studio.ml.bot.history.legacyLocationsMigrated&quot;: &quot;true&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;C:\\Program Files\\JetBrains\\IntelliJ IDEA 2026.3\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\nixyh\Documents\backup\documentos\GitHub\Arborize" />
@@ -177,9 +153,9 @@
       <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="DEBUG_JUST_MY_CODE" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="RUN_TOOL" value="" />
+      <option name="RUN_AS_SCRIPT" value="" />
       <option name="SCRIPT_NAME" value="" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
@@ -207,17 +183,16 @@
       <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="DEBUG_JUST_MY_CODE" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="RUN_TOOL" value="" />
+      <option name="RUN_AS_SCRIPT" value="" />
       <method v="2" />
     </configuration>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-jdk-30f59d01ecdd-a203e0a19954-intellij.indexing.shared.core-IU-262.10968.63" />
-        <option value="bundled-js-predefined-d6986cc7102b-4abd2a77f808-JavaScript-IU-262.10968.63" />
+        <option value="bundled-jdk-30f59d01ecdd-ac68fc9d2b05-intellij.indexing.shared.core-IU-263.7307.200" />
       </set>
     </attachedChunks>
   </component>
@@ -236,6 +211,7 @@
       <workItem from="1793506022242" duration="206000" />
       <workItem from="1793546459528" duration="1016000" />
       <workItem from="1793559692642" duration="5205000" />
+      <workItem from="1795182126761" duration="125000" />
     </task>
     <servers />
   </component>

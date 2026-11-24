@@ -1,5 +1,6 @@
-package br.com.arborize.controllers;
+package br.com.arborize.exceptions;
 
+import br.com.arborize.controllers.DashboardController;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.web.bind.MethodArgumentNotValidException;

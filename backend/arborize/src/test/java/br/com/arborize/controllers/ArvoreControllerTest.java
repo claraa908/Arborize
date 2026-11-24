@@ -5,6 +5,7 @@ import br.com.arborize.dtos.response.ArvoreResponseDTO;
 import br.com.arborize.dtos.response.EspecieIdentificacaoResponseDTO;
 import br.com.arborize.enums.ClassificacaoTerritorial;
 import br.com.arborize.enums.CondicaoFitossanitaria;
+import br.com.arborize.exceptions.GlobalExceptionHandler;
 import br.com.arborize.services.ArvoreService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

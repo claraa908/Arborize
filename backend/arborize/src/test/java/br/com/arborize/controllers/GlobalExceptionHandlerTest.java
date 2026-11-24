@@ -1,6 +1,7 @@
 package br.com.arborize.controllers;
 
 import br.com.arborize.exceptions.EntradaInventarioInvalidaException;
+import br.com.arborize.exceptions.GlobalExceptionHandler;
 import br.com.arborize.services.*;
 import br.com.arborize.dtos.request.ArvoreCadastroRequestDTO;
 import br.com.arborize.enums.ClassificacaoTerritorial;
@@ -16,7 +17,6 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import java.util.List;
 
 import static org.hamcrest.Matchers.*;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
