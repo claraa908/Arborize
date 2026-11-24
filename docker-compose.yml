@@ -26,7 +26,7 @@ services:
       - postgres
 
   minio:
-    image: cgr.dev/chainguard/minio:latest
+    image: minio/minio
     container_name: arborize-minio
     environment:
       MINIO_ROOT_USER: minioadmin
