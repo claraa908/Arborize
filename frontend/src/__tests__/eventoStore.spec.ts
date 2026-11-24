@@ -135,4 +135,56 @@ describe('eventoStore', () => {
     expect(store.isLoading).toBe(false)
     expect(toast).toHaveBeenCalledWith(expect.stringContaining('excluir'), 'error')
   })
+
+  it('expõe estado de erro quando fetchEventos falha e limpa ao recuperar', async () => {
+    const store = useEventoStore()
+    vi.spyOn(eventoService, 'getAll')
+      .mockRejectedValueOnce(new Error('offline'))
+      .mockResolvedValueOnce([evento])
+
+    await store.fetchEventos()
+    expect(store.error).toContain('Não foi possível carregar')
+
+    await store.fetchEventos()
+    expect(store.error).toBeNull()
+    expect(store.eventos).toEqual([evento])
+  })
+
+  it('carrega evento individual, diferencia 404 de erro genérico e ignora respostas obsoletas', async () => {
+    const store = useEventoStore()
+    const evento2: EventoDTO = { ...evento, id: 8, nome: 'Segundo evento' }
+
+    let resolvePrimeiro!: (value: EventoDTO) => void
+    const primeiraPromessa = new Promise<EventoDTO>((resolve) => {
+      resolvePrimeiro = resolve
+    })
+
+    const getById = vi
+      .spyOn(eventoService, 'getById')
+      .mockReturnValueOnce(primeiraPromessa)
+      .mockResolvedValueOnce(evento2)
+
+    const req1 = store.fetchEventoById(7)
+    const req2 = store.fetchEventoById(8)
+
+    await req2
+    resolvePrimeiro(evento)
+    await req1
+
+    expect(getById).toHaveBeenCalledTimes(2)
+    expect(store.eventoAtual).toEqual(evento2)
+    expect(store.isLoadingDetail).toBe(false)
+    expect(store.detailError).toBeNull()
+
+    getById.mockRejectedValueOnce({ response: { status: 404 } })
+    expect(await store.fetchEventoById(999)).toBeNull()
+    expect(store.eventoAtual).toBeNull()
+    expect(store.detailStatus).toBe(404)
+    expect(store.detailError).toContain('não encontrado')
+
+    getById.mockRejectedValueOnce(new Error('network'))
+    expect(await store.fetchEventoById(1000)).toBeNull()
+    expect(store.detailStatus).toBeNull()
+    expect(store.detailError).toContain('Não foi possível carregar')
+  })
 })

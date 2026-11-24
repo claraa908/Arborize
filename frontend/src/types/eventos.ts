@@ -1,10 +1,18 @@
 export type EventoStatus = 'PLANEJADO' | 'CONFIRMADO' | 'ENCERRADO' | 'CANCELADO';
 
+export interface EventoDocumentoDTO {
+  id?: number;
+  contentType?: string;
+  originalFilename?: string;
+  fileName?: string;
+}
+
 export interface EventoDTO {
   id?: number | string;
   nome: string;
   descricao: string;
   bannerUrl?: string;
+  documentos?: EventoDocumentoDTO[];
   dataInicio: string;
   dataTermino: string;
   localConcentracao: string;

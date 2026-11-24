@@ -22,7 +22,7 @@ const isMobileMenuOpen = ref(false)
 
 const navLinks: NavLink[] = [
   { label: 'Início', routeName: 'home' },
-  { label: 'Eventos' },
+  { label: 'Eventos', routeName: 'eventos-publico' },
   { label: 'Arborização', routeName: 'arborizacao' },
   { label: 'Biblioteca Digital', routeName: 'biblioteca-catalogo' },
   { label: 'Sobre Nós', routeName: 'sobre' }
@@ -31,6 +31,7 @@ const navLinks: NavLink[] = [
 const isLinkActive = (link: NavLink) => {
   if (!link.routeName) return false
   if (route.name === link.routeName) return true
+  if (link.routeName === 'eventos-publico' && route.path.startsWith('/eventos')) return true
   if (link.routeName === 'arborizacao' && route.path.startsWith('/arborizacao')) return true
   if (link.routeName === 'home' && (route.name === 'home' || route.path === '/')) return true
   return false
