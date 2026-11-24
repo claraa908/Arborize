@@ -6,7 +6,7 @@ Atualmente, os perfis de bolsista do IFCE herdam acesso às telas administrativa
 
 ## What Changes
 
-- Restringir os papéis `ROLE_BOLSISTA_IFCE` e `ROLE_IFCE_BOLSISTA` ao fluxo do Viveiro e ao perfil próprio, mantendo ambos como aliases do perfil de bolsista já reconhecidos pelo sistema.
+- Restringir o papel canônico `ROLE_BOLSISTA_IFCE` ao fluxo do Viveiro e ao perfil próprio.
 - Após o login, direcionar para a tela do Viveiro. Em uma sessão autenticada, permitir a página pública inicial, os fluxos públicos de Arborização e Biblioteca Digital e a tela de perfil próprio; as demais rotas continuam redirecionando para o Viveiro. Manter acessíveis as subpáginas necessárias do Viveiro, como cadastro, detalhes e edição de espécies.
 - Exibir somente a opção Viveiro no menu lateral, manter no cabeçalho o atalho para a página pública, o acesso ao perfil próprio e o encerramento da sessão.
 - Negar no backend, com resposta de acesso proibido, chamadas autenticadas do bolsista a endpoints fora do Viveiro, do perfil próprio e dos endpoints públicos explicitamente necessários à Arborização e à Biblioteca Digital.

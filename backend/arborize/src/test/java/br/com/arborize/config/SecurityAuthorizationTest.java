@@ -1,6 +1,7 @@
 package br.com.arborize.config;
 
 import br.com.arborize.services.TokenService;
+import br.com.arborize.security.CompensacaoSecurityProblemHandler;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
@@ -34,6 +35,9 @@ class SecurityAuthorizationTest {
 
     @MockitoBean
     private TokenService tokenService;
+
+    @MockitoBean
+    private CompensacaoSecurityProblemHandler compensacaoSecurityProblemHandler;
 
     @Autowired
     private SecurityProbeController securityProbeController;

@@ -31,9 +31,16 @@ const menuItems: MenuItem[] = [
 ]
 
 const visibleMenuItems = computed(() => {
-  const items = auth.canManageIfceTeam
-    ? [...menuItems.slice(0, 1), { name: 'Equipe do Laboratório', icon: 'groups', routeName: 'ifce-equipe' }, ...menuItems.slice(1)]
-    : [...menuItems]
+  if (auth.isIfceScholar) {
+    return menuItems.filter((item) => item.routeName === 'viveiro')
+  }
+
+  if (auth.canManageIfceTeam) {
+    return menuItems.filter((item) => item.routeName === 'viveiro')
+      .concat({ name: 'Equipe do Laboratório', icon: 'groups', routeName: 'ifce-equipe' })
+  }
+
+  const items = [...menuItems]
   return auth.canManageCompensacao ? items : items.filter((item) => item.routeName !== 'compensacao-lista')
 })
 
@@ -167,6 +174,8 @@ const isActive = (routeName?: string) => {
   <button
     v-if="windowWidth < 768"
     @click="isMobileOpen = true"
+    aria-label="Abrir menu de navegação"
+    :aria-expanded="isMobileOpen"
     class="fixed top-5 left-5 w-12 h-12 bg-amma-green text-white shadow-lg flex items-center justify-center z-40 efeito-zoom border-2 border-white"
     style="border-radius: 10px 30px 10px 30px;"
   >
@@ -188,6 +197,7 @@ const isActive = (routeName?: string) => {
         <div class="p-6 flex items-center justify-between border-b border-white/10">
           <button
             @click="isMobileOpen = false"
+            aria-label="Fechar menu de navegação"
             class="w-12 h-12 bg-amma-green-dark border-2 border-white text-white flex items-center justify-center shadow-lg efeito-zoom"
             style="border-radius: 30px 10px 30px 30px;"
           >

@@ -11,7 +11,10 @@ import { useAssistentePlantioStore } from '@/stores/assistentePlantioStore'
 import type { SpeciesRecommendation } from '@/types/assistentePlantio'
 
 vi.mock('@/services/recomendacaoService', () => ({ buscarRecomendacoes: vi.fn() }))
-vi.mock('vue-router', () => ({ useRoute: vi.fn(), useRouter: vi.fn() }))
+vi.mock('vue-router', async (importOriginal) => {
+  const original = await importOriginal<typeof import('vue-router')>()
+  return { ...original, useRoute: vi.fn(), useRouter: vi.fn() }
+})
 
 const especie: SpeciesRecommendation = {
   id: 15,
@@ -41,7 +44,7 @@ function mountWithStore(component: typeof AssistentePlantioView | typeof Recomen
   return mount(component, {
     global: {
       plugins: [pinia],
-      stubs: { EspecieRecomendadaCard: SpeciesCardStub },
+      stubs: { EspecieRecomendadaCard: SpeciesCardStub, RouterLink: true },
     },
   })
 }

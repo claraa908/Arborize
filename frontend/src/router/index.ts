@@ -28,7 +28,8 @@ const routes: RouteRecordRaw[] = [
         {
           path: 'arborizacao',
           name: 'arborizacao',
-          component: () => import('@/views/public/arborizacao/ArborizacaoInicioView.vue')
+          component: () => import('@/views/public/arborizacao/ArborizacaoInicioView.vue'),
+          meta: { requiresAuth: true }
         },
         {
           path: 'arborizacao/substituicao-nim',

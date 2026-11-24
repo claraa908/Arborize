@@ -7,7 +7,7 @@ Define como o sistema limita páginas e APIs conforme o perfil autenticado. Para
 ## ADDED Requirements
 
 ### Requirement: Login de bolsista direciona ao Viveiro
-O sistema MUST direcionar usuários autenticados com papel `ROLE_BOLSISTA_IFCE` ou `ROLE_IFCE_BOLSISTA` ao Viveiro após o login, independentemente do destino de retorno informado.
+O sistema MUST direcionar usuários autenticados com papel `ROLE_BOLSISTA_IFCE` ao Viveiro após o login, independentemente do destino de retorno informado.
 
 #### Scenario: Login de bolsista sem destino anterior
 - **WHEN** um usuário com um dos papéis de bolsista conclui o login
@@ -33,7 +33,7 @@ Durante a sessão, o bolsista MUST acessar as páginas do Viveiro, seu perfil pr
 - **THEN** o sistema exibe a página selecionada e seus fluxos públicos associados, mantendo as demais rotas bloqueadas
 
 ### Requirement: Bolsista vê somente a navegação do Viveiro
-Para ambos os papéis de bolsista do IFCE, a navegação autenticada MUST exibir somente a entrada Viveiro no menu lateral. O cabeçalho MUST exibir o atalho para a página pública inicial, o atalho Meu perfil e o controle de encerramento de sessão; o atalho Meu perfil MUST abrir somente os dados da própria conta. Os demais atalhos de navegação administrativa MUST permanecer ocultos. Na página pública, as opções Arborização e Biblioteca Digital MUST funcionar para o bolsista.
+Para `ROLE_BOLSISTA_IFCE`, a navegação autenticada MUST exibir somente a entrada Viveiro no menu lateral. O cabeçalho MUST exibir o atalho para a página pública inicial, o atalho Meu perfil e o controle de encerramento de sessão; o atalho Meu perfil MUST abrir somente os dados da própria conta. Os demais atalhos de navegação administrativa MUST permanecer ocultos. Na página pública, as opções Arborização e Biblioteca Digital MUST funcionar para o bolsista.
 
 #### Scenario: Menu do bolsista
 - **WHEN** um usuário autenticado como bolsista visualiza o layout do sistema
@@ -51,7 +51,7 @@ O sistema MUST permitir ao bolsista as páginas existentes que compõem o fluxo 
 - **THEN** a tela institucional carrega os dados da própria conta e oferece as ações existentes de edição do perfil e da senha
 
 ### Requirement: APIs fora do Viveiro são proibidas para bolsistas
-O backend MUST negar com HTTP 403 requisições de bolsistas fora da lista de APIs do Viveiro, do perfil próprio, de Arborização pública, Biblioteca Digital pública, login e preflight CORS. As APIs de perfil permitidas MUST limitar operações à identidade autenticada (`/usuarios/me`); endpoints de outras contas e todas as demais APIs, inclusive operações administrativas da Biblioteca, MUST permanecer bloqueadas.
+O backend MUST negar com HTTP 403 requisições de `ROLE_BOLSISTA_IFCE` fora da lista de APIs do Viveiro, do perfil próprio, de Arborização pública, Biblioteca Digital pública, login e preflight CORS. As APIs de perfil permitidas MUST limitar operações à identidade autenticada (`/usuarios/me`); endpoints de outras contas e todas as demais APIs, inclusive operações administrativas da Biblioteca, MUST permanecer bloqueadas.
 
 #### Scenario: Bolsista acessa APIs das áreas permitidas
 - **WHEN** um usuário autenticado como bolsista solicita uma destas APIs públicas:
@@ -78,5 +78,5 @@ O sistema MUST manter para visitantes sem sessão e para os demais papéis as pe
 - **THEN** o acesso continua disponível conforme as regras atuais
 
 #### Scenario: Outro perfil preserva seu fluxo
-- **WHEN** um usuário autenticado com papel diferente dos dois papéis de bolsista acessa uma rota ou endpoint permitido pelas regras atuais
+- **WHEN** um usuário autenticado com papel diferente de `ROLE_BOLSISTA_IFCE` acessa uma rota ou endpoint permitido pelas regras atuais
 - **THEN** a autorização e a navegação continuam conforme essas regras

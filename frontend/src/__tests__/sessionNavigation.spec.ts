@@ -83,7 +83,7 @@ describe('navegação real por sessão', () => {
 
     await router.push('/arborizacao')
     expect(router.currentRoute.value.name).toBe('home')
-    expect(router.currentRoute.value.query).toEqual({ auth: 'required', redirect: '/arborizacao/assistente' })
+    expect(router.currentRoute.value.query).toEqual({ auth: 'required', redirect: '/arborizacao' })
   })
 
   it.each(USER_ROLES)('direciona o login de %s, restaura sessão e mantém restrições específicas', async (role) => {
@@ -137,7 +137,7 @@ describe('navegação real por sessão', () => {
     for (const [path, name] of [
       ['/biblioteca', 'biblioteca-catalogo'],
       ['/biblioteca/12', 'biblioteca-documento'],
-      ['/arborizacao', 'arborizacao-assistente'],
+      ['/arborizacao', 'arborizacao'],
       ['/arborizacao/assistente', 'arborizacao-assistente'],
       ['/arborizacao/recomendacoes', 'arborizacao-recomendacoes'],
       ['/arborizacao/solicitar-muda', 'solicitar-muda'],
@@ -171,7 +171,7 @@ describe('navegação real por sessão', () => {
       ['/', 'home'],
       ['/biblioteca', 'biblioteca-catalogo'],
       ['/biblioteca/12', 'biblioteca-documento'],
-      ['/arborizacao', 'arborizacao-assistente'],
+      ['/arborizacao', 'arborizacao'],
       ['/arborizacao/assistente', 'arborizacao-assistente'],
       ['/arborizacao/recomendacoes', 'arborizacao-recomendacoes'],
       ['/arborizacao/solicitar-muda', 'solicitar-muda'],
@@ -349,6 +349,29 @@ describe('componentes reais de navegação', () => {
       expect(navigation[1]!.text()).not.toContain('Laudos')
       expect(navigation[1]!.text()).not.toContain('Eventos')
       expect(wrapper.find('[aria-label="Fechar menu de navegação"]').exists()).toBe(true)
+    } finally {
+      wrapper.unmount()
+      Object.defineProperty(window, 'innerWidth', { configurable: true, value: originalWidth })
+    }
+  })
+
+  it('mostra somente Viveiro no menu desktop do bolsista canônico', async () => {
+    const { router, pinia } = await session('ROLE_BOLSISTA_IFCE', '/sistema/viveiro')
+    const originalWidth = window.innerWidth
+    Object.defineProperty(window, 'innerWidth', { configurable: true, value: 1280 })
+    const wrapper = mount(AppSidebar, { global: { plugins: [pinia, router] } })
+
+    try {
+      await nextTick()
+      const menuText = wrapper.find('nav').text()
+      expect(menuText).toContain('Viveiro')
+      expect(menuText).not.toContain('Dashboard e Relatórios')
+      expect(menuText).not.toContain('Biblioteca Digital')
+      expect(menuText).not.toContain('Inventário')
+      expect(menuText).not.toContain('Solicitações')
+      expect(menuText).not.toContain('Laudos')
+      expect(menuText).not.toContain('Eventos')
+      expect(wrapper.find('[aria-label="Abrir menu de navegação"]').exists()).toBe(false)
     } finally {
       wrapper.unmount()
       Object.defineProperty(window, 'innerWidth', { configurable: true, value: originalWidth })
