@@ -26,6 +26,9 @@ public interface MovimentacaoMudaRepository extends JpaRepository<MovimentacaoMu
             @Param("inicio") LocalDate inicio,
             @Param("fim") LocalDate fim);
 
+    @Query("select coalesce(sum(m.quantidade), 0) from MovimentacaoMuda m where m.tipo = :tipo")
+    long somarQuantidadePorTipo(@Param("tipo") TipoMovimentacaoMuda tipo);
+
     @Override
     Page<MovimentacaoMuda> findAll(Specification<MovimentacaoMuda> specification, Pageable pageable);
 }

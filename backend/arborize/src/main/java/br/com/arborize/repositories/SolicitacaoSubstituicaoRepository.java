@@ -13,4 +13,6 @@ public interface SolicitacaoSubstituicaoRepository extends JpaRepository<Solicit
     List<SolicitacaoSubstituicao> findAllByOrderByCriadaEmDesc();
 
     List<SolicitacaoSubstituicao> findByStatusOrderByCriadaEmDesc(SubstituicaoBotanicaStatus status);
+
+    long countByStatus(SubstituicaoBotanicaStatus status);
 }

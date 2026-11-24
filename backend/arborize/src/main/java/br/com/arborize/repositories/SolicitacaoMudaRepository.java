@@ -20,4 +20,7 @@ public interface SolicitacaoMudaRepository extends JpaRepository<SolicitacaoMuda
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select s from SolicitacaoMuda s where s.id = :id")
     Optional<SolicitacaoMuda> buscarParaDecisao(@Param("id") long id);
+
+    @Query("select coalesce(sum(s.totalRecicaveis), 0) from SolicitacaoMuda s")
+    long somarTotalRecicaveis();
 }
