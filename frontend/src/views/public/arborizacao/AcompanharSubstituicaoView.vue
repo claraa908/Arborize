@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRoute } from 'vue-router'
+import AppBreadcrumb from '@/components/ui/AppBreadcrumb.vue'
 import { useFeedbackStore } from '@/stores/feedbackStore'
 import AcompanharRequerimentoForm from '@/components/arborizacao/AcompanharRequerimentoForm.vue'
 import { substituicaoBotanicaService } from '@/services/substituicaoBotanicaService'
@@ -64,10 +65,11 @@ function formatarData(value: string) {
 </script>
 
 <template>
-  <section class="mx-auto w-full max-w-5xl min-w-0 py-6 md:py-10" aria-labelledby="tracking-substitution-title">
-    <header class="mb-6">
-      <RouterLink :to="{ name: 'arborizacao' }" class="inline-flex min-h-11 items-center gap-2 rounded-btn px-2 text-sm font-semibold text-amma-green-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amma-green"><span class="material-symbols-outlined" aria-hidden="true">arrow_back</span> Arborização</RouterLink>
-      <p class="mt-4 text-xs font-bold uppercase tracking-wider text-amma-green">Substituição botânica</p>
+  <div class="flex w-full flex-col">
+    <AppBreadcrumb class="-mx-6 -mt-2 mb-2 md:-mx-10" :items="[{ label: 'Arborização', icon: 'park', routeName: 'arborizacao' }, { label: 'Acompanhar requerimento' }]" />
+    <section class="mx-auto w-full max-w-5xl min-w-0 py-6 md:py-10" aria-labelledby="tracking-substitution-title">
+      <header class="mb-6">
+        <p class="text-xs font-bold uppercase tracking-wider text-amma-green">Substituição botânica</p>
       <h1 id="tracking-substitution-title" class="mt-2 text-2xl font-bold text-amma-green-dark">Acompanhar requerimento</h1>
       <p class="mt-2 text-sm text-grey-text">Informe o protocolo e o CPF usado no envio. A consulta mostra apenas o andamento público do pedido.</p>
     </header>
@@ -110,5 +112,6 @@ function formatarData(value: string) {
         <p class="mt-5 rounded-btn border border-feedback-info-border bg-feedback-info-bg p-4 text-sm leading-5 text-feedback-info">A AMMA atualiza o andamento após cada etapa. Guarde seu protocolo para consultar novamente.</p>
       </section>
     </div>
-  </section>
+    </section>
+  </div>
 </template>

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import AppBreadcrumb from '@/components/ui/AppBreadcrumb.vue'
 import { useAuthStore } from '@/stores/authStore'
 import { useFeedbackStore } from '@/stores/feedbackStore'
 import { substituicaoBotanicaService } from '@/services/substituicaoBotanicaService'
@@ -119,12 +120,11 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <section class="mx-auto w-full max-w-5xl min-w-0 py-6 md:py-10" aria-labelledby="nim-request-title">
-    <header class="mb-6">
-      <RouterLink :to="{ name: 'arborizacao' }" class="inline-flex min-h-11 items-center gap-2 rounded-btn px-2 text-sm font-semibold text-amma-green-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amma-green">
-        <span class="material-symbols-outlined" aria-hidden="true">arrow_back</span> Arborização
-      </RouterLink>
-      <p class="mt-4 text-xs font-bold uppercase tracking-wider text-amma-green">Requerimento do cidadão</p>
+  <div class="flex w-full flex-col">
+    <AppBreadcrumb class="-mx-6 -mt-2 mb-2 md:-mx-10" :items="[{ label: 'Arborização', icon: 'park', routeName: 'arborizacao' }, { label: 'Retirada de Nim Indiano' }]" />
+    <section class="mx-auto w-full max-w-5xl min-w-0 py-6 md:py-10" aria-labelledby="nim-request-title">
+      <header class="mb-6">
+        <p class="text-xs font-bold uppercase tracking-wider text-amma-green">Requerimento do cidadão</p>
       <h1 id="nim-request-title" class="mt-2 text-2xl font-bold text-amma-green-dark">Solicitar retirada de Nim Indiano</h1>
       <p class="mt-2 max-w-3xl text-sm leading-6 text-grey-text">Informe onde a árvore está. A AMMA vai analisar o pedido e, se aprovado, conduzir o laudo e as etapas seguintes.</p>
     </header>
@@ -183,5 +183,6 @@ onBeforeUnmount(() => {
         </button>
       </div>
     </form>
-  </section>
+    </section>
+  </div>
 </template>

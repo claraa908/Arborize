@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import AppBreadcrumb from '@/components/ui/AppBreadcrumb.vue'
 import { useFeedbackStore } from '@/stores/feedbackStore'
 import AcompanharRequerimentoForm from '@/components/arborizacao/AcompanharRequerimentoForm.vue'
 import { useAssistentePlantioStore } from '@/stores/assistentePlantioStore'
@@ -105,12 +106,11 @@ async function voltarAoInicio() {
 </script>
 
 <template>
-  <section class="mx-auto w-full max-w-5xl min-w-0 py-6 md:py-10" aria-labelledby="tracking-title">
-    <header class="mb-7 min-w-0">
-      <RouterLink :to="{ name: 'arborizacao' }" class="inline-flex min-h-11 items-center gap-2 rounded-btn px-2 text-sm font-semibold text-amma-green-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amma-green" @click="resetFluxo">
-        <span class="material-symbols-outlined" aria-hidden="true">arrow_back</span> Arborização
-      </RouterLink>
-      <p class="mt-4 text-xs font-bold uppercase tracking-wider text-amma-green">Solicitação de muda</p>
+  <div class="flex w-full flex-col">
+    <AppBreadcrumb class="-mx-6 -mt-2 mb-2 md:-mx-10" :items="[{ label: 'Arborização', icon: 'park', onClick: voltarAoInicio }, { label: 'Acompanhar pedido de muda' }]" />
+    <section class="mx-auto w-full max-w-5xl min-w-0 py-6 md:py-10" aria-labelledby="tracking-title">
+      <header class="mb-7 min-w-0">
+        <p class="text-xs font-bold uppercase tracking-wider text-amma-green">Solicitação de muda</p>
       <h1 id="tracking-title" class="mt-2 text-2xl font-bold text-amma-green-dark">Acompanhar pedido de muda</h1>
       <p class="mt-2 text-sm text-grey-text">Consulte o andamento usando o protocolo e o CPF informado no pedido.</p>
     </header>
@@ -171,5 +171,6 @@ async function voltarAoInicio() {
       <button type="button" class="rounded-btn border-2 border-amma-green bg-white px-5 py-2.5 font-bold text-amma-green hover:bg-amma-green-lighter focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amma-green" @click="solicitarOutraMuda">Solicitar outra muda</button>
       <button type="button" class="rounded-btn bg-amma-green px-6 py-2.5 font-bold text-white hover:bg-amma-green-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amma-green" @click="voltarAoInicio">Voltar para Arborização</button>
     </div>
-  </section>
+    </section>
+  </div>
 </template>

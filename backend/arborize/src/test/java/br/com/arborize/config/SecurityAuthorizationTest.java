@@ -45,6 +45,8 @@ class SecurityAuthorizationTest {
     @Test
     void APIsDeArborizacaoExigemAutenticacaoEContinuamDisponiveisAosPerfisAutenticados() throws Exception {
         mockMvc.perform(post("/api/assistente-plantio/recomendar"))
+                .andExpect(status().isOk());
+        mockMvc.perform(post("/api/substituicoes-botanicas"))
                 .andExpect(status().isUnauthorized());
         mockMvc.perform(get("/api/solicitacoes-muda/conversao"))
                 .andExpect(status().isUnauthorized());

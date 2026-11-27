@@ -43,13 +43,13 @@ const routes: RouteRecordRaw[] = [
         {
           path: 'arborizacao',
           name: 'arborizacao',
-          component: () => import('@/views/public/arborizacao/ArborizacaoInicioView.vue'),
-          meta: { requiresAuth: true }
+          component: () => import('@/views/public/arborizacao/ArborizacaoInicioView.vue')
         },
         {
           path: 'arborizacao/substituicao-nim',
           name: 'arborizacao-substituicao-nim',
-          component: () => import('@/views/public/arborizacao/SolicitarSubstituicaoView.vue')
+          component: () => import('@/views/public/arborizacao/SolicitarSubstituicaoView.vue'),
+          meta: { requiresAuth: true }
         },
         {
           path: 'arborizacao/substituicao-nim/acompanhar',
@@ -59,14 +59,12 @@ const routes: RouteRecordRaw[] = [
         {
           path: 'arborizacao/assistente',
           name: 'arborizacao-assistente',
-          component: () => import('@/views/public/arborizacao/AssistentePlantioView.vue'),
-          meta: { requiresAuth: true }
+          component: () => import('@/views/public/arborizacao/AssistentePlantioView.vue')
         },
         {
           path: 'arborizacao/recomendacoes',
           name: 'arborizacao-recomendacoes',
-          component: () => import('@/views/public/arborizacao/RecomendacoesView.vue'),
-          meta: { requiresAuth: true }
+          component: () => import('@/views/public/arborizacao/RecomendacoesView.vue')
         },
         {
           path: 'arborizacao/solicitar-muda',
@@ -267,6 +265,12 @@ const routes: RouteRecordRaw[] = [
           name: 'gestao',
           component: () => import('@/views/auth/GestaoView.vue'),
           meta: { title: 'Painel de Gestão' }
+        },
+        {
+          path: 'novo',
+          name: 'gestao-novo',
+          component: () => import('@/views/auth/GestaoUsuarioFormView.vue'),
+          meta: { title: 'Painel de Gestão' }
         }
       ]
     },
@@ -280,6 +284,12 @@ const routes: RouteRecordRaw[] = [
           name: 'ifce-equipe',
           component: () => import('@/views/auth/GestaoIfceView.vue'),
           meta: { title: 'Equipe do Laboratório' }
+        },
+        {
+          path: 'equipe/novo',
+          name: 'ifce-equipe-novo',
+          component: () => import('@/views/auth/GestaoIfceFormView.vue'),
+          meta: { title: 'Equipe do Laboratório' }
         }
       ]
     }
@@ -287,7 +297,7 @@ const routes: RouteRecordRaw[] = [
 
 export function createAppRouter(history: RouterHistory = createWebHistory(import.meta.env.BASE_URL)) {
   const router = createRouter({ history, routes })
-  router.beforeEach((to) => sessionNavigation(to, useAuthStore()))
+  router.beforeEach((to, from) => sessionNavigation(to, useAuthStore(), from))
   return router
 }
 

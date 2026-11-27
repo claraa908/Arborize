@@ -19,9 +19,9 @@ function toDomainError(error: unknown, fallback: string): SolicitacaoMudaError {
 }
 
 export const solicitacaoMudaService = {
-  async listar(protocolo: string, page: number): Promise<SolicitacaoMudaPagina> {
+  async listar(protocolo: string, page: number, size = 10): Promise<SolicitacaoMudaPagina> {
     try {
-      const config: ApiRequestConfig = { params: { protocolo, page }, suppressGlobalErrorToast: true }
+      const config: ApiRequestConfig = { params: { protocolo, page, size }, suppressGlobalErrorToast: true }
       return (await api.get<SolicitacaoMudaPagina>(gestao, config)).data
     } catch (error) {
       throw toDomainError(error, 'Não foi possível carregar as solicitações.')

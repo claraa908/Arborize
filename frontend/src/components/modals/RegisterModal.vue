@@ -2,16 +2,19 @@
 import { computed, ref, watch } from 'vue'
 import { AxiosError } from 'axios'
 import { cadastrarUsuario } from '@/services/usuarioService'
+import { useAuthStore } from '@/stores/authStore'
 import { useFeedbackStore } from '@/stores/feedbackStore'
 import { formatBrazilianPhone } from '@/utils/phone'
 
 const props = defineProps<{
   isOpen: boolean
+  notice?: string
 }>()
 
 const emit = defineEmits<{
   (e: 'close'): void
   (e: 'open-login'): void
+  (e: 'register-success'): void
 }>()
 
 const nomeCompleto = ref('')
@@ -27,6 +30,7 @@ const showConfirmPassword = ref(false)
 const errorMessage = ref('')
 const isSubmitting = ref(false)
 const attemptedSubmit = ref(false)
+const auth = useAuthStore()
 const feedback = useFeedbackStore()
 
 const isMissing = (value: string) => attemptedSubmit.value && !value.trim()
@@ -107,8 +111,14 @@ const handleSubmit = async () => {
       senha: senha.value
     })
 
-    feedback.showToast('Cadastro realizado com sucesso', 'success')
-    emit('open-login')
+    try {
+      await auth.login({ login: email.value.trim(), senha: senha.value })
+      feedback.showToast('Cadastro realizado com sucesso! Você já está conectado.', 'success')
+      emit('register-success')
+    } catch {
+      feedback.showToast('Cadastro realizado com sucesso! Entre com sua nova conta.', 'success')
+      emit('open-login')
+    }
   } catch (error) {
     const responseData = error instanceof AxiosError ? error.response?.data : undefined
     errorMessage.value = typeof responseData === 'string'
@@ -155,7 +165,16 @@ const switchToLogin = () => {
         </div>
 
         <h2 class="text-3.5xl font-extrabold text-amma-green mb-1 tracking-tight">Criar Conta</h2>
-        <p class="text-xs text-grey-text/80 mb-6 text-center max-w-md">Cadastre-se para solicitar mudas, laudos e acompanhar processos ambientais de forma rápida e segura.</p>
+        <p class="text-xs text-grey-text/80 mb-5 text-center max-w-md">Cadastre-se para solicitar mudas, laudos e acompanhar processos ambientais de forma rápida e segura.</p>
+
+        <div
+          v-if="notice"
+          role="status"
+          class="mb-4 flex w-full items-start gap-2 rounded-btn border border-amma-green-light bg-amma-green-lighter p-3 text-xs font-medium text-amma-green-dark"
+        >
+          <span class="material-symbols-outlined shrink-0 text-[18px] text-amma-green" aria-hidden="true">info</span>
+          <span>{{ notice }}</span>
+        </div>
 
         <!-- Mensagem de erro -->
         <div v-if="errorMessage" class="w-full bg-red-50 border border-red-200 text-red-700 text-xs font-medium rounded-btn p-3.5 mb-4 flex items-center gap-2" role="alert" aria-live="assertive">
@@ -164,7 +183,7 @@ const switchToLogin = () => {
         </div>
 
         <!-- Conteúdo Interno com Rolagem apenas vertical e espaço seguro para o layout -->
-        <div class="w-full overflow-y-auto max-h-[60vh] md:max-h-[65vh] px-1 md:px-2 flex flex-col gap-1.5">
+        <div class="w-full overflow-y-auto overflow-x-hidden max-h-[60vh] md:max-h-[65vh] px-1 md:px-2 flex flex-col gap-1.5">
           <form @submit.prevent="handleSubmit" novalidate class="w-full flex flex-col gap-4">
             
             <!-- Nome Completo -->
@@ -313,7 +332,7 @@ const switchToLogin = () => {
             <button 
               type="submit" 
               :disabled="isSubmitting"
-              class="w-full mt-3 bg-amma-green hover:bg-amma-green-dark text-white font-bold py-3.5 rounded-btn flex items-center justify-center gap-2 shadow-md shadow-emerald-900/10 efeito-zoom cursor-pointer disabled:opacity-60 disabled:cursor-wait"
+              class="w-full mt-3 bg-amma-green hover:bg-amma-green-dark text-white font-bold py-3.5 rounded-btn flex items-center justify-center gap-2 shadow-md shadow-emerald-900/10 hover:shadow-lg transition-colors cursor-pointer disabled:opacity-60 disabled:cursor-wait"
             >
               <span class="material-symbols-outlined text-[22px]">person_add</span>
               <span class="leading-none pt-[2px]">{{ isSubmitting ? 'Cadastrando...' : 'Concluir Cadastro' }}</span>

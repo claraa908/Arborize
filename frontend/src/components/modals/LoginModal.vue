@@ -5,6 +5,7 @@ import { useAuthStore } from '@/stores/authStore'
 
 defineProps<{
   isOpen: boolean
+  notice?: string
 }>()
 
 const emit = defineEmits<{
@@ -66,10 +67,19 @@ const handleSubmit = async () => {
 
         <div class="inline-flex items-center gap-1.5 bg-[#e4efdc] text-emerald-800 text-xs font-semibold px-4 py-1.5 rounded-full mb-4">
           <span class="material-symbols-outlined">verified_user</span>
-          <span class="leading-none pt-[2px]">Portal do Cidadão - AMMA Quixadá</span>
+          <span class="leading-none pt-[2px]">Acesso ao Sistema - AMMA Quixadá</span>
         </div>
 
-        <h2 id="login-title" class="text-3xl font-extrabold text-amma-green mb-8 tracking-tight">Entrar</h2>
+        <h2 id="login-title" class="text-3xl font-extrabold text-amma-green mb-6 tracking-tight">Entrar</h2>
+
+        <div
+          v-if="notice"
+          role="status"
+          class="mb-4 flex w-full items-start gap-2 rounded-btn border border-amma-green-light bg-amma-green-lighter p-3.5 text-xs font-medium text-amma-green-dark"
+        >
+          <span class="material-symbols-outlined shrink-0 text-[18px] text-amma-green" aria-hidden="true">info</span>
+          <span>{{ notice }}</span>
+        </div>
 
         <div v-if="errorMessage" role="alert" aria-live="assertive" class="w-full bg-red-50 border border-red-200 text-red-700 text-sm font-medium rounded-btn p-3.5 mb-4">
           {{ errorMessage }}

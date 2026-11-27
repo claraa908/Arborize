@@ -67,31 +67,49 @@ describe('navegação real por sessão', () => {
     expect(router.currentRoute.value.name).toBe('eventos-publico')
     await router.push('/eventos/12')
     expect(router.currentRoute.value.name).toBe('eventos-publico-detalhes')
-    await router.push('/arborizacao/substituicao-nim')
-    expect(router.currentRoute.value.name).toBe('arborizacao-substituicao-nim')
     await router.push('/arborizacao/substituicao-nim/acompanhar')
     expect(router.currentRoute.value.name).toBe('arborizacao-substituicao-acompanhar')
-    for (const path of ['/perfil', '/sistema', '/sistema/perfil', '/gestao', '/ifce/equipe']) {
-      await router.push(path)
-      expect(router.currentRoute.value.name).toBe('home')
-      expect(router.currentRoute.value.query).toEqual({ auth: 'required', redirect: path })
-    }
-
-    for (const path of [
-      '/arborizacao/assistente',
-      '/arborizacao/recomendacoes',
-      '/arborizacao/solicitar-muda',
-      '/arborizacao/conversao',
-      '/arborizacao/acompanhar',
-    ]) {
+    for (const path of ['/perfil', '/sistema', '/sistema/perfil', '/gestao', '/gestao/novo', '/ifce/equipe', '/ifce/equipe/novo']) {
       await router.push(path)
       expect(router.currentRoute.value.name).toBe('home')
       expect(router.currentRoute.value.query).toEqual({ auth: 'required', redirect: path })
     }
 
     await router.push('/arborizacao')
-    expect(router.currentRoute.value.name).toBe('home')
-    expect(router.currentRoute.value.query).toEqual({ auth: 'required', redirect: '/arborizacao' })
+    expect(router.currentRoute.value.name).toBe('arborizacao')
+    await router.push('/arborizacao/assistente')
+    expect(router.currentRoute.value.name).toBe('arborizacao-assistente')
+    await router.push('/arborizacao/recomendacoes')
+    expect(router.currentRoute.value.name).toBe('arborizacao-recomendacoes')
+
+    await router.push('/arborizacao/solicitar-muda?especieId=15')
+    expect(router.currentRoute.value.name).toBe('arborizacao-recomendacoes')
+    expect(router.currentRoute.value.query).toEqual({
+      auth: 'required',
+      redirect: '/arborizacao/solicitar-muda?especieId=15',
+      motivo: 'solicitar-muda',
+    })
+
+    await router.push('/arborizacao')
+    await router.push('/arborizacao/substituicao-nim')
+    expect(router.currentRoute.value.name).toBe('arborizacao')
+    expect(router.currentRoute.value.query).toEqual({
+      auth: 'required',
+      redirect: '/arborizacao/substituicao-nim',
+      motivo: 'substituicao-nim',
+    })
+
+    for (const [path, expectedQuery] of [
+      ['/arborizacao/substituicao-nim', { auth: 'required', redirect: '/arborizacao/substituicao-nim', motivo: 'substituicao-nim' }],
+      ['/arborizacao/solicitar-muda', { auth: 'required', redirect: '/arborizacao/solicitar-muda', motivo: 'solicitar-muda' }],
+      ['/arborizacao/conversao', { auth: 'required', redirect: '/arborizacao/conversao' }],
+      ['/arborizacao/acompanhar', { auth: 'required', redirect: '/arborizacao/acompanhar' }],
+    ] as const) {
+      await router.push('/')
+      await router.push(path)
+      expect(router.currentRoute.value.name).toBe('home')
+      expect(router.currentRoute.value.query).toEqual(expectedQuery)
+    }
   })
 
   it.each(USER_ROLES)('direciona o login de %s, restaura sessão e mantém restrições específicas', async (role) => {
@@ -124,10 +142,14 @@ describe('navegação real por sessão', () => {
     expect(restored.role).toBe(role)
     expect(restored.dashboardRouteName).toBe(auth.dashboardRouteName)
     expect(postLoginTarget(router, auth, '/sistema/inventario')).toEqual(isIfceManager ? { name: 'ifce-equipe' } : role === 'ROLE_CIDADAO' ? { name: 'perfil' } : isIfceScholar ? { name: 'viveiro' } : '/sistema/inventario')
-    await router.push('/gestao')
-    expect(router.currentRoute.value.name).toBe(isIfceScholar ? 'viveiro' : role === 'ROLE_ADMINISTRADOR_AMMA' ? 'gestao' : isIfceManager ? 'ifce-equipe' : 'home')
-    await router.push('/ifce/equipe')
-    expect(router.currentRoute.value.name).toBe(isIfceScholar ? 'viveiro' : role === 'ROLE_GESTOR_IFCE' ? 'ifce-equipe' : 'home')
+      await router.push('/gestao')
+      expect(router.currentRoute.value.name).toBe(isIfceScholar ? 'viveiro' : role === 'ROLE_ADMINISTRADOR_AMMA' ? 'gestao' : isIfceManager ? 'ifce-equipe' : 'home')
+      await router.push('/gestao/novo')
+      expect(router.currentRoute.value.name).toBe(isIfceScholar ? 'viveiro' : role === 'ROLE_ADMINISTRADOR_AMMA' ? 'gestao-novo' : isIfceManager ? 'ifce-equipe' : 'home')
+      await router.push('/ifce/equipe')
+      expect(router.currentRoute.value.name).toBe(isIfceScholar ? 'viveiro' : role === 'ROLE_GESTOR_IFCE' ? 'ifce-equipe' : 'home')
+      await router.push('/ifce/equipe/novo')
+      expect(router.currentRoute.value.name).toBe(isIfceScholar ? 'viveiro' : role === 'ROLE_GESTOR_IFCE' ? 'ifce-equipe-novo' : 'home')
   })
 
   it('limita a navegação de ROLE_BOLSISTA_IFCE ao Viveiro', async () => {

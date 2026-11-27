@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import AppBreadcrumb from '@/components/ui/AppBreadcrumb.vue'
 import EspecieRecomendadaCard from '@/components/arborizacao/EspecieRecomendadaCard.vue'
 import { useAssistentePlantioStore } from '@/stores/assistentePlantioStore'
 import type { SpeciesRecommendation } from '@/types/assistentePlantio'
@@ -24,7 +25,9 @@ function selecionar(species: SpeciesRecommendation) {
 </script>
 
 <template>
-  <section class="mx-auto max-w-6xl py-8 md:py-12" aria-labelledby="recommendations-title">
+  <div class="flex w-full flex-col">
+    <AppBreadcrumb class="-mx-6 -mt-2 mb-2 md:-mx-10" :items="[{ label: 'Arborização', icon: 'park', routeName: 'arborizacao' }, { label: 'Assistente de Plantio', routeName: 'arborizacao-assistente' }, { label: 'Espécies recomendadas' }]" />
+    <section class="mx-auto w-full max-w-6xl py-8 md:py-12" aria-labelledby="recommendations-title">
     <header class="mb-7">
       <p class="text-xs font-bold uppercase tracking-wider text-amma-green">Resultado do assistente</p>
       <h1 id="recommendations-title" class="mt-2 text-2xl font-bold text-amma-green-dark">Espécies recomendadas</h1>
@@ -61,5 +64,6 @@ function selecionar(species: SpeciesRecommendation) {
       <button v-if="!store.isLoading && !store.errorMessage && store.recomendacoes?.length" type="button" class="rounded-btn border-2 border-amma-green bg-white px-5 py-2.5 font-bold text-amma-green hover:bg-amma-green-lighter focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amma-green" @click="refazer">⟳ Refazer Quiz</button>
       <p class="text-xs text-grey-text">As recomendações são calculadas pelo catálogo municipal.</p>
     </div>
-  </section>
+    </section>
+  </div>
 </template>

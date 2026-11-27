@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { RouterView } from 'vue-router'
 import { useRoute, useRouter } from 'vue-router'
 import TopBar from '@/components/layout/TopBar.vue'
@@ -15,6 +15,18 @@ const route = useRoute()
 const router = useRouter()
 const auth = useAuthStore()
 
+const authNotice = computed(() => {
+  const motivo = typeof route.query.motivo === 'string' ? route.query.motivo : ''
+  const redirect = typeof route.query.redirect === 'string' ? route.query.redirect : ''
+  if (motivo === 'solicitar-muda' || redirect.startsWith('/arborizacao/solicitar-muda')) {
+    return 'Para solicitar a muda selecionada, entre na sua conta ou cadastre-se. Sua escolha será mantida automaticamente.'
+  }
+  if (motivo === 'substituicao-nim' || redirect.startsWith('/arborizacao/substituicao-nim')) {
+    return 'Para fazer um requerimento de retirada de Nim Indiano, entre na sua conta ou cadastre-se.'
+  }
+  return ''
+})
+
 const openLogin = () => {
   isRegisterModalOpen.value = false
   isLoginModalOpen.value = true
@@ -27,6 +39,7 @@ const openRegister = () => {
 
 const handleLoginSuccess = () => {
   isLoginModalOpen.value = false
+  isRegisterModalOpen.value = false
   void router.replace(postLoginTarget(router, auth, route.query.redirect))
 }
 
@@ -39,7 +52,12 @@ const closeAuthModals = () => {
   const query = { ...route.query }
   delete query.auth
   delete query.redirect
-  void router.replace({ name: 'home', query })
+  delete query.motivo
+  void router.replace({
+    name: typeof route.name === 'string' ? route.name : 'home',
+    params: route.params,
+    query,
+  })
 }
 
 watch(() => route.query.auth, (authRequired) => {
@@ -66,6 +84,7 @@ watch(() => route.query.auth, (authRequired) => {
 
     <LoginModal 
       :isOpen="isLoginModalOpen" 
+      :notice="authNotice"
       @close="closeAuthModals"
       @login-success="handleLoginSuccess"
       @open-register="openRegister"
@@ -73,8 +92,10 @@ watch(() => route.query.auth, (authRequired) => {
 
     <RegisterModal 
       :isOpen="isRegisterModalOpen" 
+      :notice="authNotice"
       @close="closeAuthModals"
       @open-login="openLogin"
+      @register-success="handleLoginSuccess"
     />
   </div>
 </template>

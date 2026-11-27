@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import AppBreadcrumb, { type BreadcrumbItem } from '@/components/ui/AppBreadcrumb.vue'
 import { useFeedbackStore } from '@/stores/feedbackStore'
 import { useAuthStore } from '@/stores/authStore'
 import { useAssistentePlantioStore } from '@/stores/assistentePlantioStore'
@@ -13,6 +14,11 @@ const auth = useAuthStore()
 const quizStore = useAssistentePlantioStore()
 const store = useSolicitacaoMudaStore()
 const speciesName = computed(() => store.resultado?.especie.nomePopular ?? quizStore.especieSelecionada?.nomePopular ?? 'espécie selecionada')
+const breadcrumbItems = computed<BreadcrumbItem[]>(() => [
+  { label: 'Arborização', icon: 'park', routeName: 'arborizacao' },
+  { label: 'Solicitar muda', routeName: 'solicitar-muda', query: { especieId: String(route.query.especieId ?? store.form.especieId ?? '') } },
+  { label: 'Contrapartida' },
+])
 
 onMounted(async () => {
   if (!store.form.especieId) {
@@ -38,7 +44,9 @@ async function enviar() {
 </script>
 
 <template>
-  <section class="mx-auto max-w-5xl py-8 md:py-12" aria-labelledby="conversion-title">
+  <div class="flex w-full flex-col">
+    <AppBreadcrumb class="-mx-6 -mt-2 mb-2 md:-mx-10" :items="breadcrumbItems" />
+    <section class="mx-auto w-full max-w-5xl py-8 md:py-12" aria-labelledby="conversion-title">
     <header class="mb-7">
       <p class="text-xs font-bold uppercase tracking-wider text-amma-green">Solicitação de muda</p>
       <h1 id="conversion-title" class="mt-2 text-2xl font-bold text-amma-green-dark">Contrapartida em garrafas PET</h1>
@@ -77,5 +85,6 @@ async function enviar() {
         <button type="button" class="ml-2 font-bold underline" @click="enviar">Tentar novamente</button>
       </p>
     </div>
-  </section>
+    </section>
+  </div>
 </template>

@@ -51,13 +51,35 @@ const IFCE_MANAGER_ALLOWED_ROUTE_NAMES = new Set([
   'viveiro-detalhes',
   'viveiro-editar',
   'ifce-equipe',
+  'ifce-equipe-novo',
   'perfil-institucional',
 ])
 
-export function sessionNavigation(to: Pick<RouteLocationResolved, 'meta' | 'name' | 'fullPath'>, auth: SessionAccess) {
+export function sessionNavigation(
+  to: Pick<RouteLocationResolved, 'meta' | 'name' | 'fullPath'>,
+  auth: SessionAccess,
+  from?: Pick<RouteLocationResolved, 'name' | 'matched'>,
+) {
   const restricted = to.meta.requiresAuth || to.meta.requiresManagement || to.meta.requiresCitizen || to.meta.requiresAdmin || to.meta.requiresIfceTeam || to.meta.requiresAmmaStaff
   if (restricted && !auth.isAuthenticated) {
-    return { name: 'home', query: { auth: 'required', redirect: to.fullPath } }
+    const origemPreservada =
+      from?.matched?.length && (from.name === 'arborizacao' || from.name === 'arborizacao-recomendacoes')
+        ? from.name
+        : 'home'
+    const motivo =
+      to.name === 'solicitar-muda'
+        ? 'solicitar-muda'
+        : to.name === 'arborizacao-substituicao-nim'
+          ? 'substituicao-nim'
+          : undefined
+    return {
+      name: origemPreservada,
+      query: {
+        auth: 'required',
+        redirect: to.fullPath,
+        ...(motivo ? { motivo } : {}),
+      },
+    }
   }
   if (auth.isIfceScholar && (typeof to.name !== 'string' || !IFCE_SCHOLAR_ALLOWED_ROUTE_NAMES.has(to.name))) {
     return { name: 'viveiro' }
