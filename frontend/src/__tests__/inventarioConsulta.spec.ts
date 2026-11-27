@@ -52,7 +52,7 @@ function simularConsulta() {
     )
     if (url === '/api/arvores/mapa') return resposta(filtered)
     const page = params.page ?? 0,
-      size = params.size ?? 20
+      size = params.size ?? 10
     return resposta({
       content: filtered.slice(page * size, (page + 1) * size),
       page,
@@ -69,7 +69,7 @@ describe('T13: filtros e paginação com service e store reais, HTTP simulado', 
     const consulta = useInventarioConsulta()
     await consulta.consultar()
     expect(get).toHaveBeenCalledTimes(2)
-    expect(consulta.store.pagina?.content).toHaveLength(20)
+    expect(consulta.store.pagina?.content).toHaveLength(10)
     expect(consulta.store.registrosMapa).toHaveLength(25)
     expect(consulta.store.pagina?.totalElements).toBe(25)
     expect(consulta.store.opcoesEspecies.map((item) => item.id)).toEqual([7, 8])
@@ -234,14 +234,14 @@ describe('T13: filtros e paginação com service e store reais, HTTP simulado', 
     get.mockClear()
     await consulta.mudarPagina(1)
     expect(get).toHaveBeenCalledExactlyOnceWith('/api/arvores', {
-      params: { page: 1, size: 20 },
+      params: { page: 1, size: 10 },
       ...feedbackLocalDeErro,
     })
-    expect(consulta.store.pagina?.content.map((item) => item.id)).toEqual([21, 22, 23, 24, 25])
+    expect(consulta.store.pagina?.content.map((item) => item.id)).toEqual([11, 12, 13, 14, 15, 16, 17, 18, 19, 20])
     expect(consulta.store.registrosMapa).toHaveLength(25)
     expect(consulta.idSelecionado.value).toBe(24)
     await consulta.mudarPagina(-1)
-    await consulta.mudarPagina(2)
+    await consulta.mudarPagina(3)
     expect(get).toHaveBeenCalledTimes(1)
   })
 
@@ -305,7 +305,7 @@ describe('T13: filtros e paginação com service e store reais, HTTP simulado', 
     )
     const consulta = useInventarioConsulta()
     await consulta.consultar()
-    expect(consulta.store.pagina?.content).toHaveLength(20)
+    expect(consulta.store.pagina?.content).toHaveLength(10)
     expect(consulta.store.registrosMapa).toBeNull()
     expect(consulta.store.erros.mapa?.status).toBe(500)
   })

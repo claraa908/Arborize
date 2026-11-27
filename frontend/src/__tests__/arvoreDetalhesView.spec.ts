@@ -10,8 +10,12 @@ import { arvore } from './inventarioFixtures'
 
 vi.mock('@/components/inventario/InventarioMapa.vue', () => ({
   default: {
-    props: ['arvores'],
-    template: '<div role="region" aria-label="Mapa da ficha">{{ arvores[0]?.id }}</div>',
+    props: {
+      arvores: { type: Array, default: () => [] },
+      somenteVisualizacao: { type: Boolean, default: false },
+    },
+    template:
+      '<div role="region" aria-label="Mapa da ficha" :data-somente-visualizacao="String(somenteVisualizacao)">{{ arvores[0]?.id }}</div>',
   },
 }))
 
@@ -78,6 +82,7 @@ describe('ArvoreDetalhesView: apresentação da ficha', () => {
     expect(html).toContain(arvore.especie.nomeCientifico)
     expect(html).toContain('Não avaliada')
     expect(html).toContain('Mapa da ficha')
+    expect(html).toContain('data-somente-visualizacao="true"')
     expect(html).toContain('Não informado')
     expect(html).toContain(`href="/sistema/inventario/${arvore.id}/editar"`)
     expect(html).toContain('sm:grid-cols-2')

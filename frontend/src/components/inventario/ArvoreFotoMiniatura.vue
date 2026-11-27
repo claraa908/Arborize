@@ -8,8 +8,9 @@ const props = withDefaults(
     arvoreId: number
     fotoCapa: FotoCapaResponseDTO | null
     carregarImediatamente?: boolean
+    tamanho?: 'miniatura' | 'destaque'
   }>(),
-  { carregarImediatamente: false },
+  { carregarImediatamente: false, tamanho: 'miniatura' },
 )
 
 type Estado = 'sem-fotografia' | 'aguardando' | 'carregando' | 'disponivel' | 'indisponivel'
@@ -101,7 +102,12 @@ onBeforeUnmount(() => {
 <template>
   <figure
     ref="raiz"
-    class="flex h-16 w-20 shrink-0 items-center justify-center overflow-hidden rounded-btn border border-amma-green-light bg-amma-green-lighter"
+    :class="[
+      'flex shrink-0 items-center justify-center overflow-hidden bg-amma-green-lighter',
+      tamanho === 'destaque'
+        ? 'h-48 w-full border-b border-amma-green-light'
+        : 'h-16 w-20 rounded-btn border border-amma-green-light',
+    ]"
     :aria-label="estado === 'sem-fotografia' ? 'Sem fotografia' : 'Fotografia da árvore'"
   >
     <img
@@ -112,19 +118,24 @@ onBeforeUnmount(() => {
       @error="marcarIndisponivel"
     />
     <div v-else-if="estado === 'sem-fotografia'" class="flex flex-col items-center text-amma-green-dark">
-      <svg aria-hidden="true" viewBox="0 0 48 36" class="mb-0.5 h-7 w-9" fill="none">
+      <svg
+        aria-hidden="true"
+        viewBox="0 0 48 36"
+        :class="tamanho === 'destaque' ? 'mb-1.5 h-12 w-14 opacity-75' : 'mb-0.5 h-7 w-9'"
+        fill="none"
+      >
         <rect x="3" y="3" width="42" height="30" rx="4" stroke="currentColor" stroke-width="2" />
         <circle cx="16" cy="13" r="3" fill="currentColor" />
         <path d="m6 29 11-10 7 6 6-5 12 9" stroke="currentColor" stroke-width="2" />
       </svg>
-      <span class="text-[10px] font-semibold leading-tight">Sem fotografia</span>
+      <span :class="tamanho === 'destaque' ? 'text-xs font-semibold' : 'text-[10px] font-semibold leading-tight'">Sem fotografia</span>
     </div>
-    <span v-else-if="estado === 'carregando'" role="status" class="px-1 text-center text-[10px] text-grey-text">
+    <span v-else-if="estado === 'carregando'" role="status" :class="tamanho === 'destaque' ? 'px-2 text-center text-xs text-grey-text' : 'px-1 text-center text-[10px] text-grey-text'">
       Carregando…
     </span>
-    <span v-else-if="estado === 'indisponivel'" role="status" class="px-1 text-center text-[10px] leading-tight text-grey-text">
+    <span v-else-if="estado === 'indisponivel'" role="status" :class="tamanho === 'destaque' ? 'px-2 text-center text-xs leading-tight text-grey-text' : 'px-1 text-center text-[10px] leading-tight text-grey-text'">
       Fotografia indisponível
     </span>
-    <span v-else class="text-[10px] text-grey-text" aria-hidden="true">Fotografia</span>
+    <span v-else :class="tamanho === 'destaque' ? 'text-xs text-grey-text' : 'text-[10px] text-grey-text'" aria-hidden="true">Fotografia</span>
   </figure>
 </template>

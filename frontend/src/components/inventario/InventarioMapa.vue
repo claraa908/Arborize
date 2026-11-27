@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref, useTemplateRef, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, useTemplateRef, watch } from 'vue'
 import { Map as MapaLibre, Marker, NavigationControl, setWorkerUrl } from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url'
@@ -27,11 +27,15 @@ const props = withDefaults(
     mensagemVazia?: string
     centroInicial?: [number, number]
     zoomInicial?: number
+    selecaoAoLado?: boolean
+    somenteVisualizacao?: boolean
   }>(),
   {
     mensagemVazia: 'Nenhuma árvore carregada no mapa.',
     centroInicial: () => [...CENTRO_INICIAL],
     zoomInicial: ZOOM_INICIAL,
+    selecaoAoLado: false,
+    somenteVisualizacao: false,
   },
 )
 
@@ -73,6 +77,7 @@ function destacarSelecao() {
 }
 
 function selecionar(arvore: ArvoreResumoResponseDTO | null) {
+  if (props.somenteVisualizacao && arvore !== null) return
   idSelecionado.value = arvore?.id ?? null
   destacarSelecao()
   emit('selecionar', arvore)
@@ -94,16 +99,22 @@ function atualizarMarcadores() {
     const condicao = condicoesMapa[arvore.condicaoFitossanitaria]
     const button = document.createElement('button')
     button.type = 'button'
-    button.className = `inventario-marcador arvore-mapa-icone ${condicao.classe}`
+    button.className = `inventario-marcador arvore-mapa-icone ${condicao.classe}${props.somenteVisualizacao ? ' inventario-marcador-visualizacao' : ''}`
     button.innerHTML = `<span class="inventario-ondas" aria-hidden="true"></span>${iconeArvoreMapa}`
     button.setAttribute(
       'aria-label',
       `Árvore ${arvore.codigo}: ${arvore.especie.nomePopular}. ${condicao.rotulo}`,
     )
-    button.setAttribute('aria-pressed', String(arvore.id === idSelecionado.value))
+    if (props.somenteVisualizacao) {
+      button.tabIndex = -1
+    } else {
+      button.setAttribute('aria-pressed', String(arvore.id === idSelecionado.value))
+    }
     button.title = `Árvore ${arvore.codigo} · ${condicao.rotulo}`
     const click = () => selecionar(arvore)
-    button.addEventListener('click', click)
+    if (!props.somenteVisualizacao) {
+      button.addEventListener('click', click)
+    }
     const marker = new Marker({ element: button })
       .setLngLat([arvore.longitude, arvore.latitude])
       .addTo(mapa)
@@ -205,6 +216,11 @@ onBeforeUnmount(destruirMapa)
 // Atualiza apenas os marcadores; preserva instância, zoom e posição da câmera.
 watch(() => props.arvores, atualizarMarcadores, { deep: true })
 watch(idSelecionado, destacarSelecao)
+watch(selecionada, async () => {
+  if (!props.selecaoAoLado) return
+  await nextTick()
+  mapa?.resize()
+})
 </script>
 
 <template>
@@ -263,24 +279,144 @@ watch(idSelecionado, destacarSelecao)
       </button>
     </div>
     <p v-if="carregando" role="status" class="mb-3 text-sm text-grey-text">Carregando mapa…</p>
-    <div class="relative">
-      <div
-        ref="mapaContainer"
-        role="region"
-        aria-label="Mapa interativo do Inventário Arbóreo"
-        class="h-80 w-full overflow-hidden rounded-btn border border-amma-green-light bg-amma-green-lighter sm:h-96 lg:h-[440px]"
-      />
-      <a
-        v-if="baseAtual === 'satelite'"
-        href="https://www.maptiler.com/"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="absolute bottom-7 left-2 rounded bg-white/90 p-1"
-        aria-label="MapTiler"
+    <div
+      :class="selecaoAoLado && selecionada && !somenteVisualizacao ? 'grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)] lg:items-stretch' : ''"
+    >
+      <div class="relative min-w-0">
+        <div
+          ref="mapaContainer"
+          role="region"
+          aria-label="Mapa interativo do Inventário Arbóreo"
+          class="h-80 w-full overflow-hidden rounded-btn border border-amma-green-light bg-amma-green-lighter sm:h-96 lg:h-[440px]"
+        />
+        <a
+          v-if="baseAtual === 'satelite'"
+          href="https://www.maptiler.com/"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="absolute bottom-7 left-2 rounded bg-white/90 p-1"
+          aria-label="MapTiler"
+        >
+          <img src="https://api.maptiler.com/resources/logo.svg" alt="MapTiler" class="h-5 w-auto" />
+        </a>
+      </div>
+
+      <section
+        v-if="selecionada && !somenteVisualizacao"
+        aria-label="Árvore selecionada"
+        aria-live="polite"
+        :class="
+          selecaoAoLado
+            ? 'flex min-w-0 flex-col overflow-hidden rounded-btn border border-amma-green-light bg-white shadow-sm lg:h-[440px]'
+            : 'mt-4 rounded-btn border border-amma-green-light bg-amma-green-lighter p-4'
+        "
       >
-        <img src="https://api.maptiler.com/resources/logo.svg" alt="MapTiler" class="h-5 w-auto" />
-      </a>
+        <template v-if="selecaoAoLado">
+          <div class="relative w-full shrink-0">
+            <ArvoreFotoMiniatura
+              :arvore-id="selecionada.id"
+              :foto-capa="selecionada.fotoCapa"
+              tamanho="destaque"
+              carregar-imediatamente
+            />
+            <button
+              type="button"
+              aria-label="Fechar seleção da árvore"
+              class="absolute right-2.5 top-2.5 flex h-9 w-9 items-center justify-center rounded-full border border-amma-green-light bg-white/95 text-amma-green-dark shadow-sm hover:bg-amma-green-lighter focus-visible:outline-2 focus-visible:outline-amma-green"
+              @click="selecionar(null)"
+            >
+              <span aria-hidden="true" class="material-symbols-outlined text-[20px]">close</span>
+            </button>
+          </div>
+
+          <div class="flex min-h-0 flex-1 flex-col justify-between gap-3 overflow-y-auto p-4">
+            <div class="min-w-0 break-words">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <p class="text-xs font-bold uppercase tracking-wider text-grey-text">
+                  {{ selecionada.codigo }}
+                </p>
+                <span class="inline-flex items-center rounded-full border border-amma-green-light bg-amma-green-lighter px-2.5 py-0.5 text-[11px] font-bold text-amma-green-dark">
+                  {{ condicoesMapa[selecionada.condicaoFitossanitaria].rotulo }}
+                </span>
+              </div>
+              <h3 class="mt-2 text-lg font-bold leading-snug text-amma-green-dark">
+                {{ selecionada.especie.nomePopular }}
+              </h3>
+              <p class="text-sm italic text-grey-text">{{ selecionada.especie.nomeCientifico }}</p>
+              <p
+                v-if="selecionada.zonaRural === true || selecionada.classificacaoTerritorial === 'FORA_DA_AREA_URBANA'"
+                class="mt-2.5 flex items-center gap-1.5 text-xs text-grey-text"
+              >
+                <span class="material-symbols-outlined text-[16px] text-amma-green" aria-hidden="true">location_on</span>
+                <span>Localidade rural: {{ selecionada.localidadeRural || 'Não informado' }}</span>
+              </p>
+              <p
+                v-else-if="selecionada.bairroNome || selecionada.bairro?.nome"
+                class="mt-2.5 flex items-center gap-1.5 text-xs text-grey-text"
+              >
+                <span class="material-symbols-outlined text-[16px] text-amma-green" aria-hidden="true">location_on</span>
+                <span>Bairro: {{ selecionada.bairroNome || selecionada.bairro?.nome }}</span>
+              </p>
+            </div>
+            <button
+              type="button"
+              class="w-full shrink-0 rounded-btn bg-amma-green px-4 py-2.5 text-sm font-bold text-white shadow-xs transition-colors hover:bg-amma-green-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amma-green"
+              @click="emit('abrirFicha', selecionada.id)"
+            >
+              Ver ficha técnica
+            </button>
+          </div>
+        </template>
+
+        <template v-else>
+          <div class="flex items-start justify-between gap-3">
+            <ArvoreFotoMiniatura
+              :arvore-id="selecionada.id"
+              :foto-capa="selecionada.fotoCapa"
+              carregar-imediatamente
+            />
+            <div class="min-w-0 flex-1 break-words">
+              <p class="text-xs font-bold uppercase tracking-wide text-grey-text">
+                {{ selecionada.codigo }}
+              </p>
+              <h3 class="mt-1 font-bold text-amma-green-dark">{{ selecionada.especie.nomePopular }}</h3>
+              <p class="text-sm italic text-grey-text">{{ selecionada.especie.nomeCientifico }}</p>
+              <p class="mt-2 text-sm text-grey-text">
+                {{ condicoesMapa[selecionada.condicaoFitossanitaria].rotulo }}
+              </p>
+              <p
+                v-if="selecionada.zonaRural === true || selecionada.classificacaoTerritorial === 'FORA_DA_AREA_URBANA'"
+                class="mt-1 text-xs text-grey-text"
+              >
+                Localidade rural: {{ selecionada.localidadeRural || 'Não informado' }}
+              </p>
+              <p
+                v-else-if="selecionada.bairroNome || selecionada.bairro?.nome"
+                class="mt-1 text-xs text-grey-text"
+              >
+                Bairro: {{ selecionada.bairroNome || selecionada.bairro?.nome }}
+              </p>
+            </div>
+            <button
+              type="button"
+              aria-label="Fechar seleção da árvore"
+              class="rounded-btn p-2 text-amma-green-dark hover:bg-amma-green-light focus-visible:outline-2"
+              @click="selecionar(null)"
+            >
+              <span aria-hidden="true" class="material-symbols-outlined">close</span>
+            </button>
+          </div>
+          <button
+            type="button"
+            class="mt-3 rounded-btn bg-amma-green px-4 py-2 text-sm font-bold text-white hover:bg-amma-green-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amma-green"
+            @click="emit('abrirFicha', selecionada.id)"
+          >
+            Ver ficha técnica
+          </button>
+        </template>
+      </section>
     </div>
+
     <p v-if="arvores.length === 0" class="mt-3 text-sm text-grey-text">
       {{ mensagemVazia }}
     </p>
@@ -291,71 +427,33 @@ watch(idSelecionado, destacarSelecao)
     >
       Há registros com coordenadas inválidas que não puderam ser exibidos.
     </p>
-    <ul
-      aria-label="Legenda de condições fitossanitárias"
-      class="mt-4 flex flex-wrap gap-x-5 gap-y-3 text-xs text-grey-text"
-    >
-      <li v-for="(condicao, valor) in condicoesMapa" :key="valor" class="flex items-center gap-2">
-        <span
-          aria-hidden="true"
-          class="inventario-legenda arvore-mapa-icone"
-          :class="condicao.classe"
-          v-html="iconeArvoreMapa"
-        />
-        {{ condicao.rotulo }}
-      </li>
-    </ul>
-    <section
-      v-if="selecionada"
-      aria-label="Árvore selecionada"
-      aria-live="polite"
-      class="mt-4 rounded-btn border border-amma-green-light bg-amma-green-lighter p-4"
-    >
-      <div class="flex items-start justify-between gap-3">
-        <ArvoreFotoMiniatura
-          :arvore-id="selecionada.id"
-          :foto-capa="selecionada.fotoCapa"
-          carregar-imediatamente
-        />
-        <div class="min-w-0 flex-1 break-words">
-          <p class="text-xs font-bold uppercase tracking-wide text-grey-text">
-            {{ selecionada.codigo }}
-          </p>
-          <h3 class="mt-1 font-bold text-amma-green-dark">{{ selecionada.especie.nomePopular }}</h3>
-          <p class="text-sm italic text-grey-text">{{ selecionada.especie.nomeCientifico }}</p>
-          <p class="mt-2 text-sm text-grey-text">
-            {{ condicoesMapa[selecionada.condicaoFitossanitaria].rotulo }}
-          </p>
-          <p
-            v-if="selecionada.zonaRural === true || selecionada.classificacaoTerritorial === 'FORA_DA_AREA_URBANA'"
-            class="mt-1 text-xs text-grey-text"
-          >
-            Localidade rural: {{ selecionada.localidadeRural || 'Não informado' }}
-          </p>
-          <p
-            v-else-if="selecionada.bairroNome || selecionada.bairro?.nome"
-            class="mt-1 text-xs text-grey-text"
-          >
-            Bairro: {{ selecionada.bairroNome || selecionada.bairro?.nome }}
-          </p>
-        </div>
-        <button
-          type="button"
-          aria-label="Fechar seleção da árvore"
-          class="rounded-btn p-2 text-amma-green-dark hover:bg-amma-green-light focus-visible:outline-2"
-          @click="selecionar(null)"
-        >
-          <span aria-hidden="true" class="material-symbols-outlined">close</span>
-        </button>
-      </div>
-      <button
-        type="button"
-        class="mt-3 rounded-btn bg-amma-green px-4 py-2 text-sm font-bold text-white hover:bg-amma-green-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amma-green"
-        @click="emit('abrirFicha', selecionada.id)"
+
+    <div class="mt-4 rounded-btn border border-amma-green-light/80 bg-amma-bg/70 p-3.5">
+      <p class="mb-2.5 text-[11px] font-bold uppercase tracking-wider text-amma-green-dark">
+        Condição fitossanitária
+      </p>
+      <ul
+        aria-label="Legenda de condições fitossanitárias"
+        :class="[
+          'grid grid-cols-1 gap-2.5 sm:grid-cols-2',
+          selecaoAoLado ? 'lg:grid-cols-4' : '',
+        ]"
       >
-        Ver ficha técnica
-      </button>
-    </section>
+        <li
+          v-for="(condicao, valor) in condicoesMapa"
+          :key="valor"
+          class="flex items-center gap-2.5 rounded-btn border border-amma-green-light/70 bg-white px-3 py-2 text-xs font-semibold text-grey-text shadow-2xs"
+        >
+          <span
+            aria-hidden="true"
+            class="inventario-legenda arvore-mapa-icone shrink-0"
+            :class="condicao.classe"
+            v-html="iconeArvoreMapa"
+          />
+          <span class="min-w-0 leading-snug">{{ condicao.rotulo }}</span>
+        </li>
+      </ul>
+    </div>
   </div>
 </template>
 
@@ -371,6 +469,9 @@ watch(idSelecionado, destacarSelecao)
 }
 :deep(.inventario-marcador) {
   cursor: pointer;
+}
+:deep(.inventario-marcador-visualizacao) {
+  cursor: default;
 }
 :deep(.inventario-marcador:focus-visible) {
   outline: 3px solid var(--color-amma-green-dark);
@@ -390,7 +491,7 @@ watch(idSelecionado, destacarSelecao)
   top: calc(50% - 14px);
   left: calc(50% - 14px);
   pointer-events: none;
-  color: var(--inventario-cor-onda, #a78bfa);
+  color: var(--inventario-cor-onda, #15803d);
 }
 .inventario-mapa-satelite {
   --inventario-cor-onda: white;

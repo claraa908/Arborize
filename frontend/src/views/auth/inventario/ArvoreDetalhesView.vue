@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed } from 'vue'
 import { RouterLink, useRoute } from 'vue-router'
 import AppBreadcrumb from '@/components/ui/AppBreadcrumb.vue'
 import InventarioEstado from '@/components/inventario/InventarioEstado.vue'
@@ -12,7 +12,6 @@ import { useInventarioNavegacao } from '@/components/inventario/useInventarioNav
 const route = useRoute()
 const identificador = computed(() => String(route.params.id ?? ''))
 const { arvore, carregando, erro, recarregar } = useArvoreFicha(identificador)
-const arvoreSelecionadaNoMapa = ref<number | null>(null)
 const identificadorInvalido = computed(
   () =>
     !/^\d+$/.test(identificador.value) ||
@@ -67,10 +66,6 @@ function formatarNumero(valor: number | null): string {
     : valor.toLocaleString('pt-BR', { maximumFractionDigits: 8 })
 }
 
-watch(arvore, () => {
-  arvoreSelecionadaNoMapa.value = null
-})
-
 useInventarioNavegacao()
 </script>
 
@@ -84,28 +79,33 @@ useInventarioNavegacao()
     />
     <div class="flex min-w-0 flex-col gap-6 px-6 py-6 md:px-10">
       <header class="flex min-w-0 flex-col justify-between gap-4 sm:flex-row sm:items-center">
-        <div class="min-w-0">
-          <p class="mb-2 text-xs font-bold uppercase tracking-widest text-grey-text">
-            Inventário Arbóreo
-          </p>
-          <h1 class="text-2xl font-bold text-amma-green-dark">Ficha técnica</h1>
-          <template v-if="arvore">
-            <p class="mt-2 text-sm font-semibold text-grey-text">{{ arvore.codigo }}</p>
-            <h2 class="mt-1 break-words text-xl font-bold text-amma-green-dark">
-              {{ arvore.especie.nomePopular }}
-            </h2>
-            <p class="break-words text-sm italic text-grey-text">
-              {{ arvore.especie.nomeCientifico }}
+        <div class="flex min-w-0 items-start gap-4">
+          <div
+            aria-hidden="true"
+            class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-amma-green-lighter/50 text-amma-green shadow-sm"
+          >
+            <span class="material-symbols-outlined text-[24px]">park</span>
+          </div>
+          <div class="min-w-0">
+            <h1 class="text-2xl font-bold text-amma-green-dark">Ficha técnica</h1>
+            <template v-if="arvore">
+              <p class="mt-1 text-sm font-semibold text-grey-text">{{ arvore.codigo }}</p>
+              <h2 class="mt-1 break-words text-xl font-bold text-amma-green-dark">
+                {{ arvore.especie.nomePopular }}
+              </h2>
+              <p class="break-words text-sm italic text-grey-text">
+                {{ arvore.especie.nomeCientifico }}
+              </p>
+              <span
+                class="mt-3 inline-flex rounded-full border border-amma-green-light bg-amma-green-lighter px-3 py-1 text-sm font-semibold text-amma-green-dark"
+              >
+                {{ rotulosCondicao[arvore.condicaoFitossanitaria] }}
+              </span>
+            </template>
+            <p v-else class="mt-1 break-words text-sm text-grey-text">
+              Identificador solicitado: {{ identificador }}
             </p>
-            <span
-              class="mt-3 inline-flex rounded-full border border-amma-green-light bg-amma-green-lighter px-3 py-1 text-sm font-semibold text-amma-green-dark"
-            >
-              {{ rotulosCondicao[arvore.condicaoFitossanitaria] }}
-            </span>
-          </template>
-          <p v-else class="mt-1 break-words text-sm text-grey-text">
-            Identificador solicitado: {{ identificador }}
-          </p>
+          </div>
         </div>
         <RouterLink
           v-if="arvore"
@@ -197,10 +197,10 @@ useInventarioNavegacao()
           </h2>
           <div class="grid min-w-0 grid-cols-1 gap-6 lg:grid-cols-2">
             <InventarioMapa
-              v-model:selecionada-id="arvoreSelecionadaNoMapa"
               :arvores="arvoresDoMapa"
               :centro-inicial="centroMapa"
               :zoom-inicial="16"
+              somente-visualizacao
               mensagem-vazia="Não há coordenadas válidas para exibir esta árvore no mapa."
             />
             <dl class="grid min-w-0 grid-cols-1 gap-5 sm:grid-cols-2">
@@ -298,14 +298,6 @@ useInventarioNavegacao()
 
         <ArvoreFotografias :arvore-id="arvore.id" permitir-upload />
       </template>
-
-      <RouterLink
-        :to="{ name: 'inventario' }"
-        class="flex items-center justify-center gap-2 self-start rounded-btn border border-amma-green-light px-5 py-3 text-sm font-bold text-amma-green-dark transition-colors hover:bg-amma-green-lighter focus-visible:outline-2 focus-visible:outline-amma-green"
-      >
-        <span aria-hidden="true" class="material-symbols-outlined text-[18px]">arrow_back</span>
-        Voltar ao inventário
-      </RouterLink>
     </div>
   </div>
 </template>

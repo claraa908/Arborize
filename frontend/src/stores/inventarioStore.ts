@@ -77,7 +77,7 @@ export const useInventarioStore = defineStore('inventario', () => {
     setFiltros({})
   }
 
-  async function fetchArvores(page = 0, size = 20): Promise<ArvorePaginaResponseDTO> {
+  async function fetchArvores(page = 0, size = 10): Promise<ArvorePaginaResponseDTO> {
     pagina.value = null
     return executar('listagem', async () => {
       const resultado = await inventarioService.getAll({ ...filtros.value, page, size })

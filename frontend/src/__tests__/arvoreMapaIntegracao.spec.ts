@@ -1192,4 +1192,34 @@ describe('Mapa e formulário reais integrados sem WebGL', () => {
     expect(enviar).toHaveBeenNthCalledWith(3, 42, fotoDois)
     expect(navegacao.push).toHaveBeenCalledWith({ name: 'inventario-detalhes', params: { id: 42 } })
   })
+
+  it('em modo somenteVisualizacao não seleciona a árvore nem exibe o card de detalhes ao clicar no marcador', async () => {
+    const raiz = new ElementoTeste('ROOT')
+    const aoSelecionar = vi.fn()
+    const app = renderer.createApp(InventarioMapa, {
+      arvores: [{ ...arvore, latitude: -4.97, longitude: -39.015 }],
+      somenteVisualizacao: true,
+      onSelecionar: aoSelecionar,
+    })
+    app.use(createPinia())
+    app.provide('ssrContext', { modules: new Set() })
+    app.mount(raiz)
+    apps.push(app)
+    await estabilizar()
+
+    const marcador = execucao.marcadores.at(-1) as Marker
+    const botao = marcador.getElement() as unknown as ElementoTeste & {
+      className?: string
+      tabIndex?: number
+    }
+    expect(String(botao.className ?? '')).toContain('inventario-marcador-visualizacao')
+    expect(botao.tabIndex).toBe(-1)
+
+    await botao.dispatch('click')
+    await estabilizar()
+
+    expect(aoSelecionar).not.toHaveBeenCalled()
+    expect(raiz.textContent).not.toContain('Ver ficha técnica')
+    expect(raiz.textContent).not.toContain('Árvore selecionada')
+  })
 })

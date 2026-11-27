@@ -81,7 +81,7 @@ describe('inventarioStore: camada de dados sem DOM ou HTTP real', () => {
       bairro: 'Centro',
       especieId: 7,
       page: 0,
-      size: 20,
+      size: 10,
     })
     expect(store.pagina).toEqual(pagina)
     expect(store.registrosMapa).toEqual([resumo])

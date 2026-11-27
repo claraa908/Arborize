@@ -32,7 +32,7 @@ describe('inventarioService: contratos HTTP sem rede', () => {
     const get = vi.spyOn(api, 'get').mockResolvedValue(resposta(pagina))
     expect(await inventarioService.getAll()).toEqual(pagina)
     expect(get).toHaveBeenCalledExactlyOnceWith('/api/arvores', {
-      params: { page: 0, size: 20 },
+      params: { page: 0, size: 10 },
       ...feedbackLocalDeErro,
     })
   })
@@ -63,7 +63,7 @@ describe('inventarioService: contratos HTTP sem rede', () => {
       page: 0,
     })
     expect(get).toHaveBeenLastCalledWith('/api/arvores', {
-      params: { page: 0, size: 20 },
+      params: { page: 0, size: 10 },
       ...feedbackLocalDeErro,
     })
     await inventarioService.getAll({ especieId: 0, size: 0 })

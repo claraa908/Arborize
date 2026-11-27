@@ -113,7 +113,7 @@ export const inventarioService = {
   getAll(params: InventarioListagemParams = {}): Promise<ArvorePaginaResponseDTO> {
     return requisitar(() =>
       api.get<ArvorePaginaResponseDTO>(recurso, {
-        params: { ...filtrosHttp(params), page: params.page ?? 0, size: params.size ?? 20 },
+        params: { ...filtrosHttp(params), page: params.page ?? 0, size: params.size ?? 10 },
         ...feedbackLocalDeErro,
       }),
     )

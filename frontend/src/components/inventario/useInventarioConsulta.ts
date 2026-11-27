@@ -6,7 +6,7 @@ import type { InventarioFiltros } from '@/types/inventario'
 export function useInventarioConsulta() {
   const store = useInventarioStore()
   const criterios = reactive<InventarioFiltros>({ ...store.filtros })
-  const tamanhoPagina = ref(store.pagina?.size ?? 20)
+  const tamanhoPagina = ref(store.pagina?.size ?? 10)
   const idSelecionado = ref<number | null>(null)
   const consultando = computed(() => store.carregando.listagem || store.carregando.mapa)
   const filtrosAtivos = computed(() =>

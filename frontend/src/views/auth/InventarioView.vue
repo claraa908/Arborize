@@ -15,7 +15,6 @@ const mapa = useTemplateRef<InstanceType<typeof InventarioMapa>>('mapa')
 const {
   store,
   criterios,
-  tamanhoPagina,
   idSelecionado,
   consultando,
   filtrosAtivos,
@@ -24,7 +23,6 @@ const {
   aplicarFiltros,
   limparFiltros,
   mudarPagina,
-  mudarTamanho,
 } = useInventarioConsulta()
 const columns: TableColumn[] = [
   { key: 'fotografia', label: 'Fotografia' },
@@ -64,10 +62,10 @@ onMounted(() => {
     <div class="flex min-w-0 flex-col gap-8 px-6 py-8 md:px-10">
       <header class="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
         <div>
-          <p class="mb-2 text-xs font-bold uppercase tracking-widest text-grey-text">
+          <p class="mb-2 text-xs font-bold uppercase tracking-widest text-grey-text md:sr-only">
             Gestão ambiental · AMMA
           </p>
-          <h1 class="text-2xl font-bold text-amma-green-dark">Inventário Arbóreo</h1>
+          <h1 class="text-2xl font-bold text-amma-green-dark md:sr-only">Inventário Arbóreo</h1>
           <p class="mt-1 text-sm text-grey-text">
             Indivíduos arbóreos, localização e características técnicas.
           </p>
@@ -236,30 +234,15 @@ onMounted(() => {
           :arvores="store.registrosMapa ?? []"
           :filtros-ativos="filtrosAtivos"
           :mensagem-vazia="mensagemMapaVazio"
+          selecao-ao-lado
           @abrir-ficha="abrirFicha"
         />
       </section>
 
       <section aria-labelledby="arvores-titulo" class="min-w-0">
-        <div class="mb-4 flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
-          <h2 id="arvores-titulo" class="text-lg font-bold text-amma-green-dark">
-            Árvores do inventário
-          </h2>
-          <div class="flex items-center gap-2 text-sm text-grey-text">
-            <label for="inventario-tamanho">Registros por página</label>
-            <select
-              id="inventario-tamanho"
-              v-model="tamanhoPagina"
-              :disabled="consultando"
-              class="rounded-btn border border-amma-green-light bg-white px-3 py-2"
-              @change="mudarTamanho"
-            >
-              <option v-for="size in [10, 20, 50, 100]" :key="size" :value="size">
-                {{ size }}
-              </option>
-            </select>
-          </div>
-        </div>
+        <h2 id="arvores-titulo" class="mb-4 text-lg font-bold text-amma-green-dark">
+          Árvores do inventário
+        </h2>
         <InventarioEstado v-if="store.carregando.listagem" estado="carregando" />
         <InventarioEstado
           v-else-if="store.erros.listagem && !acessoNegado"
