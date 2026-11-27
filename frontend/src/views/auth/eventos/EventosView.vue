@@ -10,12 +10,12 @@ const searchQuery = ref('')
 const selectedStatusFilter = ref<string>('TODOS')
 
 const colunas: TableColumn[] = [
-  { key: 'nome', label: 'Nome do Evento', width: '32%' },
-  { key: 'periodo', label: 'Período', align: 'center' },
-  { key: 'horario', label: 'Horário', align: 'center' },
-  { key: 'local', label: 'Local de Concentração' },
-  { key: 'status', label: 'Status', align: 'center' },
-  { key: 'acoes', label: 'Ações', align: 'center' },
+  { key: 'nome', label: 'Nome do Evento', width: '27%' },
+  { key: 'periodo', label: 'Período', align: 'center', width: '13%' },
+  { key: 'horario', label: 'Horário', align: 'center', width: '13%' },
+  { key: 'local', label: 'Local', width: '19%' },
+  { key: 'status', label: 'Status', align: 'center', width: '13%' },
+  { key: 'acoes', label: 'Ações', align: 'center', width: '15%', class: 'px-2' },
 ]
 
 onMounted(() => {
@@ -142,6 +142,9 @@ const statusClass = (status: string) => {
       v-model:search="searchQuery"
       :columns="colunas"
       :items="eventosFiltrados"
+      default-view="table"
+      fixed-layout
+      max-body-height-class="max-h-[max(520px,calc(100vh-260px))]"
       search-placeholder="Pesquisar por nome do evento ou local..."
       button-label="Cadastrar Evento"
       button-icon="add"
@@ -149,25 +152,31 @@ const statusClass = (status: string) => {
       @action-click="navigateToNew"
     >
       <template #nome="{ item }">
-        <span class="font-semibold text-grey-text block">{{ item.nome }}</span>
-        <span v-if="item.destinoFinal" class="text-xs text-grey-text/70 block mt-0.5">
+        <span class="font-semibold text-grey-text block truncate" :title="item.nome">
+          {{ item.nome }}
+        </span>
+        <span
+          v-if="item.destinoFinal"
+          class="text-xs text-grey-text/70 block mt-0.5 truncate"
+          :title="item.destinoFinal"
+        >
           Destino: {{ item.destinoFinal }}
         </span>
       </template>
 
       <template #periodo="{ item }">
-        <span class="text-sm font-medium text-grey-text/80 whitespace-nowrap">
-          {{
-            item.dataInicio === item.dataTermino
-              ? item.dataInicio
-              : `${item.dataInicio} - ${item.dataTermino}`
-          }}
+        <span v-if="item.dataInicio === item.dataTermino" class="text-xs font-medium text-grey-text/80 whitespace-nowrap">
+          {{ item.dataInicio }}
         </span>
+        <div v-else class="flex flex-col text-xs font-medium text-grey-text/80 leading-tight whitespace-nowrap">
+          <span>{{ item.dataInicio }}</span>
+          <span class="text-grey-text/60">até {{ item.dataTermino }}</span>
+        </div>
       </template>
 
       <template #horario="{ item }">
         <span
-          class="text-xs font-semibold text-grey-text/80 bg-black/5 px-2.5 py-1 rounded-full whitespace-nowrap"
+          class="text-xs font-semibold text-grey-text/80 bg-black/5 px-2 py-1 rounded-full whitespace-nowrap"
         >
           {{ item.horarioInicio }} - {{ item.horarioTermino }}
         </span>
@@ -175,7 +184,7 @@ const statusClass = (status: string) => {
 
       <template #local="{ item }">
         <span
-          class="text-sm font-medium text-grey-text block truncate max-w-xs"
+          class="text-sm font-medium text-grey-text block truncate"
           :title="item.localConcentracao"
         >
           {{ item.localConcentracao }}
@@ -185,7 +194,7 @@ const statusClass = (status: string) => {
       <template #status="{ item }">
         <span
           :class="[
-            'text-xs font-bold px-3 py-1.5 rounded-full inline-block min-w-[100px]',
+            'text-[11px] font-bold px-2.5 py-1 rounded-full inline-block whitespace-nowrap',
             statusClass(item.status),
           ]"
         >
@@ -194,33 +203,33 @@ const statusClass = (status: string) => {
       </template>
 
       <template #acoes="{ item }">
-        <div class="flex items-center justify-center gap-2">
+        <div v-if="item.id" class="flex items-center justify-center gap-2">
           <button
-            v-if="item.id"
             type="button"
             @click="viewDetails(item.id)"
-            class="w-8 h-8 flex items-center justify-center text-amma-green hover:bg-amma-green-lighter rounded-full transition-colors efeito-zoom cursor-pointer"
+            class="flex h-8 w-8 items-center justify-center rounded-full text-amma-green transition-colors hover:bg-amma-green-lighter cursor-pointer"
             title="Visualizar Detalhes"
+            :aria-label="`Visualizar ${item.nome}`"
           >
-            <span class="material-symbols-outlined text-[20px]">event</span>
+            <span class="material-symbols-outlined text-[20px]" aria-hidden="true">event</span>
           </button>
           <button
-            v-if="item.id"
             type="button"
             @click="editEvento(item.id)"
-            class="w-8 h-8 flex items-center justify-center text-grey-text hover:text-amma-green-dark hover:bg-amma-green-lighter rounded-full transition-colors efeito-zoom cursor-pointer"
+            class="flex h-8 w-8 items-center justify-center rounded-full text-grey-text transition-colors hover:bg-amma-green-lighter hover:text-amma-green-dark cursor-pointer"
             title="Editar Evento"
+            :aria-label="`Editar ${item.nome}`"
           >
-            <span class="material-symbols-outlined text-[20px]">edit</span>
+            <span class="material-symbols-outlined text-[20px]" aria-hidden="true">edit</span>
           </button>
           <button
-            v-if="item.id"
             type="button"
             @click="handleDelete(item.id)"
-            class="w-8 h-8 flex items-center justify-center text-feedback-danger hover:bg-feedback-danger-bg rounded-full transition-colors efeito-zoom cursor-pointer"
+            class="flex h-8 w-8 items-center justify-center rounded-full text-feedback-danger transition-colors hover:bg-feedback-danger-bg cursor-pointer"
             title="Excluir Evento"
+            :aria-label="`Excluir ${item.nome}`"
           >
-            <span class="material-symbols-outlined text-[20px]">delete</span>
+            <span class="material-symbols-outlined text-[20px]" aria-hidden="true">delete</span>
           </button>
         </div>
       </template>

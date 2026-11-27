@@ -154,13 +154,22 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="px-6 md:px-10 pt-5 pb-8 flex flex-col gap-5">
-    <AppBreadcrumb :items="breadcrumbItems" :show-back="false" />
-    <section class="bg-white border border-amma-green-light rounded-box p-5 md:p-8">
-      <header class="mb-7">
-        <h1 class="text-2xl md:text-3xl font-bold text-amma-green-dark">{{ isEditing ? 'Consultar / editar termo' : 'Cadastrar termo de compensação' }}</h1>
-        <p class="text-sm md:text-base text-grey-text mt-2">Registre a empresa, as mudas acordadas e anexe o Termo de Compromisso assinado.</p>
+  <div class="flex w-full flex-col">
+    <AppBreadcrumb :items="breadcrumbItems" />
+    <div class="flex flex-col gap-6 px-6 pb-8 pt-6 md:px-10">
+      <header class="flex items-center gap-4">
+        <div
+          aria-hidden="true"
+          class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-amma-green-lighter/50 text-amma-green shadow-sm"
+        >
+          <span class="material-symbols-outlined text-[24px]">{{ isEditing ? 'edit_document' : 'post_add' }}</span>
+        </div>
+        <div>
+          <h1 class="text-2xl font-bold leading-none text-amma-green-dark">{{ isEditing ? 'Consultar / editar termo' : 'Cadastrar termo de compensação' }}</h1>
+          <p class="mt-1 text-sm text-grey-text">Registre a empresa, as mudas acordadas e anexe o Termo de Compromisso assinado.</p>
+        </div>
       </header>
+      <section class="bg-white border border-amma-green-light rounded-box p-5 md:p-8">
 
       <p v-if="store.isLoading" class="rounded-btn border border-amma-green-light bg-amma-bg px-4 py-3 text-sm text-grey-text mb-6" role="status">
         Carregando os dados do termo…
@@ -281,12 +290,13 @@ onUnmounted(() => {
         </div>
 
         <footer class="border-t border-amma-green-light pt-5 flex flex-col-reverse sm:flex-row sm:justify-end gap-3">
-          <button type="button" class="min-h-11 rounded-btn border-2 border-amma-green-light bg-white px-6 py-2.5 font-bold text-grey-text hover:bg-amma-bg focus-visible:outline focus-visible:outline-2 focus-visible:outline-amma-green" @click="router.push({ name: 'compensacao-lista' })">Voltar</button>
+          <button type="button" class="min-h-11 rounded-btn border-2 border-amma-green-light bg-white px-6 py-2.5 font-bold text-grey-text hover:bg-amma-bg focus-visible:outline focus-visible:outline-2 focus-visible:outline-amma-green" @click="router.push({ name: 'compensacao-lista' })">Cancelar</button>
           <button type="submit" :disabled="isSubmitting || (isEditing && !original)" class="min-h-11 rounded-btn bg-amma-green px-6 py-2.5 font-bold text-white hover:bg-amma-green-dark disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amma-green">
             {{ isSubmitting ? 'Enviando…' : isEditing ? 'Salvar alterações' : 'Salvar termo' }}
           </button>
         </footer>
       </form>
-    </section>
+      </section>
+    </div>
   </div>
 </template>

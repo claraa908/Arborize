@@ -112,6 +112,7 @@ const handleDelete = async (id: string) => {
       v-model:search="searchQuery"
       :columns="colunas"
       :items="documentosFiltrados"
+      max-body-height-class="max-h-[max(520px,calc(100vh-260px))]"
       search-placeholder="Pesquisar por título ou categoria..."
       button-label="Novo Documento"
       button-icon="add"

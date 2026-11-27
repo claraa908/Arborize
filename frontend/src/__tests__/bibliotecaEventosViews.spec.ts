@@ -133,6 +133,18 @@ describe('gestão de eventos', () => {
     await wrapper.get('[title="Visualizar Detalhes"]').trigger('click')
     expect(routerPush).toHaveBeenCalledWith({ name: 'eventos-detalhes', params: { id: 1 } })
 
+    const table = wrapper.get('table')
+    expect(table.classes()).toContain('lg:table-fixed')
+    const headers = wrapper.findAll('thead th').map((th) => th.text().trim())
+    expect(headers).toContain('Ações')
+    const rows = wrapper.findAll('tbody tr')
+    expect(rows).toHaveLength(2)
+    expect(rows[0]!.find('[title="Visualizar Detalhes"]').exists()).toBe(true)
+    expect(rows[0]!.find('[title="Editar Evento"]').exists()).toBe(true)
+    expect(rows[0]!.find('[title="Excluir Evento"]').exists()).toBe(true)
+    expect(rows[0]!.get('[title="Plantio na Praça"]').classes()).toContain('truncate')
+    expect(rows[0]!.get('[title="Praça Central"]').classes()).toContain('truncate')
+
     await wrapper.findAll('button').find((button) => button.text().includes('Cadastrar Evento'))!.trigger('click')
     expect(routerPush).toHaveBeenCalledWith({ name: 'eventos-cadastrar' })
     wrapper.unmount()

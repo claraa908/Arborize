@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import AppBreadcrumb from '@/components/ui/AppBreadcrumb.vue'
+import AppBreadcrumb, { type BreadcrumbItem } from '@/components/ui/AppBreadcrumb.vue'
+import AppDataTable, { type TableColumn, type TablePagination } from '@/components/ui/AppDataTable.vue'
 import { useAuthStore } from '@/stores/authStore'
 import { useFeedbackStore } from '@/stores/feedbackStore'
 import { solicitacaoMudaService } from '@/services/solicitacaoMudaService'
@@ -32,11 +33,27 @@ const podeRejeitar = computed(() => auth.role === 'ROLE_ADMINISTRADOR_AMMA' || a
 const baixandoDocumento = ref(false)
 const pendente = computed(() => pedido.value?.status === 'PENDENTE_RECICLAVEIS')
 const detalhes = computed(() => ({ name: 'solicitacoes-detalhes', params: { protocolo: protocolo.value } }))
-const breadcrumb = computed(() => {
-  const inicio = { label: 'Solicitações de mudas', routeName: lista.value ? undefined : 'solicitacoes' }
+const breadcrumb = computed<BreadcrumbItem[]>(() => {
+  const inicio: BreadcrumbItem = { label: 'Solicitações de mudas', icon: 'assignment', routeName: lista.value ? undefined : 'solicitacoes' }
   if (lista.value) return [inicio]
-  const detalhe = { label: 'Detalhes da solicitação', routeName: recebimento.value ? 'solicitacoes-detalhes' : undefined, params: { protocolo: protocolo.value } }
+  const detalhe: BreadcrumbItem = { label: 'Detalhes da solicitação', routeName: recebimento.value ? 'solicitacoes-detalhes' : undefined, params: { protocolo: protocolo.value } }
   return recebimento.value ? [inicio, detalhe, { label: 'Registrar recebimento' }] : [inicio, detalhe]
+})
+const colunasSolicitacoes: TableColumn[] = [
+  { key: 'protocolo', label: 'Protocolo / Solicitante' },
+  { key: 'especie', label: 'Espécie / Mudas' },
+  { key: 'contrapartida', label: 'Contrapartida' },
+  { key: 'status', label: 'Status', align: 'center' },
+  { key: 'acoes', label: 'Ações', align: 'right' },
+]
+const paginacaoTabela = computed<TablePagination | undefined>(() => {
+  if (!resultado.value) return undefined
+  return {
+    page: resultado.value.page,
+    size: 10,
+    totalElements: resultado.value.totalPages <= 1 ? resultado.value.content.length : resultado.value.totalPages * 10,
+    totalPages: resultado.value.totalPages,
+  }
 })
 const campos = computed(() => pedido.value ? [
   ['Cidadão', pedido.value.nomeSolicitante],
@@ -168,52 +185,77 @@ watch(() => route.fullPath, () => {
 </script>
 
 <template>
-  <div class="flex min-w-0 flex-col gap-5 px-6 py-8 md:px-10">
-    <AppBreadcrumb :items="breadcrumb" :show-back="false" />
-    <header>
-      <h1 class="text-2xl font-bold text-amma-green-dark">{{ titulo }}</h1>
-      <p class="text-grey-text">{{ lista ? 'Acompanhe os pedidos de mudas e a entrega de recicláveis.' : recebimento ? 'Confirme os recicláveis entregues e aprove a solicitação.' : 'Confira os dados do cidadão, da muda e da contrapartida.' }}</p>
-    </header>
+  <div class="flex w-full flex-col">
+    <AppBreadcrumb v-if="!lista" :items="breadcrumb" />
+    <div class="flex min-w-0 flex-col gap-5 px-6 py-8 md:px-10">
+      <header v-if="lista">
+        <h1 class="text-2xl font-bold text-amma-green-dark md:sr-only">{{ titulo }}</h1>
+        <p class="text-grey-text">Acompanhe os pedidos de mudas e a entrega de recicláveis.</p>
+      </header>
+      <header v-else class="flex items-center gap-4">
+        <div
+          aria-hidden="true"
+          class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-amma-green-lighter/50 text-amma-green shadow-sm"
+        >
+          <span class="material-symbols-outlined text-[24px]">{{ recebimento ? 'recycling' : 'assignment' }}</span>
+        </div>
+        <div>
+          <h1 class="text-2xl font-bold leading-none text-amma-green-dark">{{ titulo }}</h1>
+          <p class="mt-1 text-sm text-grey-text">{{ recebimento ? 'Confirme os recicláveis entregues e aprove a solicitação.' : 'Confira os dados do cidadão, da muda e da contrapartida.' }}</p>
+        </div>
+      </header>
 
-    <form v-if="lista" class="flex flex-wrap items-end gap-3" @submit.prevent="pesquisar">
-      <label class="min-w-0 flex-1 font-semibold text-grey-text">
-        Buscar por protocolo
-        <input v-model="busca" :class="campo" type="search" placeholder="SOL-2026-0011" />
-      </label>
-      <button :class="secundario" type="submit">Buscar</button>
-      <p class="rounded-btn border border-amma-green-light px-4 py-2.5 text-sm text-grey-text">Mais recentes</p>
-    </form>
+      <form v-if="lista" class="flex flex-wrap items-end gap-3" @submit.prevent="pesquisar">
+        <label class="min-w-0 flex-1 font-semibold text-grey-text">
+          Buscar por protocolo
+          <input v-model="busca" :class="campo" type="search" placeholder="SOL-2026-0011" />
+        </label>
+        <button :class="secundario" type="submit">Buscar</button>
+        <p class="rounded-btn border border-amma-green-light px-4 py-2.5 text-sm text-grey-text">Mais recentes</p>
+      </form>
 
-    <p v-if="carregando" role="status" :class="painel">
-      <span aria-hidden="true" class="mr-2 inline-block size-4 animate-spin rounded-full border-2 border-amma-green border-r-transparent"></span>
-      Carregando solicitações…
-    </p>
-    <div v-else-if="erro" :class="painel">
-      <p class="mb-3 text-feedback-danger" role="alert">{{ erro }}</p>
-      <button :class="secundario" type="button" @click="carregar">Tentar novamente</button>
-    </div>
-    <template v-else-if="lista && resultado">
-      <p v-if="!resultado.content.length" :class="painel">{{ filtro ? 'Nenhum pedido corresponde a esse protocolo.' : 'Ainda não há solicitações.' }}</p>
-      <ul v-else class="space-y-4">
-        <li v-for="item in resultado.content" :key="item.protocolo" class="grid min-w-0 gap-4 rounded-box border border-amma-green bg-white p-5 md:grid-cols-[minmax(0,2fr)_minmax(0,1fr)_auto_auto] md:items-center">
-          <div class="min-w-0 break-words">
-            <p class="font-bold text-amma-green-dark">{{ item.protocolo }} · {{ item.nomeSolicitante }}</p>
-            <p class="text-grey-text">{{ item.especie }} · {{ item.quantidadeMudas }} muda(s)</p>
-          </div>
-          <div>
-            <p class="font-bold text-amma-green-dark">{{ item.totalRecicaveis }} garrafas PET</p>
-            <p class="text-sm text-grey-text">Contrapartida esperada</p>
-          </div>
-          <span :class="[selo, solicitacaoStatus[item.status].badge]">{{ solicitacaoStatus[item.status].label }}</span>
-          <RouterLink :to="{ name: 'solicitacoes-detalhes', params: { protocolo: item.protocolo } }" :class="primario" :aria-label="'Abrir solicitação ' + item.protocolo">Abrir</RouterLink>
-        </li>
-      </ul>
-      <nav v-if="resultado.totalPages > 1" class="flex flex-wrap items-center gap-3" aria-label="Paginação de solicitações">
-        <button :class="secundario" :disabled="pagina === 0" @click="mudarPagina(pagina - 1)">Anterior</button>
-        <span>Página {{ resultado.page + 1 }} de {{ resultado.totalPages }}</span>
-        <button :class="secundario" :disabled="pagina + 1 >= resultado.totalPages" @click="mudarPagina(pagina + 1)">Próxima</button>
-      </nav>
-    </template>
+      <p v-if="carregando" role="status" :class="painel">
+        <span aria-hidden="true" class="mr-2 inline-block size-4 animate-spin rounded-full border-2 border-amma-green border-r-transparent"></span>
+        Carregando solicitações…
+      </p>
+      <div v-else-if="erro" :class="painel">
+        <p class="mb-3 text-feedback-danger" role="alert">{{ erro }}</p>
+        <button :class="secundario" type="button" @click="carregar">Tentar novamente</button>
+      </div>
+      <template v-else-if="lista && resultado">
+        <p v-if="!resultado.content.length" :class="painel">{{ filtro ? 'Nenhum pedido corresponde a esse protocolo.' : 'Ainda não há solicitações.' }}</p>
+        <AppDataTable
+          v-else
+          :columns="colunasSolicitacoes"
+          :items="resultado.content"
+          :pagination="paginacaoTabela"
+          item-key="protocolo"
+          caption="Solicitações de mudas"
+          :show-search="false"
+          :show-summary="true"
+          :allow-view-toggle="false"
+          default-view="table"
+          @page-change="mudarPagina"
+        >
+          <template #protocolo="{ item }">
+            <p class="font-bold text-amma-green-dark">{{ item.protocolo }}</p>
+            <p class="text-xs text-grey-text">{{ item.nomeSolicitante }}</p>
+          </template>
+          <template #especie="{ item }">
+            <p class="text-sm font-medium text-grey-text">{{ item.especie }}</p>
+            <p class="text-xs text-grey-text">{{ item.quantidadeMudas }} muda(s)</p>
+          </template>
+          <template #contrapartida="{ item }">
+            <span class="whitespace-nowrap text-sm font-semibold text-amma-green-dark">{{ item.totalRecicaveis }} garrafas PET</span>
+          </template>
+          <template #status="{ item }">
+            <span :class="[selo, solicitacaoStatus[item.status].badge]">{{ solicitacaoStatus[item.status].label }}</span>
+          </template>
+          <template #acoes="{ item }">
+            <RouterLink :to="{ name: 'solicitacoes-detalhes', params: { protocolo: item.protocolo } }" :class="['inline-block text-sm', primario]" :aria-label="'Abrir solicitação ' + item.protocolo">Abrir</RouterLink>
+          </template>
+        </AppDataTable>
+      </template>
 
     <div v-else-if="pedido" class="grid min-w-0 gap-5 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
       <template v-if="recebimento">
@@ -278,6 +320,7 @@ watch(() => route.fullPath, () => {
           </button>
         </section>
       </template>
+    </div>
     </div>
   </div>
 </template>

@@ -90,7 +90,7 @@ const handleLogout = async () => {
           @click="navigateToIfceTeam"
           :class="[
             'w-10 h-10 flex items-center justify-center transition-all efeito-zoom cursor-pointer rounded-bl-[10px] rounded-tr-[10px] rounded-tl-[20px] rounded-br-[20px]',
-            route.name === 'ifce-equipe'
+            route.name === 'ifce-equipe' || route.name === 'ifce-equipe-novo'
               ? 'bg-amma-green-dark text-white shadow-inner'
               : 'text-grey-text hover:text-white hover:bg-amma-green'
           ]"
@@ -105,7 +105,7 @@ const handleLogout = async () => {
           @click="navigateToManagement"
           :class="[
             'w-10 h-10 flex items-center justify-center transition-all efeito-zoom cursor-pointer rounded-bl-[10px] rounded-tr-[10px] rounded-tl-[20px] rounded-br-[20px]',
-            route.name === 'gestao'
+            route.name === 'gestao' || route.name === 'gestao-novo'
               ? 'bg-amma-green-dark text-white shadow-inner'
               : 'text-grey-text hover:text-white hover:bg-amma-green'
           ]"

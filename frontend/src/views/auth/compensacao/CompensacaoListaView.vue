@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import AppDataTable, { type TableColumn } from '@/components/ui/AppDataTable.vue'
 import CompensacaoStatusBadge from '@/components/compensacao/CompensacaoStatusBadge.vue'
@@ -9,6 +9,8 @@ import { useCompensacaoStore } from '@/stores/compensacaoStore'
 const router = useRouter()
 const store = useCompensacaoStore()
 const busca = ref('')
+const mobilePage = ref(0)
+const mobilePageSize = 10
 const termos = computed(() => store.termos)
 const isLoading = computed(() => store.isLoading)
 const loadError = computed(() => store.error)
@@ -24,6 +26,25 @@ const colunas: TableColumn[] = [
 const linhas = computed(() => termos.value
   .filter((termo) => `${termo.razaoSocial} ${termo.cnpj} ${termo.numeroTermo}`.toLowerCase().includes(busca.value.toLowerCase()))
   )
+
+const mobileTotalPages = computed(() =>
+  linhas.value.length === 0 ? 0 : Math.max(1, Math.ceil(linhas.value.length / mobilePageSize)),
+)
+const linhasMobilePaginadas = computed(() => {
+  const start = mobilePage.value * mobilePageSize
+  return linhas.value.slice(start, start + mobilePageSize)
+})
+
+watch(busca, () => {
+  mobilePage.value = 0
+})
+
+watch(
+  () => linhas.value.length,
+  () => {
+    if (mobilePage.value >= mobileTotalPages.value) mobilePage.value = 0
+  },
+)
 
 const resumo = computed(() => ({
   acordos: termos.value.length,
@@ -46,8 +67,8 @@ function retryLoad() {
   <div class="px-6 md:px-10 pt-6 pb-8 flex flex-col gap-6">
     <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
       <div>
-        <h1 class="text-2xl md:text-3xl font-bold text-amma-green-dark">Termos de compensação ambiental</h1>
-        <p class="text-sm md:text-base text-grey-text mt-2">Acompanhe as mudas acordadas e entregues por empreendimentos.</p>
+        <h1 class="text-2xl md:text-3xl font-bold text-amma-green-dark md:sr-only">Termos de compensação ambiental</h1>
+        <p class="text-sm md:text-base text-grey-text md:mt-0 mt-2">Acompanhe as mudas acordadas e entregues por empreendimentos.</p>
       </div>
       <RouterLink
         :to="{ name: 'compensacao-novo' }"
@@ -88,20 +109,29 @@ function retryLoad() {
       </div>
       <CompensacaoListaEstado :loading="isLoading" :error="loadError" :empty="linhas.length === 0" @retry="retryLoad">
       <div class="md:hidden flex flex-col gap-4" aria-label="Lista de termos">
-        <article v-for="item in linhas" :key="item.id" class="rounded-btn border border-amma-green-light p-4">
-          <div class="flex items-start justify-between gap-3">
-            <div class="min-w-0"><h2 class="font-bold text-grey-text break-words">{{ item.razaoSocial }}</h2><p class="mt-1 text-xs text-grey-text">CNPJ {{ item.cnpj }}</p></div>
-            <CompensacaoStatusBadge :status="item.status" />
+        <div class="flex max-h-[540px] flex-col gap-4 overflow-y-auto pr-1">
+          <article v-for="item in linhasMobilePaginadas" :key="item.id" class="rounded-btn border border-amma-green-light p-4">
+            <div class="flex items-start justify-between gap-3">
+              <div class="min-w-0"><h2 class="font-bold text-grey-text break-words">{{ item.razaoSocial }}</h2><p class="mt-1 text-xs text-grey-text">CNPJ {{ item.cnpj }}</p></div>
+              <CompensacaoStatusBadge :status="item.status" />
+            </div>
+            <dl class="mt-4 grid grid-cols-2 gap-3 text-sm">
+              <div><dt class="text-xs text-grey-text">Termo</dt><dd class="font-semibold text-grey-text">{{ item.numeroTermo }}</dd></div>
+              <div><dt class="text-xs text-grey-text">Entregue / acordado</dt><dd class="font-semibold text-grey-text">{{ item.quantidadeEntregue }} / {{ item.quantidadeAcordada }} mudas</dd></div>
+            </dl>
+            <div class="mt-4 flex gap-2 border-t border-amma-green-light pt-3">
+              <button type="button" @click="abrirDetalhe(item.id)" class="min-h-10 flex-1 rounded-btn border border-amma-green px-3 font-bold text-amma-green focus-visible:outline focus-visible:outline-2 focus-visible:outline-amma-green" :aria-label="`Consultar termo ${item.numeroTermo}`">Consultar</button>
+              <button type="button" @click="abrirEdicao(item.id)" class="min-h-10 flex-1 rounded-btn bg-amma-green px-3 font-bold text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amma-green" :aria-label="`Editar termo ${item.numeroTermo}`">Editar / recibo</button>
+            </div>
+          </article>
+        </div>
+        <div v-if="mobileTotalPages > 1" class="flex items-center justify-between gap-3 rounded-btn border border-amma-green-light px-3 py-2 text-xs text-grey-text">
+          <span class="font-semibold">{{ linhas.length }} registros · Página {{ mobilePage + 1 }} de {{ mobileTotalPages }}</span>
+          <div class="flex gap-2">
+            <button type="button" class="rounded-btn border border-amma-green-light px-3 py-1.5 font-bold disabled:opacity-40" :disabled="mobilePage <= 0" @click="mobilePage = Math.max(0, mobilePage - 1)">Anterior</button>
+            <button type="button" class="rounded-btn border border-amma-green-light px-3 py-1.5 font-bold disabled:opacity-40" :disabled="mobilePage + 1 >= mobileTotalPages" @click="mobilePage = Math.min(mobileTotalPages - 1, mobilePage + 1)">Próxima</button>
           </div>
-          <dl class="mt-4 grid grid-cols-2 gap-3 text-sm">
-            <div><dt class="text-xs text-grey-text">Termo</dt><dd class="font-semibold text-grey-text">{{ item.numeroTermo }}</dd></div>
-            <div><dt class="text-xs text-grey-text">Entregue / acordado</dt><dd class="font-semibold text-grey-text">{{ item.quantidadeEntregue }} / {{ item.quantidadeAcordada }} mudas</dd></div>
-          </dl>
-          <div class="mt-4 flex gap-2 border-t border-amma-green-light pt-3">
-            <button type="button" @click="abrirDetalhe(item.id)" class="min-h-10 flex-1 rounded-btn border border-amma-green px-3 font-bold text-amma-green focus-visible:outline focus-visible:outline-2 focus-visible:outline-amma-green" :aria-label="`Consultar termo ${item.numeroTermo}`">Consultar</button>
-            <button type="button" @click="abrirEdicao(item.id)" class="min-h-10 flex-1 rounded-btn bg-amma-green px-3 font-bold text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amma-green" :aria-label="`Editar termo ${item.numeroTermo}`">Editar / recibo</button>
-          </div>
-        </article>
+        </div>
       </div>
       <AppDataTable
         class="hidden md:block"
@@ -109,7 +139,7 @@ function retryLoad() {
         :items="linhas"
         :loading="isLoading"
         :show-search="false"
-        :show-summary="false"
+        :show-summary="true"
         :allow-view-toggle="false"
         :default-view="'table'"
         :caption="'Acordos de compensação ambiental — registros fictícios de demonstração'"

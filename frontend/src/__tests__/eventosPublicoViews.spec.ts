@@ -209,7 +209,7 @@ describe('EventoPublicoDetalhesView (/eventos/:id)', () => {
     expect(wrapper.text()).toContain('Em frente ao coreto central.')
     expect(wrapper.text()).toContain('Distribuição de mudas no ponto final.')
 
-    await wrapper.findAll('button').find((b) => b.text().includes('Eventos Ambientais'))!.trigger('click')
+    await wrapper.get('nav[aria-label="Caminho de navegação"] a[aria-label="Voltar para Eventos Ambientais"]').trigger('click')
     await flushPromises()
     expect(router.currentRoute.value.name).toBe('eventos-publico')
 

@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
+import { computed, ref, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
+import AppBreadcrumb, { type BreadcrumbItem } from '@/components/ui/AppBreadcrumb.vue'
 import { materialService } from '@/services/materialService'
 import { useFeedbackStore } from '@/stores/feedbackStore'
 
-const router = useRouter()
 const route = useRoute()
 const feedback = useFeedbackStore()
 
@@ -49,9 +49,10 @@ onMounted(() => {
   carregarDetalhesPublicos()
 })
 
-const goToCatalogo = () => {
-  router.push({ name: 'biblioteca-catalogo' })
-}
+const breadcrumbItems = computed<BreadcrumbItem[]>(() => [
+  { label: 'Biblioteca Digital', icon: 'local_library', routeName: 'biblioteca-catalogo' },
+  { label: documento.value.titulo },
+])
 
 // Função para abrir ou baixar o PDF usando a URL centralizada do service
 const downloadPdf = () => {
@@ -61,21 +62,10 @@ const downloadPdf = () => {
 </script>
 
 <template>
-  <div class="max-w-7xl mx-auto flex flex-col gap-4 pt-1 pb-6 w-full">
+  <div class="flex w-full flex-col gap-4 pb-6">
+    <AppBreadcrumb class="-mx-6 -mt-2 md:-mx-10" :items="breadcrumbItems" />
 
-    <nav class="flex items-center gap-2 text-xs md:text-sm text-grey-text">
-      <button
-        @click="goToCatalogo"
-        class="hover:text-amma-green flex items-center gap-1 font-semibold transition-colors cursor-pointer"
-      >
-        <span class="material-symbols-outlined text-[18px]">local_library</span>
-        Biblioteca Digital
-      </button>
-      <span class="text-gray-300 select-none">/</span>
-      <span class="text-amma-green-dark font-bold truncate max-w-xs md:max-w-md">
-        {{ documento.titulo }}
-      </span>
-    </nav>
+    <div class="mx-auto w-full max-w-7xl">
 
     <div class="bg-white rounded-box shadow-sm border border-amma-green-light overflow-hidden flex flex-col lg:flex-row min-h-[580px]">
 
@@ -157,6 +147,7 @@ const downloadPdf = () => {
 
       </div>
 
+    </div>
     </div>
   </div>
 </template>

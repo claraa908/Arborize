@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, reactive, ref } from 'vue'
-import AppBreadcrumb from '@/components/ui/AppBreadcrumb.vue'
+import AppBreadcrumb, { type BreadcrumbItem } from '@/components/ui/AppBreadcrumb.vue'
 import AppDataTable from '@/components/ui/AppDataTable.vue'
 import { useFeedbackStore } from '@/stores/feedbackStore'
 import { useSubstituicaoBotanicaStore } from '@/stores/substituicaoBotanicaStore'
@@ -221,18 +221,35 @@ function voltarLista() {
   selectedId.value = null
   store.selected = null
 }
+
+const laudosBreadcrumb = computed<BreadcrumbItem[]>(() => {
+  const base: BreadcrumbItem[] = [
+    { label: 'Laudos técnicos', icon: 'description', onClick: voltarLista },
+  ]
+  if (!selected.value) return base
+  if (view.value === 'details') {
+    return [...base, { label: `Requerimento ${selected.value.protocolo}` }]
+  }
+  return [
+    ...base,
+    {
+      label: `Requerimento ${selected.value.protocolo}`,
+      onClick: () => {
+        view.value = 'details'
+      },
+    },
+    { label: view.value === 'report' ? 'Emitir laudo' : 'Registrar andamento' },
+  ]
+})
 </script>
 
 <template>
   <section class="flex w-full flex-col" aria-labelledby="laudos-title">
-    <AppBreadcrumb
-      :items="[{ label: 'Início', routeName: 'dashboard', icon: 'home' }, { label: 'Laudos' }]"
-      :show-back="false"
-    />
+    <AppBreadcrumb v-if="view !== 'list'" :items="laudosBreadcrumb" />
     <div class="flex min-w-0 flex-col gap-8 px-6 py-8 md:px-10">
     <template v-if="view === 'list'">
       <header class="flex min-w-0 flex-col justify-between gap-4 sm:flex-row sm:items-center">
-        <div class="min-w-0"><p class="mb-2 text-xs font-bold uppercase tracking-widest text-grey-text">Substituição botânica</p><h1 id="laudos-title" class="text-2xl font-bold text-amma-green-dark">Laudos técnicos</h1><p class="mt-1 max-w-3xl text-sm text-grey-text">Analise os requerimentos de retirada de Nim e acompanhe os laudos e as etapas de execução.</p></div>
+        <div class="min-w-0"><p class="mb-2 text-xs font-bold uppercase tracking-widest text-grey-text md:sr-only">Substituição botânica</p><h1 id="laudos-title" class="text-2xl font-bold text-amma-green-dark md:sr-only">Laudos técnicos</h1><p class="mt-1 max-w-3xl text-sm text-grey-text">Analise os requerimentos de retirada de Nim e acompanhe os laudos e as etapas de execução.</p></div>
         <button type="button" class="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-btn border-2 border-amma-green bg-white px-5 py-2.5 text-sm font-bold text-amma-green hover:bg-amma-green-lighter focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amma-green" @click="store.carregar"><span class="material-symbols-outlined" aria-hidden="true">refresh</span> Atualizar</button>
       </header>
 
@@ -261,7 +278,7 @@ function voltarLista() {
             :show-search="true"
             :show-summary="true"
             :allow-view-toggle="true"
-            default-view="grid"
+            default-view="table"
           >
             <template #card="{ item }">
               <div class="flex min-w-0 flex-col gap-3">
@@ -281,7 +298,15 @@ function voltarLista() {
     </template>
 
     <template v-else-if="selected">
-      <header class="flex min-w-0 flex-col justify-between gap-4 sm:flex-row sm:items-center"><div class="min-w-0"><p class="mb-2 text-xs font-bold uppercase tracking-widest text-grey-text">Laudos técnicos</p><h1 id="laudos-title" class="break-all text-2xl font-bold text-amma-green-dark">{{ view === 'report' ? 'Emitir laudo' : view === 'progress' ? 'Registrar andamento' : 'Requerimento ' + selected.protocolo }}</h1><p class="mt-1 text-sm text-grey-text">Dados do requerimento enviados pelo cidadão e persistidos no Arborize.</p></div><button type="button" class="min-h-11 shrink-0 rounded-btn border-2 border-amma-green bg-white px-4 py-2 font-bold text-amma-green hover:bg-amma-green-lighter focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amma-green" @click="voltarLista">Voltar à lista</button></header>
+      <header class="flex min-w-0 items-center gap-4">
+        <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-amma-green-lighter/50 text-amma-green shadow-sm" aria-hidden="true">
+          <span class="material-symbols-outlined text-[24px]">{{ view === 'report' ? 'assignment_turned_in' : view === 'progress' ? 'published_with_changes' : 'description' }}</span>
+        </div>
+        <div class="min-w-0">
+          <h1 id="laudos-title" class="break-all text-2xl font-bold leading-tight text-amma-green-dark">{{ view === 'report' ? 'Emitir laudo' : view === 'progress' ? 'Registrar andamento' : 'Requerimento ' + selected.protocolo }}</h1>
+          <p class="mt-1 text-sm text-grey-text">Dados do requerimento enviados pelo cidadão e persistidos no Arborize.</p>
+        </div>
+      </header>
 
       <div v-if="store.isLoading" class="h-48 animate-pulse rounded-box bg-amma-green-lighter" role="status" aria-label="Carregando requerimento" />
       <div v-else-if="store.error" class="rounded-btn border border-feedback-danger-border bg-feedback-danger-bg p-4 text-sm text-feedback-danger" role="alert">{{ store.error }} <button type="button" class="ml-2 underline" @click="abrirDetalhes(selected)">Tentar novamente</button></div>

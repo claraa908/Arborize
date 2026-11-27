@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import AppBreadcrumb, { type BreadcrumbItem } from '@/components/ui/AppBreadcrumb.vue'
 import AppDataTable, { type TableColumn } from '@/components/ui/AppDataTable.vue'
 import MovimentacaoMudaForm from '@/components/viveiro/MovimentacaoMudaForm.vue'
 import MovimentacoesTable from '@/components/viveiro/MovimentacoesTable.vue'
@@ -20,6 +21,10 @@ const activeTab = computed(() => route.query.aba === 'movimentacoes' ? 'moviment
 const movementQuery = computed(() => typeof route.query.movimentacao === 'string' ? route.query.movimentacao : '')
 const formMode = computed(() => movementQuery.value !== '')
 const movementId = computed(() => movementQuery.value && movementQuery.value !== 'nova' ? Number(movementQuery.value) : undefined)
+const movimentacaoBreadcrumb = computed<BreadcrumbItem[]>(() => [
+  { label: 'Viveiro', icon: 'psychiatry', onClick: fecharFormulario },
+  { label: movementId.value ? 'Editar movimentação' : 'Registrar movimentação' },
+])
 
 const indicadores = computed(() => {
   const estoqueAtual = viveiroStore.especies.reduce((total, especie) => total + (especie.mudasDisponiveis ?? 0), 0)
@@ -110,37 +115,39 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="flex flex-col gap-6 px-4 pt-6 sm:px-6 md:px-10">
+  <div class="flex w-full flex-col">
     <template v-if="formMode">
-      <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <p class="text-sm font-semibold text-amma-green">Viveiro / Movimentações</p>
-          <h1 class="mt-1 text-2xl font-black text-amma-green-dark">{{ movementId ? 'Editar movimentação' : 'Registrar movimentação' }}</h1>
-          <p class="mt-1 text-sm text-grey-text">Registre entradas, saídas para plantio e perdas de mudas.</p>
+      <AppBreadcrumb :items="movimentacaoBreadcrumb" />
+      <div class="flex flex-col gap-6 px-6 pb-8 pt-6 md:px-10">
+        <header class="flex items-center gap-4">
+          <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-amma-green-lighter/50 text-amma-green shadow-sm" aria-hidden="true">
+            <span class="material-symbols-outlined text-[24px]">{{ movementId ? 'edit' : 'sync_alt' }}</span>
+          </div>
+          <div>
+            <h1 class="text-2xl font-bold leading-none text-amma-green-dark">{{ movementId ? 'Editar movimentação' : 'Registrar movimentação' }}</h1>
+            <p class="mt-1 text-sm text-grey-text">Registre entradas, saídas para plantio e perdas de mudas.</p>
+          </div>
+        </header>
+        <div v-if="movementId && movimentacaoStore.isLoadingDetalhe" class="rounded-box border border-amma-green-light bg-white p-8 text-center" role="status">Carregando movimentação...</div>
+        <div v-else-if="movementId && !movimentacaoStore.movimentacaoAtual" class="rounded-box border border-feedback-danger-border bg-feedback-danger-bg p-6 text-center" role="alert">
+          <p class="font-semibold text-feedback-danger">{{ movimentacaoStore.formError || 'Movimentação não encontrada.' }}</p>
+          <button type="button" class="mt-3 text-sm font-bold text-amma-green-dark underline" @click="fecharFormulario">Voltar ao histórico</button>
         </div>
-        <button type="button" class="inline-flex min-h-10 items-center gap-2 self-start rounded-btn px-3 text-sm font-bold text-amma-green-dark hover:bg-amma-green-lighter" @click="fecharFormulario">
-          <span class="material-symbols-outlined" aria-hidden="true">arrow_back</span>Voltar ao histórico
-        </button>
+        <MovimentacaoMudaForm
+          v-else
+          :especies="viveiroStore.especies"
+          :initial-movement="movimentacaoStore.movimentacaoAtual"
+          :loading="viveiroStore.isLoading"
+          :saving="movimentacaoStore.isSaving"
+          :error="movimentacaoStore.formError"
+          @save="salvarMovimentacao"
+          @cancel="fecharFormulario"
+          @proof="movimentacaoStore.abrirComprovante"
+        />
       </div>
-      <div v-if="movementId && movimentacaoStore.isLoadingDetalhe" class="rounded-box border border-amma-green-light bg-white p-8 text-center" role="status">Carregando movimentação...</div>
-      <div v-else-if="movementId && !movimentacaoStore.movimentacaoAtual" class="rounded-box border border-feedback-danger-border bg-feedback-danger-bg p-6 text-center" role="alert">
-        <p class="font-semibold text-feedback-danger">{{ movimentacaoStore.formError || 'Movimentação não encontrada.' }}</p>
-        <button type="button" class="mt-3 text-sm font-bold text-amma-green-dark underline" @click="fecharFormulario">Voltar ao histórico</button>
-      </div>
-      <MovimentacaoMudaForm
-        v-else
-        :especies="viveiroStore.especies"
-        :initial-movement="movimentacaoStore.movimentacaoAtual"
-        :loading="viveiroStore.isLoading"
-        :saving="movimentacaoStore.isSaving"
-        :error="movimentacaoStore.formError"
-        @save="salvarMovimentacao"
-        @cancel="fecharFormulario"
-        @proof="movimentacaoStore.abrirComprovante"
-      />
     </template>
 
-    <template v-else>
+    <div v-else class="flex flex-col gap-6 px-4 pb-8 pt-6 sm:px-6 md:px-10">
       <section aria-label="Resumo do estoque" :aria-busy="viveiroStore.isLoading || movimentacaoStore.isLoadingResumo" class="grid grid-cols-1 gap-4 sm:grid-cols-2 2xl:grid-cols-4">
         <article v-for="indicador in indicadores" :key="indicador.titulo" class="min-w-0 rounded-box border border-amma-green-light bg-white p-5 shadow-sm sm:p-6">
           <div class="flex items-start justify-between gap-3">
@@ -218,6 +225,6 @@ onMounted(() => {
           </div></template>
         </AppDataTable>
       </div>
-    </template>
+    </div>
   </div>
 </template>

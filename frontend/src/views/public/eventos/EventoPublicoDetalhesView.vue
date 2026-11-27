@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import AppBreadcrumb, { type BreadcrumbItem } from '@/components/ui/AppBreadcrumb.vue'
 import {
   eventoPossuiBanner,
   formatarHorarioEvento,
@@ -51,6 +52,11 @@ const horarioFormatado = computed(() =>
   evento.value ? formatarHorarioEvento(evento.value.horarioInicio, evento.value.horarioTermino) : 'Não informado',
 )
 
+const breadcrumbItems = computed<BreadcrumbItem[]>(() => [
+  { label: 'Eventos Ambientais', icon: 'calendar_month', routeName: 'eventos-publico' },
+  { label: isVisivel.value && evento.value ? evento.value.nome : isCancelado.value && evento.value ? evento.value.nome : 'Detalhes do Evento' },
+])
+
 const carregarEvento = () => {
   bannerErro.value = false
   if (eventoId.value) {
@@ -76,21 +82,9 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="max-w-7xl mx-auto flex flex-col gap-4 pt-1 pb-8 w-full">
-    <nav aria-label="Navegação estrutural" class="flex items-center gap-2 text-xs md:text-sm text-grey-text">
-      <button
-        type="button"
-        class="hover:text-amma-green flex items-center gap-1 font-semibold transition-colors cursor-pointer rounded-btn focus-visible:outline focus-visible:outline-2 focus-visible:outline-amma-green"
-        @click="voltarParaEventos"
-      >
-        <span class="material-symbols-outlined text-[18px]" aria-hidden="true">calendar_month</span>
-        Eventos Ambientais
-      </button>
-      <span class="text-gray-300 select-none" aria-hidden="true">/</span>
-      <span class="text-amma-green-dark font-bold truncate max-w-xs md:max-w-md">
-        {{ isVisivel && evento ? evento.nome : isCancelado && evento ? evento.nome : 'Detalhes do Evento' }}
-      </span>
-    </nav>
+  <div class="flex w-full flex-col gap-4 pb-8">
+    <AppBreadcrumb class="-mx-6 -mt-2 md:-mx-10" :items="breadcrumbItems" />
+    <div class="mx-auto flex w-full max-w-7xl flex-col gap-4">
 
     <div
       v-if="eventoStore.isLoadingDetail"
@@ -330,18 +324,8 @@ onUnmounted(() => {
             <p class="text-sm text-grey-text leading-relaxed">{{ evento.descricaoEncerramento }}</p>
           </section>
         </div>
-
-        <div class="pt-4 border-t border-amma-green-light flex flex-wrap items-center justify-between gap-3">
-          <button
-            type="button"
-            class="border-2 border-amma-green text-amma-green hover:bg-amma-green-lighter font-bold py-2.5 px-6 rounded-btn transition-colors text-sm inline-flex items-center gap-2 cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amma-green"
-            @click="voltarParaEventos"
-          >
-            <span class="material-symbols-outlined text-[18px]" aria-hidden="true">arrow_back</span>
-            Voltar para Eventos
-          </button>
-        </div>
       </div>
     </article>
+    </div>
   </div>
 </template>

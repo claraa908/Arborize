@@ -29,11 +29,12 @@ async function baixarDocumento(entregaId?: number) {
 </script>
 
 <template>
-  <div class="px-6 md:px-10 pt-5 pb-8 flex flex-col gap-5">
+  <div class="flex w-full flex-col">
     <AppBreadcrumb :items="[
       { label: 'Compensação Ambiental', routeName: 'compensacao-lista', icon: 'balance' },
       { label: termo?.numeroTermo ?? 'Termo' },
-    ]" :show-back="false" />
+    ]" />
+    <div class="flex flex-col gap-5 px-6 pb-8 pt-6 md:px-10">
 
     <div v-if="store.isLoading" class="rounded-box border border-amma-green-light bg-white p-8 text-center text-grey-text" role="status">Carregando o termo…</div>
     <div v-else-if="store.error" class="rounded-box border border-feedback-danger-border bg-feedback-danger-bg p-8 text-center" role="alert">
@@ -48,10 +49,17 @@ async function baixarDocumento(entregaId?: number) {
 
     <template v-else>
       <header class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <p class="text-sm font-semibold text-amma-green">{{ termo.numeroTermo }}</p>
-          <h1 class="text-2xl md:text-3xl font-bold text-amma-green-dark mt-1">Termo de compensação</h1>
-          <p class="text-sm md:text-base text-grey-text mt-1">{{ termo.razaoSocial }}</p>
+        <div class="flex items-center gap-4">
+          <div
+            aria-hidden="true"
+            class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-amma-green-lighter/50 text-amma-green shadow-sm"
+          >
+            <span class="material-symbols-outlined text-[24px]">balance</span>
+          </div>
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-wide text-amma-green">{{ termo.numeroTermo }}</p>
+            <h1 class="text-2xl font-bold leading-tight text-amma-green-dark">{{ termo.razaoSocial }}</h1>
+          </div>
         </div>
         <RouterLink :to="{ name: 'compensacao-editar', params: { id: termo.id } }" class="inline-flex min-h-11 items-center justify-center gap-2 rounded-btn border-2 border-amma-green bg-white px-5 font-bold text-amma-green hover:bg-amma-green-lighter focus-visible:outline focus-visible:outline-2 focus-visible:outline-amma-green">
           <span class="material-symbols-outlined" aria-hidden="true">edit</span>
@@ -108,5 +116,6 @@ async function baixarDocumento(entregaId?: number) {
         <p v-else class="mt-5 rounded-btn border border-amma-green-light bg-amma-bg p-5 text-sm text-grey-text">Nenhuma entrega registrada. O status permanece Em aberto até que uma parcela seja comprovada.</p>
       </section>
     </template>
+    </div>
   </div>
 </template>

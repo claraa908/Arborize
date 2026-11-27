@@ -16,6 +16,17 @@ const yearOptions = computed(() =>
   [...new Set([year.value, ...(dashboardStore.goals?.anosDisponiveis ?? [])])].sort((a, b) => b - a),
 )
 const quarterOptions = [1, 2, 3, 4]
+const goalsPage = ref(0)
+const goalsPageSize = 10
+const paginatedGoals = computed(() => {
+  const metas = dashboardStore.goals?.metas ?? []
+  const start = goalsPage.value * goalsPageSize
+  return metas.slice(start, start + goalsPageSize)
+})
+const goalsTotalPages = computed(() => {
+  const total = dashboardStore.goals?.metas.length ?? 0
+  return total === 0 ? 0 : Math.max(1, Math.ceil(total / goalsPageSize))
+})
 const hasEvolutionData = computed(
   () =>
     dashboardStore.overview?.evolucao.some((month) => month.mudasDoadas > 0 || month.mudasPlantadas > 0) ??
@@ -74,6 +85,7 @@ const fetchGoals = () =>
   })
 
 watch([zone, year, quarter], () => {
+  goalsPage.value = 0
   void fetchGoals()
 })
 
@@ -107,8 +119,7 @@ const generateReport = async (request: DashboardReportRequest) => {
   <div class="flex flex-col gap-6 px-6 pb-8 pt-6 md:px-10">
     <header class="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
       <div>
-        <p class="text-xs font-bold uppercase tracking-wider text-amma-green">Indicadores da AMMA</p>
-        <h1 class="mt-1 text-2xl font-bold text-amma-green-dark">Dashboard Gerencial</h1>
+        <h1 class="mt-1 text-2xl font-bold text-amma-green-dark md:sr-only">Dashboard Gerencial</h1>
         <p class="mt-1 text-sm text-grey-text">Acompanhe os resultados operacionais e as metas de arborização.</p>
       </div>
       <button
@@ -376,22 +387,22 @@ const generateReport = async (request: DashboardReportRequest) => {
         </div>
 
         <div class="overflow-hidden rounded-box border border-amma-green-light bg-white shadow-sm">
-          <div class="overflow-x-auto">
+          <div class="max-h-[460px] overflow-auto">
             <table class="w-full min-w-[760px] border-collapse text-left">
               <caption class="sr-only">
                 Metas de plantio e saldo líquido por bairro no {{ dashboardStore.goals.trimestre }}º trimestre de {{ dashboardStore.goals.ano }}
               </caption>
-              <thead class="bg-amma-green-lighter text-xs uppercase tracking-wide text-amma-green-dark">
+              <thead class="sticky top-0 z-10 bg-amma-green-lighter text-xs uppercase tracking-wide text-amma-green-dark shadow-[inset_0_-1px_0_0_var(--color-amma-green-light)]">
                 <tr>
-                  <th scope="col" class="px-5 py-4 font-bold">Bairro</th>
-                  <th scope="col" class="px-5 py-4 font-bold">Meta de plantio</th>
-                  <th scope="col" class="px-5 py-4 font-bold">Realizado</th>
-                  <th scope="col" class="px-5 py-4 font-bold">Saldo líquido</th>
-                  <th scope="col" class="px-5 py-4 font-bold">Prioridade</th>
+                  <th scope="col" class="bg-amma-green-lighter px-5 py-4 font-bold">Bairro</th>
+                  <th scope="col" class="bg-amma-green-lighter px-5 py-4 font-bold">Meta de plantio</th>
+                  <th scope="col" class="bg-amma-green-lighter px-5 py-4 font-bold">Realizado</th>
+                  <th scope="col" class="bg-amma-green-lighter px-5 py-4 font-bold">Saldo líquido</th>
+                  <th scope="col" class="bg-amma-green-lighter px-5 py-4 font-bold">Prioridade</th>
                 </tr>
               </thead>
-              <tbody v-if="dashboardStore.goals.metas.length" class="divide-y divide-amma-green-light">
-                <tr v-for="goal in dashboardStore.goals.metas" :key="`${goal.zona}-${goal.bairro}-table`">
+              <tbody v-if="paginatedGoals.length" class="divide-y divide-amma-green-light">
+                <tr v-for="goal in paginatedGoals" :key="`${goal.zona}-${goal.bairro}-table`">
                   <th scope="row" class="px-5 py-4 text-sm font-semibold text-grey-text">
                     {{ goal.bairro }}
                     <span class="mt-0.5 block text-xs font-normal">{{ goal.zona }}</span>
@@ -429,6 +440,13 @@ const generateReport = async (request: DashboardReportRequest) => {
                 </tr>
               </tbody>
             </table>
+          </div>
+          <div v-if="goalsTotalPages > 1" class="flex items-center justify-between gap-3 border-t border-amma-green-light px-5 py-3 text-xs text-grey-text">
+            <span class="font-semibold">{{ dashboardStore.goals.metas.length }} registros · Página {{ goalsPage + 1 }} de {{ goalsTotalPages }}</span>
+            <div class="flex gap-2">
+              <button type="button" class="rounded-btn border border-amma-green-light px-3 py-1.5 font-bold text-amma-green-dark hover:bg-amma-green-lighter disabled:opacity-40" :disabled="goalsPage <= 0" @click="goalsPage = Math.max(0, goalsPage - 1)">Anterior</button>
+              <button type="button" class="rounded-btn border border-amma-green-light px-3 py-1.5 font-bold text-amma-green-dark hover:bg-amma-green-lighter disabled:opacity-40" :disabled="goalsPage + 1 >= goalsTotalPages" @click="goalsPage = Math.min(goalsTotalPages - 1, goalsPage + 1)">Próxima</button>
+            </div>
           </div>
         </div>
         <p class="text-xs text-grey-text">

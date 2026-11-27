@@ -92,11 +92,11 @@ function dataPtBr(data: string) {
       <button type="button" class="mt-3 rounded-btn border border-feedback-danger px-4 py-2 text-sm font-bold text-feedback-danger" @click="emit('retry')">Tentar novamente</button>
     </div>
     <div v-else class="overflow-hidden rounded-box border border-amma-green-light bg-white shadow-sm">
-      <div class="overflow-x-auto">
+      <div class="max-h-[460px] overflow-auto">
         <table class="w-full min-w-[900px] border-collapse text-left">
           <caption class="sr-only">Histórico de movimentações de mudas</caption>
-          <thead><tr class="border-b border-amma-green-light bg-amma-bg text-sm text-amma-green-dark">
-            <th class="px-5 py-4 font-bold">Data</th><th class="px-5 py-4 font-bold">Tipo</th><th class="px-5 py-4 font-bold">Espécie</th><th class="px-5 py-4 text-right font-bold">Quantidade</th><th class="px-5 py-4 font-bold">Destino / responsável</th><th class="px-5 py-4 text-center font-bold">Ações</th>
+          <thead class="sticky top-0 z-10 bg-amma-bg shadow-[inset_0_-1px_0_0_var(--color-amma-green-light)]"><tr class="text-sm text-amma-green-dark">
+            <th class="bg-amma-bg px-5 py-4 font-bold">Data</th><th class="bg-amma-bg px-5 py-4 font-bold">Tipo</th><th class="bg-amma-bg px-5 py-4 font-bold">Espécie</th><th class="bg-amma-bg px-5 py-4 text-right font-bold">Quantidade</th><th class="bg-amma-bg px-5 py-4 font-bold">Destino / responsável</th><th class="bg-amma-bg px-5 py-4 text-center font-bold">Ações</th>
           </tr></thead>
           <tbody v-if="pagina?.content.length">
             <tr v-for="movimento in pagina.content" :key="movimento.id" class="border-b border-amma-green-light/60 last:border-0 hover:bg-amma-green-lighter/30">
@@ -119,8 +119,8 @@ function dataPtBr(data: string) {
           </td></tr></tbody>
         </table>
       </div>
-      <div v-if="pagina && pagina.totalPages > 1" class="flex items-center justify-between border-t border-amma-green-light px-5 py-3 text-sm text-grey-text">
-        <span>{{ pagina.totalElements }} registros · página {{ pagina.number + 1 }} de {{ pagina.totalPages }}</span>
+      <div v-if="pagina && pagina.totalElements > 0" class="flex items-center justify-between border-t border-amma-green-light px-5 py-3 text-sm text-grey-text">
+        <span>{{ pagina.totalElements }} registros · página {{ pagina.number + 1 }} de {{ pagina.totalPages || 1 }}</span>
         <div class="flex gap-2"><button type="button" :disabled="pagina.number <= 0" class="rounded-btn border border-amma-green-light px-3 py-1.5 font-semibold disabled:opacity-40" @click="emit('page', { ...filtros }, pagina.number - 1)">Anterior</button><button type="button" :disabled="pagina.number + 1 >= pagina.totalPages" class="rounded-btn border border-amma-green-light px-3 py-1.5 font-semibold disabled:opacity-40" @click="emit('page', { ...filtros }, pagina.number + 1)">Próxima</button></div>
       </div>
     </div>
