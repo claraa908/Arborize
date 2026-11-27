@@ -45,4 +45,14 @@ describe('AppBreadcrumb', () => {
     expect(html).toContain('aria-label="Voltar para Árvore 42"')
     expect(html).toContain('href="/sistema/inventario/42"')
   })
+
+  it('suporta query string e ação onClick quando não há rota dedicada', async () => {
+    const items: BreadcrumbItem[] = [
+      { label: 'Viveiro', icon: 'psychiatry', onClick: () => {} },
+      { label: 'Registrar movimentação' },
+    ]
+    const html = await renderizarBreadcrumb(items)
+    expect(html).toContain('<button type="button"')
+    expect(html).toContain('aria-label="Voltar para Viveiro"')
+  })
 })

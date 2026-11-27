@@ -6,7 +6,9 @@ export interface BreadcrumbItem {
   label: string
   routeName?: string
   params?: Record<string, string | number>
+  query?: Record<string, string | number | undefined>
   icon?: string
+  onClick?: () => void
 }
 
 const props = withDefaults(
@@ -23,21 +25,21 @@ const destinoAnterior = computed(() =>
   [...props.items]
     .slice(0, -1)
     .reverse()
-    .find((item) => item.routeName),
+    .find((item) => item.routeName || item.onClick),
 )
 </script>
 
 <template>
   <nav
     aria-label="Caminho de navegação"
-    class="sticky top-0 z-20 flex w-full items-center justify-between border-b border-amma-green-light/40 bg-white px-6 py-2.5 shadow-xs md:px-10"
+    class="sticky top-0 z-20 flex self-stretch items-center justify-between border-b border-amma-green-light/40 bg-white px-6 py-2.5 shadow-xs md:px-10"
   >
     <ol class="flex flex-wrap items-center gap-1 text-xs md:text-sm">
       <template v-for="(item, index) in items" :key="index">
         <li class="flex items-center gap-1">
           <RouterLink
             v-if="item.routeName && index < items.length - 1"
-            :to="{ name: item.routeName, params: item.params }"
+            :to="{ name: item.routeName, params: item.params, query: item.query }"
             class="flex items-center transition-colors hover:text-amma-green focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amma-green"
             :class="item.icon ? 'text-grey-text' : 'font-semibold text-grey-text'"
             :aria-label="item.icon ? item.label : undefined"
@@ -51,6 +53,23 @@ const destinoAnterior = computed(() =>
             >
             <span v-else>{{ item.label }}</span>
           </RouterLink>
+          <button
+            v-else-if="item.onClick && index < items.length - 1"
+            type="button"
+            class="flex cursor-pointer items-center transition-colors hover:text-amma-green focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amma-green"
+            :class="item.icon ? 'text-grey-text' : 'font-semibold text-grey-text'"
+            :aria-label="item.icon ? item.label : undefined"
+            :title="item.icon ? item.label : undefined"
+            @click="item.onClick()"
+          >
+            <span
+              v-if="item.icon"
+              aria-hidden="true"
+              class="material-symbols-outlined text-[18px]"
+              >{{ item.icon }}</span
+            >
+            <span v-else>{{ item.label }}</span>
+          </button>
           <span
             v-else
             :aria-current="index === items.length - 1 ? 'page' : undefined"
@@ -80,12 +99,22 @@ const destinoAnterior = computed(() =>
 
     <RouterLink
       v-if="showBack && destinoAnterior?.routeName"
-      :to="{ name: destinoAnterior.routeName, params: destinoAnterior.params }"
+      :to="{ name: destinoAnterior.routeName, params: destinoAnterior.params, query: destinoAnterior.query }"
       :aria-label="`Voltar para ${destinoAnterior.label}`"
       class="flex cursor-pointer items-center gap-1 rounded-[4px_14px_4px_14px] border border-gray-200 bg-white px-2.5 py-1 text-xs font-bold text-grey-text shadow-xs transition-colors hover:border-amma-green hover:bg-amma-green-lighter/10 hover:text-amma-green focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amma-green"
     >
       <span aria-hidden="true" class="material-symbols-outlined text-[16px]">arrow_back</span>
       Voltar
     </RouterLink>
+    <button
+      v-else-if="showBack && destinoAnterior?.onClick"
+      type="button"
+      :aria-label="`Voltar para ${destinoAnterior.label}`"
+      class="flex cursor-pointer items-center gap-1 rounded-[4px_14px_4px_14px] border border-gray-200 bg-white px-2.5 py-1 text-xs font-bold text-grey-text shadow-xs transition-colors hover:border-amma-green hover:bg-amma-green-lighter/10 hover:text-amma-green focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amma-green"
+      @click="destinoAnterior.onClick()"
+    >
+      <span aria-hidden="true" class="material-symbols-outlined text-[16px]">arrow_back</span>
+      Voltar
+    </button>
   </nav>
 </template>

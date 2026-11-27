@@ -1,8 +1,9 @@
 <script setup lang="ts" generic="T extends object">
-import { ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 
 export interface TablePagination {
   page: number
+  size?: number
   totalElements: number
   totalPages: number
 }
@@ -20,6 +21,9 @@ const props = withDefaults(
     columns: TableColumn[]
     items: T[]
     pagination?: TablePagination
+    pageSize?: number
+    maxBodyHeightClass?: string
+    fixedLayout?: boolean
     loading?: boolean
     selectedId?: string | number | null
     caption?: string
@@ -35,6 +39,9 @@ const props = withDefaults(
     defaultView?: 'table' | 'grid'
   }>(),
   {
+    pageSize: 10,
+    maxBodyHeightClass: 'max-h-[460px]',
+    fixedLayout: false,
     loading: false,
     selectedId: null,
     itemKey: 'id',
@@ -49,14 +56,72 @@ const props = withDefaults(
   },
 )
 
-defineEmits<{
+const emit = defineEmits<{
   (e: 'update:search', value: string): void
   (e: 'action-click'): void
   (e: 'prev-page'): void
   (e: 'next-page'): void
+  (e: 'page-change', page: number): void
 }>()
 
 const currentView = ref<'table' | 'grid'>(props.defaultView)
+const localPage = ref(0)
+
+const isServerPaginated = computed(() => Boolean(props.pagination))
+const effectivePageSize = computed(() => props.pagination?.size ?? props.pageSize ?? 10)
+const effectivePage = computed(() => props.pagination?.page ?? localPage.value)
+const effectiveTotalElements = computed(
+  () => props.pagination?.totalElements ?? props.items.length,
+)
+const effectiveTotalPages = computed(() => {
+  if (props.pagination) return props.pagination.totalPages
+  return props.items.length === 0
+    ? 0
+    : Math.max(1, Math.ceil(props.items.length / effectivePageSize.value))
+})
+
+const displayedItems = computed(() => {
+  if (isServerPaginated.value) return props.items
+  const start = localPage.value * effectivePageSize.value
+  return props.items.slice(start, start + effectivePageSize.value)
+})
+
+watch(
+  () => props.search,
+  () => {
+    localPage.value = 0
+  },
+)
+
+watch(
+  () => [props.items.length, effectivePageSize.value],
+  () => {
+    if (isServerPaginated.value) return
+    const maxPage = Math.max(0, effectiveTotalPages.value - 1)
+    if (localPage.value > maxPage) localPage.value = 0
+  },
+)
+
+function goPrevPage() {
+  if (props.loading || effectivePage.value <= 0) return
+  if (isServerPaginated.value) {
+    emit('prev-page')
+    emit('page-change', effectivePage.value - 1)
+    return
+  }
+  localPage.value = Math.max(0, localPage.value - 1)
+}
+
+function goNextPage() {
+  if (props.loading || effectivePage.value + 1 >= effectiveTotalPages.value) return
+  if (isServerPaginated.value) {
+    emit('next-page')
+    emit('page-change', effectivePage.value + 1)
+    return
+  }
+  localPage.value = Math.min(effectiveTotalPages.value - 1, localPage.value + 1)
+}
+
 function valor(item: T, key: string): unknown {
   return (item as Record<string, unknown>)[key]
 }
@@ -93,18 +158,18 @@ function chave(item: T, index: number): string | number {
           class="flex items-center gap-2 bg-white border border-amma-green-light/70 px-3 py-1.5 rounded-btn shadow-xs"
         >
           <span class="text-xs font-semibold text-grey-text/70 whitespace-nowrap">
-            {{ pagination?.totalElements ?? items.length }} registros
+            {{ effectiveTotalElements }} registros
           </span>
-          <span v-if="pagination" class="text-xs text-grey-text">
-            Página {{ pagination.totalPages ? pagination.page + 1 : 0 }} de
-            {{ pagination.totalPages }}
+          <span class="text-xs text-grey-text whitespace-nowrap">
+            Página {{ effectiveTotalPages ? effectivePage + 1 : 0 }} de
+            {{ effectiveTotalPages }}
           </span>
           <div class="flex items-center ml-1">
             <button
               type="button"
-              @click="$emit('prev-page')"
+              @click="goPrevPage"
               class="w-6 h-6 flex items-center justify-center rounded-l border border-amma-green-light bg-amma-bg text-grey-text hover:text-amma-green hover:bg-amma-green-lighter/30 disabled:opacity-40 transition-colors cursor-pointer"
-              :disabled="!pagination || loading || pagination.page <= 0"
+              :disabled="loading || effectivePage <= 0"
               aria-label="Página anterior"
               title="Página anterior"
             >
@@ -112,9 +177,9 @@ function chave(item: T, index: number): string | number {
             </button>
             <button
               type="button"
-              @click="$emit('next-page')"
+              @click="goNextPage"
               class="w-6 h-6 flex items-center justify-center rounded-r border-y border-r border-amma-green-light bg-amma-bg text-grey-text hover:text-amma-green hover:bg-amma-green-lighter/30 disabled:opacity-40 transition-colors cursor-pointer"
-              :disabled="!pagination || loading || pagination.page + 1 >= pagination.totalPages"
+              :disabled="loading || effectivePage + 1 >= effectiveTotalPages"
               aria-label="Próxima página"
               title="Próxima página"
             >
@@ -175,9 +240,12 @@ function chave(item: T, index: number): string | number {
     </div>
 
     <div v-if="currentView === 'grid'" class="flex min-w-0 flex-col gap-6">
-      <div v-if="items.length > 0" class="grid min-w-0 grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      <div
+        v-if="displayedItems.length > 0"
+        :class="['grid min-w-0 grid-cols-1 gap-5 overflow-y-auto pr-1 sm:grid-cols-2 lg:grid-cols-3', maxBodyHeightClass]"
+      >
         <div
-          v-for="(item, index) in items"
+          v-for="(item, index) in displayedItems"
           :key="chave(item, index)"
           class="flex min-w-0 flex-col justify-between rounded-box border border-amma-green-light bg-white p-5 shadow-xs transition-shadow hover:shadow-md"
         >
@@ -193,6 +261,12 @@ function chave(item: T, index: number): string | number {
               </div>
             </div>
           </slot>
+          <div
+            v-if="$slots['row-actions']"
+            class="mt-4 border-t border-amma-green-light/60 pt-3"
+          >
+            <slot name="row-actions" :item="item" />
+          </div>
         </div>
       </div>
 
@@ -206,20 +280,20 @@ function chave(item: T, index: number): string | number {
       v-else
       class="bg-white rounded-btn shadow-sm border border-amma-green-light overflow-hidden"
     >
-      <div class="overflow-x-auto">
-        <table class="w-full text-left border-collapse">
+      <div :class="['overflow-auto', maxBodyHeightClass]">
+        <table :class="['w-full text-left border-collapse', fixedLayout ? 'lg:table-fixed' : '']">
           <caption v-if="caption" class="sr-only">
             {{
               caption
             }}
           </caption>
-          <thead>
-            <tr class="bg-amma-bg border-b border-amma-green-light text-amma-green-dark text-sm">
+          <thead class="sticky top-0 z-10 bg-amma-bg shadow-[inset_0_-1px_0_0_var(--color-amma-green-light)]">
+            <tr class="text-amma-green-dark text-sm">
               <th
                 v-for="col in columns"
                 :key="col.key"
                 :class="[
-                  'py-4 px-6 font-bold',
+                  'bg-amma-bg py-3.5 px-4 font-bold whitespace-nowrap',
                   col.align === 'center'
                     ? 'text-center'
                     : col.align === 'right'
@@ -234,32 +308,43 @@ function chave(item: T, index: number): string | number {
             </tr>
           </thead>
 
-          <tbody v-if="items.length > 0">
-            <tr
-              v-for="(item, index) in items"
-              :key="chave(item, index)"
-              class="border-b border-amma-green-light/50 hover:bg-amma-green-lighter/30 transition-colors"
-              :class="{
-                'bg-amma-green-lighter': selectedId != null && valor(item, itemKey) === selectedId,
-              }"
-            >
-              <td
-                v-for="col in columns"
-                :key="col.key"
+          <tbody v-if="displayedItems.length > 0">
+            <template v-for="(item, index) in displayedItems" :key="chave(item, index)">
+              <tr
+                class="hover:bg-amma-green-lighter/30 transition-colors"
                 :class="[
-                  'py-4 px-6',
-                  col.align === 'center'
-                    ? 'text-center'
-                    : col.align === 'right'
-                      ? 'text-right'
-                      : 'text-left',
+                  $slots['row-actions'] ? '' : 'border-b border-amma-green-light/50',
+                  { 'bg-amma-green-lighter': selectedId != null && valor(item, itemKey) === selectedId },
                 ]"
               >
-                <slot :name="col.key" :item="item" :value="valor(item, col.key)">
-                  <span class="text-sm font-medium text-grey-text">{{ valor(item, col.key) }}</span>
-                </slot>
-              </td>
-            </tr>
+                <td
+                  v-for="col in columns"
+                  :key="col.key"
+                  :class="[
+                    $slots['row-actions'] ? 'pt-3.5 pb-2 px-4' : 'py-3.5 px-4',
+                    col.align === 'center'
+                      ? 'text-center'
+                      : col.align === 'right'
+                        ? 'text-right'
+                        : 'text-left',
+                    fixedLayout ? 'overflow-hidden' : '',
+                    col.class || '',
+                  ]"
+                >
+                  <slot :name="col.key" :item="item" :value="valor(item, col.key)">
+                    <span class="text-sm font-medium text-grey-text">{{ valor(item, col.key) }}</span>
+                  </slot>
+                </td>
+              </tr>
+              <tr
+                v-if="$slots['row-actions']"
+                class="border-b border-amma-green-light/60 bg-amma-bg/25"
+              >
+                <td :colspan="columns.length" class="px-4 pb-3 pt-1">
+                  <slot name="row-actions" :item="item" />
+                </td>
+              </tr>
+            </template>
           </tbody>
 
           <tbody v-else>
@@ -273,6 +358,35 @@ function chave(item: T, index: number): string | number {
             </tr>
           </tbody>
         </table>
+      </div>
+    </div>
+
+    <div
+      v-if="effectiveTotalPages > 1"
+      class="flex flex-wrap items-center justify-between gap-3 rounded-btn border border-amma-green-light/70 bg-white px-4 py-2.5 text-xs text-grey-text shadow-xs"
+    >
+      <span class="font-semibold">
+        {{ effectiveTotalElements }} registros · Página {{ effectivePage + 1 }} de {{ effectiveTotalPages }}
+      </span>
+      <div class="flex items-center gap-2">
+        <button
+          type="button"
+          class="inline-flex min-h-9 items-center gap-1 rounded-btn border border-amma-green-light bg-white px-3 py-1.5 font-bold text-amma-green-dark hover:bg-amma-green-lighter disabled:cursor-not-allowed disabled:opacity-40"
+          :disabled="loading || effectivePage <= 0"
+          @click="goPrevPage"
+        >
+          <span class="material-symbols-outlined text-[16px]" aria-hidden="true">chevron_left</span>
+          Anterior
+        </button>
+        <button
+          type="button"
+          class="inline-flex min-h-9 items-center gap-1 rounded-btn border border-amma-green-light bg-white px-3 py-1.5 font-bold text-amma-green-dark hover:bg-amma-green-lighter disabled:cursor-not-allowed disabled:opacity-40"
+          :disabled="loading || effectivePage + 1 >= effectiveTotalPages"
+          @click="goNextPage"
+        >
+          Próxima
+          <span class="material-symbols-outlined text-[16px]" aria-hidden="true">chevron_right</span>
+        </button>
       </div>
     </div>
   </div>
