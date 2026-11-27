@@ -23,7 +23,7 @@ Consulte `proposal.md` para a motivação e `specs/arborizacao-authentication/sp
 
 ### Reusar a guarda de rotas para proteger o fluxo completo
 
-Marcar todas as rotas existentes de Arborização como autenticadas: assistente, recomendações, solicitação de muda, conversão e acompanhamento. O destino `arborizacao` já encaminha para a etapa apropriada; ao selecionar essa opção sem sessão, a guarda existente deve redirecionar à home com a intenção de autenticação e o endereço solicitado. A mesma regra protege acessos por URL direta. Isso evita implementar uma checagem apenas no clique do menu, que seria contornada por navegação direta.
+Manter `/arborizacao`, `/arborizacao/assistente` e `/arborizacao/recomendacoes` públicos e marcar com `requiresAuth` as etapas de requerimento e pedido (`/arborizacao/substituicao-nim`, `/arborizacao/solicitar-muda`, `/arborizacao/conversao` e `/arborizacao/acompanhar`). Ao clicar em "Fazer requerimento" em `/arborizacao` ou selecionar uma muda em `/arborizacao/recomendacoes` sem sessão, a guarda permanece na rota de origem com `auth=required`, `motivo` e `redirect` preenchidos; após login ou auto-login imediato ao concluir o cadastro, o usuário segue diretamente para a rota preservada. No backend, `POST /api/assistente-plantio/recomendar` permanece `permitAll`, enquanto `POST /api/substituicoes-botanicas`, `GET /api/solicitacoes-muda/conversao` e `POST /api/solicitacoes-muda` exigem autenticação.
 
 As roles já autorizadas a navegar por Arborização continuam podendo usar o fluxo. A validação de `sessionNavigation` continua sendo a autoridade do frontend para decidir se a role pode retomar a rota.
 

@@ -6,9 +6,9 @@ O fluxo de Arborização permite iniciar e preencher o quiz sem uma conta autent
 
 ## What Changes
 
-- Exigir autenticação para as rotas existentes de Arborização, incluindo quiz, recomendações, solicitação de muda, conversão e acompanhamento.
-- Ao abrir Arborização sem sessão, exibir o modal de login e preservar a rota solicitada; oferecer cadastro a partir do modal e, após o cadastro e login, retomar o fluxo solicitado.
-- Aplicar a exigência de autenticação às APIs de recomendação e solicitação/conversão usadas pelo fluxo, mantendo os contratos existentes.
+- Permitir navegação pública em `/arborizacao`, no assistente de plantio (`/arborizacao/assistente`) e nas recomendações (`/arborizacao/recomendacoes`).
+- Exigir autenticação ao clicar em "Fazer requerimento" (`/arborizacao/substituicao-nim`), ao selecionar uma muda recomendada (`/arborizacao/solicitar-muda`), na conversão (`/arborizacao/conversao`) e no acompanhamento; exibir modal com aviso contextual, efetuar login automático após o cadastro e retomar imediatamente o fluxo solicitado preservando os parâmetros (como a espécie escolhida).
+- Exigir sessão válida no backend em `POST /api/substituicoes-botanicas`, `GET /api/solicitacoes-muda/conversao` e `POST /api/solicitacoes-muda`, mantendo `POST /api/assistente-plantio/recomendar` acessível publicamente para o quiz.
 - Preservar o comportamento de destino pós-login para acessos sem uma rota protegida pendente e manter as permissões atuais das outras áreas públicas.
 
 ## Capabilities
